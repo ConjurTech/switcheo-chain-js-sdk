@@ -23,7 +23,7 @@ function broadcastPromise(wallet, signature, txn) {
       side: msg.Side,
       quantity: msg.Quantity,
       price: msg.Price,
-      mode: 'async',
+      mode: 'sync',
     })
     return wallet.broadcast(broadcastTxBody)
   }
@@ -34,7 +34,7 @@ function broadcastPromise(wallet, signature, txn) {
       gas,
       memo,
       id: msg.ID,
-      mode: 'async',
+      mode: 'sync',
     })
     return wallet.broadcast(broadcastTxBody)
   }
@@ -119,7 +119,7 @@ function createCancelOrder(address, id) {
   }
 }
 
-const loops = 5
+const loops = 10
 function start(mnemonic, accountNumber) {
   return new Promise((resolve, reject) => {
     getWallet(mnemonic)
@@ -137,12 +137,13 @@ function start(mnemonic, accountNumber) {
           let txn
           // 40% change of generating a cancel order
           if (Math.random() >= 0.45 || openOrders === null || openOrders.length < loops) {
-            // 70% chance for generating swth_eth order
-            if (Math.random() >= 0.3) {
-              txn = createSwthEthOrder(wallet.pubKeyBech32)
-            } else {
-              txn = createSwthBtcOrder(wallet.pubKeyBech32)
-            }
+            txn = createSwthEthOrder(wallet.pubKeyBech32)
+            // // 70% chance for generating swth_eth order
+            // if (Math.random() >= 0.3) {
+            //   txn = createSwthEthOrder(wallet.pubKeyBech32)
+            // } else {
+            //   txn = createSwthBtcOrder(wallet.pubKeyBech32)
+            // }
           } else {
             txn = createCancelOrder(wallet.pubKeyBech32, openOrders[i].id)
           }

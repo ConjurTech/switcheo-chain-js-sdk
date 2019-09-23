@@ -8,14 +8,14 @@ setInterval(() => {
   const walletsLen = mnemonics.length
   // faux random normal distribution
   // e.g. if there are 20 wallets, it should generate a sample average value of 10 with a normal distribution
-  let wallets = Math.round((((Math.random() + Math.random() + Math.random() + Math.random() + Math.random() + Math.random()) - 3) / 3) * walletsLen + (walletsLen / 2))
-  if (wallets < 0) {
-    wallets = 0
-  } else if (wallets > walletsLen) {
-    wallets = walletsLen
-  }
+  // let wallets = Math.round((((Math.random() + Math.random() + Math.random() + Math.random() + Math.random() + Math.random()) - 3) / 3) * walletsLen + (walletsLen / 2))
+  // if (wallets < 0) {
+  //   wallets = 0
+  // } else if (wallets > walletsLen) {
+  //   wallets = walletsLen
+  // }
 
-  for (let i = 0; i < wallets; i++) {
+  for (let i = 0; i < 5; i++) {
     start(mnemonics[i], i)
   }
 
