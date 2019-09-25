@@ -28,12 +28,12 @@ function broadcastPromise(wallet, signature) {
   return wallet.broadcast(broadcastTxBody)
 }
 
-function signPromise(wallet, sequence) {
+function signPromise(wallet, accountNumber, sequence) {
   const { pubKeyBech32 } = wallet
 
   const stdSignMsg = new StdSignDoc({
     chainId: CHAIN_ID,
-    accountNumber: '1',
+    accountNumber,
     sequence,
     fee: new Fee([], gas),
     msgs: [
@@ -51,35 +51,46 @@ function signPromise(wallet, sequence) {
   return wallet.sign(marshalJSON(stdSignMsg))
 }
 
-function start(mnemonic) {
+function start(mnemonic, accountNumber) {
+  return new Promise((resolve, reject) => {
+    getWallet(mnemonic)
+      .then(wallet => {
+        let promises = []
 
-  getWallet(mnemonic)
-    .then(wallet => {
-      let promises = []
+        console.log('starting to sign....')
 
-      console.log('starting to sign....')
+        // prepare signatures offline
+        for (let i = 0; i < 2000; i++) {
+          promises.push(signPromise(wallet, accountNumber.toString(), i.toString()))
+        }
 
-      // prepare signatures offline
-      for(let i=0; i< 100000; i++) {
-        promises.push(signPromise(wallet, i.toString()))
-      }
+        // resolve promise in series
+        Promise.all(promises)
+          .then((signatureArray) => {
+            console.log('done signing....')
 
-      // resolve promise in series
-      Promise.all(promises).then((signatureArray) => {
-        console.log('done signing....')
+            signatureArray.reduce((previousPromise, nextSignature) =>
+              previousPromise.then(() =>
+                broadcastPromise(wallet, nextSignature)
+              ), Promise.resolve())
+                .then(() => {
+                  console.log('done.')
+                  resolve()
+                })
+                .catch(err => {
+                  reject(err)
+                })
 
-
-        signatureArray.reduce((previousPromise, nextSignature) =>
-          previousPromise.then(() =>
-            broadcastPromise(wallet, nextSignature)
-          ), Promise.resolve())
-          .then(() => {
-            console.log('done.')
+          })
+          .catch(err => {
+            reject(err)
           })
 
       })
-
-    })
+      .catch(err => {
+        reject(err)
+      })
+  })
 }
 
 module.exports = { start }
