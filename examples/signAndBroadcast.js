@@ -3,33 +3,30 @@ const { Fee, Msg, StdSignDoc } = require('../src/StdSignDoc')
 const { CHAIN_ID } = require('../src/config')
 const { marshalJSON } = require('../src/encoder')
 const { makeBroadcastTxBody } = require('../src/utils')
+const axios = require('axios')
+
 
 // default properties
 const gas = '1000000000000'
 const memo = ''
-const pair = 'swth_eth'
-const side = 'buy'
-const quantity = '100'
-const price = '0.100000000000000000'
 
-function broadcastPromise(wallet, signature) {
+function broadcastPromise(wallet, signature, order) {
   // attach signature to txn body
   const broadcastTxBody = makeBroadcastTxBody({
     signatures: [signature],
     address: wallet.pubKeyBech32,
     gas,
     memo,
-    pair,
-    side,
-    quantity,
-    price,
-    mode: 'async',
+    pair: order.Pair,
+    side: order.Side,
+    quantity: order.Quantity,
+    price: order.Price,
+    mode: 'sync',
   })
   return wallet.broadcast(broadcastTxBody)
 }
 
-function signPromise(wallet, accountNumber, sequence) {
-  const { pubKeyBech32 } = wallet
+function signPromise(order, wallet, accountNumber, sequence) {
 
   const stdSignMsg = new StdSignDoc({
     chainId: CHAIN_ID,
@@ -37,31 +34,58 @@ function signPromise(wallet, accountNumber, sequence) {
     sequence,
     fee: new Fee([], gas),
     msgs: [
-      new Msg({
-        originator: pubKeyBech32,
-        pair,
-        side,
-        quantity,
-        price,
-      })
+      order
     ],
     memo,
   })
-
   return wallet.sign(marshalJSON(stdSignMsg))
+}
+
+async function getSequeunce(address) {
+  const response = await axios.get(`http://localhost:1317/auth/accounts/${address}`)
+  return response.data.result.value.sequence
+}
+
+function randomQuantity(lotSize) {
+  // returns 100 to 500
+  const randInt = Math.floor(Math.random() * 5) + 1
+  return randInt * lotSize
+}
+function randomPrice(tick) {
+  // returns 0.01 to 0.1
+  const randInt = Math.floor(Math.random() * 10) + 1
+  return randInt * tick
+}
+
+function createOrder(address) {
+  const msg = new Msg({
+    originator: address,
+    pair: 'swth_eth',
+    side: Math.random() >= 0.5 ? 'buy' : 'sell',
+    quantity: randomQuantity(100).toString(),
+    price: randomPrice(0.01),
+  })
+  console.log(msg)
+  return msg
 }
 
 function start(mnemonic, accountNumber) {
   return new Promise((resolve, reject) => {
     getWallet(mnemonic)
-      .then(wallet => {
+      .then(async wallet => {
+
+        const sequence = await getSequeunce(wallet.pubKeyBech32)
+
         let promises = []
+        let orders = []
 
         console.log('starting to sign....')
 
         // prepare signatures offline
-        for (let i = 0; i < 2000; i++) {
-          promises.push(signPromise(wallet, accountNumber.toString(), i.toString()))
+        for (let i = 0; i < 20; i++) {
+          const order = createOrder(wallet.pubKeyBech32)
+          promises.push(signPromise(order, wallet, accountNumber.toString(), (parseInt(sequence) + i).toString()))
+          orders.push(order)
         }
 
         // resolve promise in series
@@ -69,11 +93,13 @@ function start(mnemonic, accountNumber) {
           .then((signatureArray) => {
             console.log('done signing....')
 
-            signatureArray.reduce((previousPromise, nextSignature) =>
-              previousPromise.then(() =>
-                broadcastPromise(wallet, nextSignature)
+            signatureArray.reduce((previousPromise, nextSignature, index) =>
+              previousPromise.then(() => {
+                return (
+                  broadcastPromise(wallet, nextSignature, orders[index])
+              )}
               ), Promise.resolve())
-                .then(() => {
+                .then(() => {``
                   console.log('done.')
                   resolve()
                 })

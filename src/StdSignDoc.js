@@ -37,7 +37,7 @@ class Msg {
     this.Pair = pair
     this.Side = side
     this.Quantity = quantity
-    this.Price = new BigNumber(price).toPrecision(18)  // decimal is precision 18
+    this.Price = new BigNumber(price).toFixed(18)  // decimal is precision 18
   }
 }
 
