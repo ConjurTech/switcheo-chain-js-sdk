@@ -1,5 +1,5 @@
 module.exports = [
-  'ahead profit erupt observe glory swear invest quantum element please net fire eyebrow loyal forget negative square laptop kitchen kidney demand february image box',
+  'whip toast tunnel wreck pioneer funny mechanic slot learn street tortoise like flavor veteran medal later another simple tent exercise clap wedding print auto',
   'cannon kick nose boring hunt sun foot oak quote round cream blanket capital milk unit zoo satisfy grow bar photo extra again census arrive',
   'detect twice vintage border offer actor aunt trumpet leg nurse anchor material valid blouse sketch clay inspire wrap dream drip scissors scrub unfair hello',
   'lend balance basic season ridge approve congress vacant mail clock harbor spot define quarter scale crystal speed seed casual pen dove sad sudden explain',

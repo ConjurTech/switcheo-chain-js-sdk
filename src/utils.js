@@ -1,4 +1,4 @@
-function makeBroadcastTxBody({
+function makeCreateBroadcastTxBody({
   signatures,
   address,
   gas,
@@ -34,6 +34,37 @@ function makeBroadcastTxBody({
   }
 }
 
+function makeCancelBroadcastTxBody({
+  signatures,
+  address,
+  gas,
+  memo,
+  id,
+  mode = 'sync',
+}) {
+  return {
+    tx: {
+      msg: [
+        {
+          type: 'broker/CancelOrder',
+          value: {
+            Originator: address,
+            ID: id,
+          }
+        }
+      ],
+      fee: {
+        amount: [],
+        gas,
+      },
+      signatures,
+      memo,
+    },
+    mode: mode, // sync, async, block
+  }
+}
+
 module.exports = {
-  makeBroadcastTxBody,
+  makeCreateBroadcastTxBody,
+  makeCancelBroadcastTxBody,
 }

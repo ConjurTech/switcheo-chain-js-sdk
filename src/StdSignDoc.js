@@ -25,7 +25,7 @@ class Fee {
   }
 }
 
-class Msg {
+class CreateMsg {
   constructor({
     originator,
     pair,
@@ -41,8 +41,19 @@ class Msg {
   }
 }
 
+class CancelMsg {
+  constructor({
+    originator,
+    id,
+  }) {
+    this.Originator = originator
+    this.ID = id
+  }
+}
+
 module.exports = {
   Fee,
-  Msg,
+  CancelMsg,
+  CreateMsg,
   StdSignDoc,
 }
