@@ -119,7 +119,7 @@ function createCancelOrder(address, id) {
   }
 }
 
-const loops = 200
+const loops = 5
 function start(mnemonic, accountNumber) {
   return new Promise((resolve, reject) => {
     getWallet(mnemonic)
@@ -127,19 +127,16 @@ function start(mnemonic, accountNumber) {
 
         const sequence = await getSequeunce(wallet.pubKeyBech32)
         const openOrders = await getOpenOrders(wallet.pubKeyBech32)
-        console.log('len', openOrders.length)
     
         let promises = []
         let txns = []
-
-        console.log('starting to sign....')
 
         // prepare signatures offline
         
         for (let i = 0; i < loops; i++) {
           let txn
           // 40% change of generating a cancel order
-          if (Math.random() >= 0.45 || openOrders.length < loops) {
+          if (Math.random() >= 0.45 || openOrders === null || openOrders.length < loops) {
             // 70% chance for generating swth_eth order
             if (Math.random() >= 0.3) {
               txn = createSwthEthOrder(wallet.pubKeyBech32)
@@ -158,7 +155,7 @@ function start(mnemonic, accountNumber) {
         // resolve promise in series
         Promise.all(promises)
           .then((signatureArray) => {
-            console.log('done signing....')
+            // console.log('done signing....')
 
             signatureArray.reduce((previousPromise, nextSignature, index) =>
               previousPromise.then(() => {
@@ -167,7 +164,7 @@ function start(mnemonic, accountNumber) {
               )}
               ), Promise.resolve())
                 .then(() => {``
-                  console.log('done.')
+                  // console.log('done.')
                   resolve()
                 })
                 .catch(err => {
