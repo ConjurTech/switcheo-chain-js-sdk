@@ -15,7 +15,7 @@ setInterval(() => {
     wallets = walletsLen
   }
 
-  for (let i = 0; i < wallets; i++) {
+  for (let i = 0; i < 2; i++) {
     start(mnemonics[i], i)
   }
 
