@@ -1,5 +1,7 @@
-const mnemonics = require('./mnemonics')
-const { start } = require('./examples/signAndBroadcast');
+const mnemonics = require('./mnemonics.json')
+const { start } = require('./examples/signAndBroadcast')
+
+console.log(mnemonics)
 
 setInterval(() => {
   console.log('starting....')
