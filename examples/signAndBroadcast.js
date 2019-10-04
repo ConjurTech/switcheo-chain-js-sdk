@@ -23,7 +23,7 @@ function broadcastPromise(wallet, signature, txn) {
       side: msg.Side,
       quantity: msg.Quantity,
       price: msg.Price,
-      mode: 'async',
+      mode: 'sync',
     })
     return wallet.broadcast(broadcastTxBody)
   }
