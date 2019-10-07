@@ -119,7 +119,7 @@ function createCancelOrder(address, id) {
   }
 }
 
-const loops = 1
+const loops = 50
 function start(mnemonic, accountNumber) {
   return new Promise((resolve, reject) => {
     getWallet(mnemonic)
