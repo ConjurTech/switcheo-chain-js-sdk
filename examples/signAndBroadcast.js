@@ -23,7 +23,7 @@ function broadcastPromise(wallet, signature, txn) {
       side: msg.Side,
       quantity: msg.Quantity,
       price: msg.Price,
-      mode: 'sync',
+      mode: 'async',
     })
     return wallet.broadcast(broadcastTxBody)
   }
@@ -34,7 +34,7 @@ function broadcastPromise(wallet, signature, txn) {
       gas,
       memo,
       id: msg.ID,
-      mode: 'sync',
+      mode: 'async',
     })
     return wallet.broadcast(broadcastTxBody)
   }
@@ -119,7 +119,7 @@ function createCancelOrder(address, id) {
   }
 }
 
-const loops = 50
+const loops = 5
 function start(mnemonic, accountNumber) {
   return new Promise((resolve, reject) => {
     getWallet(mnemonic)
