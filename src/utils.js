@@ -1,4 +1,4 @@
-function makeCreateBroadcastTxBody({
+function makeCreateOrderBroadcastTxBody({
   signatures,
   address,
   gas,
@@ -34,7 +34,7 @@ function makeCreateBroadcastTxBody({
   }
 }
 
-function makeCancelBroadcastTxBody({
+function makeCancelOrderBroadcastTxBody({
   signatures,
   address,
   gas,
@@ -65,6 +65,6 @@ function makeCancelBroadcastTxBody({
 }
 
 module.exports = {
-  makeCreateBroadcastTxBody,
-  makeCancelBroadcastTxBody,
+  makeCreateOrderBroadcastTxBody,
+  makeCancelOrderBroadcastTxBody,
 }

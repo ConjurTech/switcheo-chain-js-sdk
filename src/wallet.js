@@ -1,11 +1,13 @@
 const { LocalWalletProvider } = require('@node-a-team/cosmosjs/core/walletProvider')
 const fetch = require('node-fetch')
 const { GaiaApi } = require('@node-a-team/cosmosjs/gaia/api')
+const { CHAIN_ID, RPC_URL, REST_URL } = require('./config')
+const { Fee, StdSignDoc } = require('./StdSignDoc')
+const { marshalJSON } = require('./encoder')
 // const { Fee, Msg, StdSignMsg } = require('./StdSignMsg')
 
-const CHAIN_ID = 'switcheochain'
-const RPC_URL = 'http://localhost:26657'
-const REST_URL = 'http://localhost:1317'
+// default properties
+const memo = ''
 
 class Wallet {
   constructor(api, account) {
@@ -15,6 +17,7 @@ class Wallet {
     this.pubKeySecp256k1 = account.pubKey
     this.pubKeyBase64 = this.pubKeySecp256k1.pubKey.toString('base64')
     this.pubKeyBech32 = this.pubKeySecp256k1.toAddress().toBech32('cosmos')
+    this.gas = '1000000000000'
   }
 
   sign(message) {
@@ -41,9 +44,30 @@ class Wallet {
   broadcast(body) {
     return fetch(`${REST_URL}/txs`, { method: 'POST', body: JSON.stringify(body) })
       .then(res => res.json()) // expecting a json response
-      .then(json => {
-        console.log(json)
-      })
+  }
+
+  getAccount() {
+    return fetch(`${REST_URL}/auth/accounts/${this.pubKeyBech32}`)
+      .then(res => res.json()) // expecting a json response
+  }
+
+  signMessage(msg, accountNumber, sequence) {
+    const stdSignMsg = new StdSignDoc({
+      chainId: CHAIN_ID,
+      accountNumber,
+      sequence,
+      fee: new Fee([], this.gas),
+      msgs: [
+        msg,
+      ],
+      memo,
+    })
+    return this.sign(marshalJSON(stdSignMsg))
+  }
+
+  getTransferMsg(toAddress, body) {
+    return fetch(`${REST_URL}/bank/accounts/${toAddress}/transfers`, { method: 'POST', body: JSON.stringify(body) })
+      .then(res => res.json()) // expecting a json response
   }
 }
 

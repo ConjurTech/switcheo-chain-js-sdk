@@ -23,7 +23,7 @@ function broadcastPromise(wallet, signature, txn) {
       side: msg.Side,
       quantity: msg.Quantity,
       price: msg.Price,
-      mode: 'sync',
+      mode: 'async',
     })
     return wallet.broadcast(broadcastTxBody)
   }
@@ -34,7 +34,7 @@ function broadcastPromise(wallet, signature, txn) {
       gas,
       memo,
       id: msg.ID,
-      mode: 'sync',
+      mode: 'async',
     })
     return wallet.broadcast(broadcastTxBody)
   }
@@ -119,7 +119,7 @@ function createCancelOrder(address, id) {
   }
 }
 
-const loops = 10
+const loops = 15
 function start(mnemonic, accountNumber) {
   return new Promise((resolve, reject) => {
     getWallet(mnemonic)
@@ -127,23 +127,23 @@ function start(mnemonic, accountNumber) {
 
         const sequence = await getSequeunce(wallet.pubKeyBech32)
         const openOrders = await getOpenOrders(wallet.pubKeyBech32)
-    
+
         let promises = []
         let txns = []
 
         // prepare signatures offline
-        
+
         for (let i = 0; i < loops; i++) {
           let txn
           // 40% change of generating a cancel order
           if (Math.random() >= 0.45 || openOrders === null || openOrders.length < loops) {
-            txn = createSwthEthOrder(wallet.pubKeyBech32)
+            // txn = createSwthEthOrder(wallet.pubKeyBech32)
             // // 70% chance for generating swth_eth order
-            // if (Math.random() >= 0.3) {
-            //   txn = createSwthEthOrder(wallet.pubKeyBech32)
-            // } else {
-            //   txn = createSwthBtcOrder(wallet.pubKeyBech32)
-            // }
+            if (Math.random() >= 0.3) {
+              txn = createSwthEthOrder(wallet.pubKeyBech32)
+            } else {
+              txn = createSwthBtcOrder(wallet.pubKeyBech32)
+            }
           } else {
             txn = createCancelOrder(wallet.pubKeyBech32, openOrders[i].id)
           }
@@ -164,7 +164,7 @@ function start(mnemonic, accountNumber) {
                   broadcastPromise(wallet, nextSignature, txns[index])
               )}
               ), Promise.resolve())
-                .then(() => {``
+                .then(() => {
                   // console.log('done.')
                   resolve()
                 })
