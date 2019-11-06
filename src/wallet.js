@@ -1,6 +1,7 @@
 const { LocalWalletProvider } = require('@node-a-team/cosmosjs/core/walletProvider')
-const fetch = require('node-fetch')
 const { GaiaApi } = require('@node-a-team/cosmosjs/gaia/api')
+const bip39 = require('bip39')
+const fetch = require('node-fetch')
 const { NETWORK, CONFIG } = require('./config')
 const { Fee, StdSignDoc } = require('./containers/StdSignDoc')
 const { marshalJSON } = require('./utils/encoder')
@@ -66,7 +67,7 @@ class Wallet {
   }
 }
 
-function getWallet(mnemonic, net = 'LOCALHOST') {
+function connect(mnemonic, net = 'LOCALHOST') {
   const wallet = new LocalWalletProvider(mnemonic)
   const network = NETWORK[net]
   if (!network) throw new Error('network must be LOCALHOST/DEVNET')
@@ -94,6 +95,12 @@ function getWallet(mnemonic, net = 'LOCALHOST') {
   })
 }
 
+function newAccount() {
+  const mnemonic = bip39.generateMnemonic()
+  return mnemonic
+}
+
 module.exports = {
-  getWallet,
+  connect,
+  newAccount,
 }

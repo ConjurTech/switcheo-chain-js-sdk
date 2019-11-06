@@ -1,11 +1,12 @@
-const { getWallet } = require('./src/wallet')
+const { connect, newAccount } = require('./src/wallet')
 const { CreateOrderMsg } = require('./src/msgs/orders')
 const { MintTokenMsg } = require('./src/msgs/mints')
 const { Transaction } = require('./src/containers/Transaction')
 const types = require('./src/types')
 
 module.exports = {
-  connect: getWallet,
+  connect,
+  newAccount,
   CreateOrderMsg,
   MintTokenMsg,
   Transaction,
