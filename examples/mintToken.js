@@ -3,7 +3,9 @@ const SDK = require('../index')
 
 const mnemonic = 'myself cross give glue viable suggest satisfy warrior also brass kitten merge arrive index swap evidence baby return armed grunt legend manage term diary'
 
-SDK.connect(mnemonic)
+// const network = 'LOCALHOST'
+const network = 'DEVNET'
+SDK.connect(mnemonic, network)
   .then((wallet) => {
     const address = wallet.pubKeyBech32
     const toAddress = 'cosmos1rzdwrr33z5pxw2ndtsdluxhce9p26emfs0f5dm'

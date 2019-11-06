@@ -3,7 +3,9 @@ const SDK = require('../index')
 
 const mnemonic = 'myself cross give glue viable suggest satisfy warrior also brass kitten merge arrive index swap evidence baby return armed grunt legend manage term diary'
 
-SDK.connect(mnemonic)
+// const network = 'LOCALHOST'
+const network = 'DEVNET'
+SDK.connect(mnemonic, network)
   .then((wallet) => {
     wallet.getAccount().then(({ result: { value } }) => {
       console.log(value.account_number) // signed messages includes this. this is unique and incremental for every new account.

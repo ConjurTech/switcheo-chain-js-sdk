@@ -1,19 +1,20 @@
 const { LocalWalletProvider } = require('@node-a-team/cosmosjs/core/walletProvider')
 const fetch = require('node-fetch')
 const { GaiaApi } = require('@node-a-team/cosmosjs/gaia/api')
-const { CHAIN_ID, RPC_URL, REST_URL, DEFAULT_GAS } = require('./config')
+const { NETWORK, CONFIG } = require('./config')
 const { Fee, StdSignDoc } = require('./containers/StdSignDoc')
 const { marshalJSON } = require('./utils/encoder')
 
 class Wallet {
-  constructor(api, account) {
+  constructor(api, account, network) {
     this.api = api
 
     this.address = account.address
     this.pubKeySecp256k1 = account.pubKey
     this.pubKeyBase64 = this.pubKeySecp256k1.pubKey.toString('base64')
     this.pubKeyBech32 = this.pubKeySecp256k1.toAddress().toBech32('cosmos')
-    this.gas = DEFAULT_GAS
+    this.gas = CONFIG.DEFAULT_GAS
+    this.network = network
   }
 
   sign(message) {
@@ -38,12 +39,12 @@ class Wallet {
   }
 
   broadcast(body) {
-    return fetch(`${REST_URL}/txs`, { method: 'POST', body: JSON.stringify(body) })
+    return fetch(`${this.network.REST_URL}/txs`, { method: 'POST', body: JSON.stringify(body) })
       .then(res => res.json()) // expecting a json response
   }
 
   getAccount() {
-    return fetch(`${REST_URL}/auth/accounts/${this.pubKeyBech32}`)
+    return fetch(`${this.network.REST_URL}/auth/accounts/${this.pubKeyBech32}`)
       .then(res => res.json()) // expecting a json response
   }
 
@@ -51,7 +52,7 @@ class Wallet {
     return this.getAccount().then(({ result: { value } }) => {
       const memo = options.memo || ''
       const stdSignMsg = new StdSignDoc({
-        chainId: CHAIN_ID,
+        chainId: CONFIG.CHAIN_ID,
         accountNumber: value.account_number,
         sequence: value.sequence,
         fee: new Fee([], this.gas),
@@ -65,14 +66,16 @@ class Wallet {
   }
 }
 
-function getWallet(mnemonic) {
+function getWallet(mnemonic, net = 'LOCALHOST') {
   const wallet = new LocalWalletProvider(mnemonic)
+  const network = NETWORK[net]
+  if (!network) throw new Error('network must be LOCALHOST/DEVNET')
 
   const api = new GaiaApi({
-    chainId: CHAIN_ID,
+    chainId: CONFIG.CHAIN_ID,
     walletProvider: wallet,
-    rpc: RPC_URL,
-    rest: REST_URL,
+    rpc: network.RPC_URL,
+    rest: network.REST_URL,
   })
 
   return new Promise((resolve, reject) => {
@@ -81,7 +84,7 @@ function getWallet(mnemonic) {
         api.wallet.getSignerAccounts(api.context)
           .then(wallets => {
             const account = wallets[0]
-            const wallet = new Wallet(api, account)
+            const wallet = new Wallet(api, account, network)
 
             resolve(wallet)
           })
