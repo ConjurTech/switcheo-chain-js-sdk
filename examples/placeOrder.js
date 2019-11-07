@@ -2,27 +2,27 @@
 const SDK = require('../index')
 
 const mnemonic = 'myself cross give glue viable suggest satisfy warrior also brass kitten merge arrive index swap evidence baby return armed grunt legend manage term diary'
+const privateKey = SDK.getPrivKey(mnemonic)
 
-// const network = 'LOCALHOST'
-const network = 'DEVNET'
-SDK.connect(mnemonic, network)
-  .then((wallet) => {
-    const address = wallet.pubKeyBech32
-    const msg = new SDK.CreateOrderMsg({
-      originator: address,
-      pair: 'swth_eth',
-      side: 'buy',
-      quantity: '100',
-      price: '0.01',
-    })
-    wallet.signMessage(msg)
-      .then(signature => {
-        const broadcastTxBody = new SDK.Transaction(
-          SDK.types.PLACE_ORDER_MSG_TYPE,
-          msg,
-          signature,
-        )
-        wallet.broadcast(broadcastTxBody).then(console.log)
-      }) // signMessage
+const net = 'LOCALHOST'
+// const net = 'DEVNET'
 
-  }) // connect
+const privateKeyWallet = SDK.connectWithPrivKey(privateKey)
+const address = privateKeyWallet.pubKeyBech32
+
+const msg = new SDK.CreateOrderMsg({
+  originator: address,
+  pair: 'swth_eth',
+  side: 'buy',
+  quantity: '100',
+  price: '0.01',
+})
+privateKeyWallet.signMessage(msg)
+  .then(signature => {
+    const broadcastTxBody = new SDK.Transaction(
+      SDK.types.PLACE_ORDER_MSG_TYPE,
+      msg,
+      signature,
+    )
+    privateKeyWallet.broadcast(broadcastTxBody).then(console.log)
+  })
