@@ -120,7 +120,14 @@ class BIP44 {
   }
 }
 
+function getPath() {
+  const bip44 = new BIP44(44, 118, 0)
+  const index = 0
+  const change = 0
+  return bip44.pathString(index, change)
+}
+
 module.exports = {
-  BIP44,
   PrivKeySecp256k1,
+  getPath,
 }

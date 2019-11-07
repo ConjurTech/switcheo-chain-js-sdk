@@ -4,9 +4,9 @@ const fetch = require('node-fetch')
 const { NETWORK, CONFIG } = require('./config')
 const { StdSignDoc, Fee } = require('./containers')
 const { marshalJSON } = require('./utils/encoder')
-const { BIP44, PrivKeySecp256k1 } = require('./utils/wallet')
+const { getPath, PrivKeySecp256k1 } = require('./utils/wallet')
 
-class PrivateKeyWallet {
+class Wallet {
   constructor(privateKey, network) {
     const privKey = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex'))
 
@@ -64,14 +64,7 @@ function connect(privateKey, net = 'LOCALHOST') {
   const network = NETWORK[net]
   if (!network) throw new Error('network must be LOCALHOST/DEVNET')
 
-  return new PrivateKeyWallet(privateKey, network)
-}
-
-function getPath() {
-  const bip44 = new BIP44(44, 118, 0)
-  const index = 0
-  const change = 0
-  return bip44.pathString(index, change)
+  return new Wallet(privateKey, network)
 }
 
 function newAccount() {
