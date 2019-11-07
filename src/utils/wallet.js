@@ -1,10 +1,7 @@
-const { Amino } = require('@node-a-team/ts-amino')
 const secp256k1 = require('secp256k1')
 const { sha256 } = require('sha.js')
 const ripemd160 = require('ripemd160')
 const bech32 = require('bech32')
-
-const { marshalBinaryBare } = Amino
 
 class PrivKeySecp256k1 {
   constructor(privKey) {
@@ -12,7 +9,8 @@ class PrivKeySecp256k1 {
   }
 
   toBytes() {
-    return marshalBinaryBare(this)
+    // return marshalBinaryBare(this) // stub marshalBinaryBare with Uint8Array
+    return new Uint8Array(this.privKey)
   }
 
   toPubKey() {
@@ -41,7 +39,8 @@ class PubKeySecp256k1 {
   }
 
   toBytes() {
-    return marshalBinaryBare(this);
+    // return marshalBinaryBare(this)
+    return new Uint8Array(this.pubKey)
   }
 
   toAddress() {
