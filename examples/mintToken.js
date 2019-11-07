@@ -2,29 +2,27 @@
 const SDK = require('../index')
 
 const mnemonic = 'myself cross give glue viable suggest satisfy warrior also brass kitten merge arrive index swap evidence baby return armed grunt legend manage term diary'
+const privateKey = SDK.getPrivKeyFromMnemonic(mnemonic)
 
-// const network = 'LOCALHOST'
-const network = 'DEVNET'
-SDK.connect(mnemonic, network)
-  .then((wallet) => {
-    const address = wallet.pubKeyBech32
-    const toAddress = 'cosmos1rzdwrr33z5pxw2ndtsdluxhce9p26emfs0f5dm'
+const net = 'LOCALHOST'
+// const net = 'DEVNET'
 
-    const msg = new SDK.MintTokenMsg({
-      originator: address,
-      toAddress,
-      amount: '1000',
-      denom: 'swth',
-    })
-    wallet.signMessage(msg)
-      .then(signature => {
-        const broadcastTxBody = new SDK.Transaction(
-          SDK.types.MINT_TOKEN_MSG_TYPE,
-          msg,
-          signature,
-        )
+const privateKeyWallet = SDK.connect(privateKey)
+const address = privateKeyWallet.pubKeyBech32
+const toAddress = 'cosmos1rzdwrr33z5pxw2ndtsdluxhce9p26emfs0f5dm'
 
-        wallet.broadcast(broadcastTxBody).then(console.log)
-      }) // signMessage
-
-  }) // connect
+const msg = new SDK.MintTokenMsg({
+  originator: address,
+  toAddress,
+  amount: '1000',
+  denom: 'swth',
+})
+privateKeyWallet.signMessage(msg)
+  .then(signature => {
+    const broadcastTxBody = new SDK.Transaction(
+      SDK.types.MINT_TOKEN_MSG_TYPE,
+      msg,
+      signature,
+    )
+    privateKeyWallet.broadcast(broadcastTxBody).then(console.log)
+  }) // signMessage

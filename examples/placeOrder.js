@@ -2,12 +2,12 @@
 const SDK = require('../index')
 
 const mnemonic = 'myself cross give glue viable suggest satisfy warrior also brass kitten merge arrive index swap evidence baby return armed grunt legend manage term diary'
-const privateKey = SDK.getPrivKey(mnemonic)
+const privateKey = SDK.getPrivKeyFromMnemonic(mnemonic)
 
 const net = 'LOCALHOST'
 // const net = 'DEVNET'
 
-const privateKeyWallet = SDK.connectWithPrivKey(privateKey)
+const privateKeyWallet = SDK.connect(privateKey)
 const address = privateKeyWallet.pubKeyBech32
 
 const msg = new SDK.CreateOrderMsg({

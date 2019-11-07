@@ -1,27 +1,10 @@
 const { Amino } = require('@node-a-team/ts-amino')
-const bip39 = require('bip39')
-const bip32 = require('bip32')
 const secp256k1 = require('secp256k1')
 const { sha256 } = require('sha.js')
 const ripemd160 = require('ripemd160')
 const bech32 = require('bech32')
 
 const { marshalBinaryBare } = Amino
-
-function generateWalletFromMnemonic(mnemonic, path, password = '') {
-  const seed = bip39.mnemonicToSeedSync(mnemonic, password)
-  const masterKey = bip32.fromSeed(seed)
-  const hd = masterKey.derivePath(path)
-
-  const privateKey = hd.privateKey
-  // console.log(privateKey)
-  // console.log(Buffer.from(privateKey.toString('hex'), 'hex'))
-
-  if (!privateKey) {
-    throw new Error("null hd key")
-  }
-  return new PrivKeySecp256k1(privateKey)
-}
 
 class PrivKeySecp256k1 {
   constructor(privKey) {
@@ -138,7 +121,6 @@ class BIP44 {
 }
 
 module.exports = {
-  generateWalletFromMnemonic,
   BIP44,
   PrivKeySecp256k1,
 }
