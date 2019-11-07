@@ -1,21 +1,11 @@
-const { connect, newAccount, getPrivKeyFromMnemonic } = require('./src/wallet')
-const { CreateOrderMsg } = require('./src/msgs/orders')
-const { MintTokenMsg } = require('./src/msgs/mints')
-const { Transaction } = require('./src/containers/Transaction')
-const { StdSignDoc } = require('./src/containers/StdSignDoc')
-const { marshalJSON } = require('./src/utils/encoder')
+const wallet = require('./src/wallet')
+const msgs = require('./src/msgs')
+const containers = require('./src/containers')
 const types = require('./src/types')
-const { BIP44 } = require('./src/utils/wallet')
 
 module.exports = {
-  connect,
-  newAccount,
-  CreateOrderMsg,
-  MintTokenMsg,
-  Transaction,
+  msgs,
+  containers,
   types,
-  BIP44,
-  StdSignDoc,
-  marshalJSON,
-  getPrivKeyFromMnemonic,
+  wallet,
 }

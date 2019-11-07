@@ -2,7 +2,7 @@ const bip39 = require('bip39')
 const bip32 = require('bip32')
 const fetch = require('node-fetch')
 const { NETWORK, CONFIG } = require('./config')
-const { Fee, StdSignDoc } = require('./containers/StdSignDoc')
+const { StdSignDoc, Fee } = require('./containers')
 const { marshalJSON } = require('./utils/encoder')
 const { BIP44, PrivKeySecp256k1 } = require('./utils/wallet')
 

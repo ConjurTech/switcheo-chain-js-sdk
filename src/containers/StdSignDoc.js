@@ -23,7 +23,6 @@ class Fee {
   }
 }
 
-
 module.exports = {
   Fee,
   StdSignDoc,
