@@ -8,7 +8,7 @@ const privateKey = wallet.getPrivKeyFromMnemonic(mnemonic)
 const net = 'LOCALHOST'
 // const net = 'DEVNET'
 
-const privateKeyWallet = wallet.connect(privateKey)
+const privateKeyWallet = wallet.Wallet.connect(privateKey)
 const address = privateKeyWallet.pubKeyBech32
 const toAddress = 'cosmos1rzdwrr33z5pxw2ndtsdluxhce9p26emfs0f5dm'
 

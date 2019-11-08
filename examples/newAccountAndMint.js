@@ -10,10 +10,10 @@ const net = 'LOCALHOST'
 
 const newAccount = wallet.newAccount()
 const newPrivateKey = newAccount.privateKey
-const newPrivateKeyWallet = wallet.connect(newPrivateKey)
+const newPrivateKeyWallet = wallet.Wallet.connect(newPrivateKey)
 console.log(newAccount)
 
-const privateKeyWallet = wallet.connect(privateKey)
+const privateKeyWallet = wallet.Wallet.connect(privateKey)
 const address = privateKeyWallet.pubKeyBech32
 const newAddress = newPrivateKeyWallet.pubKeyBech32
 const toAddress = newAddress

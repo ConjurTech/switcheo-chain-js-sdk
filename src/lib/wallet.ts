@@ -6,7 +6,16 @@ import { Fee, StdSignDoc } from './containers'
 import { marshalJSON } from './utils/encoder'
 import { getPath, PrivKeySecp256k1, PubKeySecp256k1 } from './utils/wallet'
 
-class Wallet {
+export class Wallet {
+  public static connect(privateKey: string, net = 'LOCALHOST') {
+    const network = NETWORK[net]
+    if (!network) {
+      throw new Error('network must be LOCALHOST/DEVNET')
+    }
+
+    return new Wallet(privateKey, network)
+  }
+
   public readonly privKey: PrivKeySecp256k1
   public readonly address: Uint8Array
   public readonly pubKeySecp256k1: PubKeySecp256k1
@@ -66,16 +75,6 @@ class Wallet {
       return this.sign(marshalJSON(stdSignMsg))
     })
   }
-}
-
-// TODO: shift this to Wallet
-export function connect(privateKey, net = 'LOCALHOST') {
-  const network = NETWORK[net]
-  if (!network) {
-    throw new Error('network must be LOCALHOST/DEVNET')
-  }
-
-  return new Wallet(privateKey, network)
 }
 
 export function newAccount() {
