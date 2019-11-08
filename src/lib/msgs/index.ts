@@ -1,4 +1,7 @@
 import { MintTokenMsg } from './mints'
 import { CreateOrderMsg } from './orders'
 
-export { CreateOrderMsg, MintTokenMsg }
+export const msgs = {
+  CreateOrderMsg,
+  MintTokenMsg,
+}
