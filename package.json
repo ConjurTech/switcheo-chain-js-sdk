@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "switcheo-chain-js-sdk",
   "main": "build/main/index.js",
-  "files": [
-    "build/"
-  ],
   "typings": "build/main/index.d.ts",
   "module": "build/module/index.js",
   "repository": "https://github.com/holyxiaoxin/switcheo-chain-js-sdk",
