@@ -1,19 +1,21 @@
-const secp256k1 = require('secp256k1')
-const { sha256 } = require('sha.js')
-const ripemd160 = require('ripemd160')
-const bech32 = require('bech32')
+// tslint:disable:max-classes-per-file
+import bech32 from 'bech32'
+import ripemd160 from 'ripemd160'
+import secp256k1 from 'secp256k1'
+import { sha256 } from 'sha.js'
 
-class PrivKeySecp256k1 {
+export class PrivKeySecp256k1 {
+  public readonly privKey: Buffer
   constructor(privKey) {
     this.privKey = privKey
   }
 
-  toBytes() {
+  public toBytes(): Uint8Array {
     // return marshalBinaryBare(this) // stub marshalBinaryBare with Uint8Array
     return new Uint8Array(this.privKey)
   }
 
-  toPubKey() {
+  public toPubKey() {
     const pubKey = secp256k1.publicKeyCreate(
       Buffer.from(this.privKey),
       true
@@ -21,11 +23,11 @@ class PrivKeySecp256k1 {
     return new PubKeySecp256k1(pubKey);
   }
 
-  equals(privKey) {
+  public equals(privKey) {
     return this.toBytes().toString() === privKey.toBytes().toString()
   }
 
-  sign(msg) {
+  public sign(msg) {
     return secp256k1.sign(
       Buffer.from(new sha256().update(msg).digest()),
       Buffer.from(this.privKey)
@@ -33,28 +35,29 @@ class PrivKeySecp256k1 {
   }
 }
 
-class PubKeySecp256k1 {
+export class PubKeySecp256k1 {
+  public readonly pubKey: Buffer
   constructor(pubKey) {
     this.pubKey = pubKey;
   }
 
-  toBytes() {
+  public toBytes() {
     // return marshalBinaryBare(this)
     return new Uint8Array(this.pubKey)
   }
 
-  toAddress() {
+  public toAddress() {
     let hash = new sha256().update(this.pubKey).digest('latin1')
     hash = new ripemd160().update(hash, 'latin1').digest('hex')
 
     return new Address(Buffer.from(hash, 'hex'))
   }
 
-  equals(pubKey) {
+  public equals(pubKey) {
     return this.toBytes().toString() === pubKey.toBytes().toString()
   }
 
-  verify(msg, sig) {
+  public verify(msg, sig) {
     return secp256k1.verify(
       Buffer.from(msg),
       Buffer.from(sig),
@@ -64,11 +67,12 @@ class PubKeySecp256k1 {
 }
 
 class Address {
+  public readonly address: Buffer
   constructor(address) {
     this.address = address
   }
 
-  fromBech32(prefix, bech32Addr) {
+  public fromBech32(prefix, bech32Addr) {
     const { prefix: b32Prefix, words } = bech32.decode(bech32Addr)
     if (b32Prefix !== prefix) {
       throw new Error("Prefix doesn't match")
@@ -76,24 +80,27 @@ class Address {
     return new Address(bech32.fromWords(words))
   }
 
-  toBech32(prefix) {
+  public toBech32(prefix) {
     const words = bech32.toWords(Buffer.from(this.address))
     return bech32.encode(prefix, words)
   }
 
-  toBytes() {
+  public toBytes() {
     return new Uint8Array(this.address)
   }
 }
 
 class BIP44 {
+  public readonly purpose: number
+  public readonly coinType: number
+  public readonly account: number
   constructor(purpose, coinType, account) {
     this.purpose = purpose
     this.coinType = coinType
     this.account = account
   }
 
-  path(index, change = 0) {
+  public path(index, change = 0) {
     if (this.purpose !== parseInt(this.purpose.toString(), 10)) {
       throw new Error('Purpose should be integer')
     }
@@ -113,20 +120,15 @@ class BIP44 {
     return [this.purpose, this.coinType, this.account, change, index];
   }
 
-  pathString(index, change = 0) {
+  public pathString(index, change = 0) {
     const path = this.path(index, change)
     return `m/${path[0]}'/${path[1]}'/${path[2]}'/${path[3]}/${path[4]}`
   }
 }
 
-function getPath() {
+export function getPath() {
   const bip44 = new BIP44(44, 118, 0)
   const index = 0
   const change = 0
   return bip44.pathString(index, change)
-}
-
-module.exports = {
-  PrivKeySecp256k1,
-  getPath,
 }

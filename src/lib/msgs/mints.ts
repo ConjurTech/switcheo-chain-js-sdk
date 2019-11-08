@@ -1,4 +1,9 @@
-class MintTokenMsg {
+export class MintTokenMsg {
+  public readonly Originator: string
+  public readonly ToAddress: string
+  public readonly Amount: string
+  public readonly Denom: string
+
   constructor({
     originator,
     toAddress,
@@ -10,8 +15,4 @@ class MintTokenMsg {
     this.Amount = amount
     this.Denom = denom
   }
-}
-
-module.exports = {
-  MintTokenMsg,
 }

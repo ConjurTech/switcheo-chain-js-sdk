@@ -1,9 +1,14 @@
 function sortObject(obj) {
-  if (obj === null) return null
-  if (typeof obj !== "object") return obj
+  if (obj === null) {
+    return null
+  }
+  if (typeof obj !== "object") {
+    return obj
+  }
   // arrays have typeof "object" in js!
-  if (Array.isArray(obj))
+  if (Array.isArray(obj)) {
     return obj.map(sortObject)
+  }
   const sortedKeys = Object.keys(obj).sort()
   const result = {}
   sortedKeys.forEach(key => {
@@ -12,10 +17,7 @@ function sortObject(obj) {
   return result
 }
 
-function marshalJSON(json) {
+export function marshalJSON(json) {
   return Buffer.from(JSON.stringify(sortObject(json)))
 }
 
-module.exports = {
-  marshalJSON,
-}

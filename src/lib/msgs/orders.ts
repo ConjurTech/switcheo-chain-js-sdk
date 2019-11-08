@@ -1,6 +1,13 @@
-const { BigNumber } = require('bignumber.js')
+// tslint:disable:max-classes-per-file
+import { BigNumber } from 'bignumber.js'
 
-class CreateOrderMsg {
+export class CreateOrderMsg {
+  public readonly Originator: string
+  public readonly Pair: string
+  public readonly Side: string
+  public readonly Quantity: string
+  public readonly Price: string
+
   constructor({
     originator,
     pair,
@@ -16,7 +23,10 @@ class CreateOrderMsg {
   }
 }
 
-class CancelOrderMsg {
+export class CancelOrderMsg {
+  public readonly Originator: string
+  public readonly ID: string
+
   constructor({
     originator,
     id,
@@ -24,9 +34,4 @@ class CancelOrderMsg {
     this.Originator = originator
     this.ID = id
   }
-}
-
-module.exports = {
-  CancelOrderMsg,
-  CreateOrderMsg,
 }
