@@ -1,8 +1,2 @@
-import { Fee, StdSignDoc } from './StdSignDoc'
-import { Transaction } from './Transaction'
-
-export const containers = {
-  Fee,
-  StdSignDoc,
-  Transaction,
-}
+export { Transaction } from './Transaction'
+export { Fee, StdSignDoc } from './StdSignDoc'

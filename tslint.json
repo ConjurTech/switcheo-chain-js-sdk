@@ -1,8 +1,6 @@
 {
-  "extends": ["tslint:latest", "tslint-immutable"],
+  "extends": ["tslint:latest", "tslint-config-prettier", "tslint-immutable"],
   "rules": {
-    "semicolon": [true, "never"],
-    "quotemark": [true, "single"],
     "interface-name": [true, "never-prefix"],
     // TODO: allow devDependencies only in **/*.spec.ts files:
     // waiting on https://github.com/palantir/tslint/pull/3708

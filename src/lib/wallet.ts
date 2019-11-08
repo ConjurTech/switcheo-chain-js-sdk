@@ -1,21 +1,12 @@
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
 import fetch from 'node-fetch'
-import { CONFIG, NETWORK, Network } from '../config'
-import { Fee, StdSignDoc } from '../containers/StdSignDoc'
-import { marshalJSON } from '../utils/encoder'
-import { getPath, PrivKeySecp256k1, PubKeySecp256k1 } from '../utils/wallet'
+import { CONFIG, NETWORK, Network } from './config'
+import { Fee, StdSignDoc } from './containers'
+import { marshalJSON } from './utils/encoder'
+import { getPath, PrivKeySecp256k1, PubKeySecp256k1 } from './utils/wallet'
 
-export class Wallet {
-  public static connect(privateKey: string, net = 'LOCALHOST') {
-    const network = NETWORK[net]
-    if (!network) {
-      throw new Error('network must be LOCALHOST/DEVNET')
-    }
-
-    return new Wallet(privateKey, network)
-  }
-
+class Wallet {
   public readonly privKey: PrivKeySecp256k1
   public readonly address: Uint8Array
   public readonly pubKeySecp256k1: PubKeySecp256k1
@@ -51,12 +42,12 @@ export class Wallet {
 
   public broadcast(body) {
     return fetch(`${this.network.REST_URL}/txs`, { method: 'POST', body: JSON.stringify(body) })
-      .then((res) => res.json()) // expecting a json response
+      .then(res => res.json()) // expecting a json response
   }
 
   public getAccount() {
     return fetch(`${this.network.REST_URL}/auth/accounts/${this.pubKeyBech32}`)
-      .then((res) => res.json()) // expecting a json response
+      .then(res => res.json()) // expecting a json response
   }
 
   public signMessage(msg, options: { memo?: string } = {}) {
@@ -77,6 +68,16 @@ export class Wallet {
   }
 }
 
+// TODO: shift this to Wallet
+export function connect(privateKey, net = 'LOCALHOST') {
+  const network = NETWORK[net]
+  if (!network) {
+    throw new Error('network must be LOCALHOST/DEVNET')
+  }
+
+  return new Wallet(privateKey, network)
+}
+
 export function newAccount() {
   const mnemonic = bip39.generateMnemonic()
   return {
@@ -93,7 +94,7 @@ export function getPrivKeyFromMnemonic(mnemonic) {
 
   const privateKey = hd.privateKey
   if (!privateKey) {
-    throw new Error('null hd key')
+    throw new Error("null hd key")
   }
   return privateKey.toString('hex')
 }
