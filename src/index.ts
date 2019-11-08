@@ -3,7 +3,7 @@ import * as msgs from './lib/msgs'
 import * as types from './lib/types'
 import * as wallet from './lib/wallet'
 
-export {
+export default {
   msgs,
   types,
   containers,
