@@ -2,18 +2,19 @@
 const SDK = require('../.')
 const { wallet, api } = SDK
 
-const mnemonic = 'myself cross give glue viable suggest satisfy warrior also brass kitten merge arrive index swap evidence baby return armed grunt legend manage term diary'
+const mnemonic = 'fan clump antique answer height room onion choose afraid need spring pumpkin between burger unit vague love peace lend salmon trophy quit staff mix'
 const privateKey = wallet.getPrivKeyFromMnemonic(mnemonic)
 
 const net = 'LOCALHOST'
 // const net = 'DEVNET'
 
-const _wallet = wallet.Wallet.connect(privateKey)
-const params = {
-  pair: 'swth_eth',
-  side: 'buy',
-  quantity: '100',
-  price: '0.01',
-}
-api.placeOrder(_wallet, params)
-  .then(console.log)
+wallet.Wallet.connect(privateKey).then((_wallet) => {
+  const params = {
+    pair: 'swth_eth',
+    side: 'buy',
+    quantity: '100',
+    price: '0.01',
+  }
+  api.placeOrder(_wallet, params)
+    .then(console.log)
+})

@@ -4,7 +4,8 @@ const { wallet } = SDK
 
 const net = 'LOCALHOST'
 // const net = 'DEVNET'
-const mnemonic = 'myself cross give glue viable suggest satisfy warrior also brass kitten merge arrive index swap evidence baby return armed grunt legend manage term diary'
+const mnemonic = 'fan clump antique answer height room onion choose afraid need spring pumpkin between burger unit vague love peace lend salmon trophy quit staff mix'
 const privateKey = wallet.getPrivKeyFromMnemonic(mnemonic)
-const privateKeyWallet = wallet.Wallet.connect(privateKey, net)
-console.log(privateKeyWallet)
+wallet.Wallet.connect(privateKey, net).then((_wallet) => {
+  _wallet.getAccount().then(console.log)
+})

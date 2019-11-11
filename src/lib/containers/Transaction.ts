@@ -1,7 +1,7 @@
 import { CONFIG } from '../config'
 import { Fee } from './StdSignDoc'
 
-interface Options {
+export interface TransactionOptions {
   fee?: Fee
   mode?: string
 }
@@ -22,7 +22,7 @@ export class Transaction {
   public readonly mode: string
   public readonly tx: Tx
 
-  constructor(type, msg, signature, options: Options = {}) {
+  constructor(type, msg, signature, options: TransactionOptions = {}) {
     const fee = options.fee || new Fee([], CONFIG.DEFAULT_GAS)
     const mode = options.mode || 'sync'
     this.tx = {
