@@ -1,4 +1,2 @@
-import { MintTokenMsg } from './mints'
-import { CreateOrderMsg } from './orders'
-
-export { CreateOrderMsg, MintTokenMsg }
+export { MintTokenMsg } from './mints'
+export { CreateOrderMsg, CancelOrderMsg } from './orders'

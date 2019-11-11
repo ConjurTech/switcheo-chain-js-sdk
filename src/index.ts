@@ -2,10 +2,12 @@ import * as containers from './lib/containers'
 import * as msgs from './lib/msgs'
 import * as types from './lib/types'
 import * as wallet from './lib/wallet'
+import * as api from './lib/api'
 
 export {
-  msgs,
-  types,
-  containers,
   wallet,
+  api,
+  types,
+  msgs,
+  containers,
 }

@@ -10,10 +10,7 @@ const net = 'LOCALHOST'
 
 const _wallet = wallet.Wallet.connect(privateKey)
 const params = {
-  pair: 'swth_eth',
-  side: 'buy',
-  quantity: '100',
-  price: '0.01',
+  id: '61ACA69AC20330D068AFC9E48D5F344E6211EF243E5FCC475AB6361A1F20075C'
 }
-api.placeOrder(_wallet, params)
+api.cancelOrder(_wallet, params)
   .then(console.log)
