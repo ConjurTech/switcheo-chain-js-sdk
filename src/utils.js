@@ -3,10 +3,7 @@ function makeCreateBroadcastTxBody({
   address,
   gas,
   memo,
-  pair,
-  side,
-  quantity,
-  price,
+  orderParams,
   mode = 'sync',
 }) {
   return {
@@ -15,11 +12,9 @@ function makeCreateBroadcastTxBody({
         {
           type: 'broker/PlaceOrder',
           value: {
+            // orderParams
             Originator: address,
-            Pair: pair,
-            Side: side,
-            Quantity: quantity,
-            Price: price,
+            OrderParams: orderParams.OrderParams,
           }
         }
       ],

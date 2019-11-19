@@ -4,6 +4,7 @@ const { CHAIN_ID } = require('../src/config')
 const { marshalJSON } = require('../src/encoder')
 const { makeCreateBroadcastTxBody, makeCancelBroadcastTxBody } = require('../src/utils')
 const axios = require('axios')
+const { BigNumber } = require('bignumber.js')
 
 
 // default properties
@@ -13,16 +14,14 @@ const memo = ''
 function broadcastPromise(wallet, signature, txn) {
   // attach signature to txn body
   const { msg } = txn
+  // console.log('msg', msg)
   if (txn.type === 'create') {
     const broadcastTxBody = makeCreateBroadcastTxBody({
       signatures: [signature],
       address: wallet.pubKeyBech32,
       gas,
       memo,
-      pair: msg.Pair,
-      side: msg.Side,
-      quantity: msg.Quantity,
-      price: msg.Price,
+      orderParams: msg,
       mode: 'sync',
     })
     return wallet.broadcast(broadcastTxBody)
@@ -81,12 +80,15 @@ function randomPrice(tick) {
 }
 
 function createSwthEthOrder(address) {
+  const params = {
+    Pair: 'swth_eth',
+    Side: Math.random() >= 0.5 ? 'buy' : 'sell',
+    Quantity: randomQuantity(100).toString(),
+    Price: new BigNumber(randomPrice(0.01)).toFixed(18),
+  }
   const msg = new CreateMsg({
     originator: address,
-    pair: 'swth_eth',
-    side: Math.random() >= 0.5 ? 'buy' : 'sell',
-    quantity: randomQuantity(100).toString(),
-    price: randomPrice(0.01),
+    orderParams: JSON.stringify(params),
   })
   return {
     msg,

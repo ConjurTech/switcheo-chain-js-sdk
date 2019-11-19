@@ -28,16 +28,10 @@ class Fee {
 class CreateMsg {
   constructor({
     originator,
-    pair,
-    side,
-    quantity,
-    price,
+    orderParams,
   }) {
     this.Originator = originator
-    this.Pair = pair
-    this.Side = side
-    this.Quantity = quantity
-    this.Price = new BigNumber(price).toFixed(18)  // decimal is precision 18
+    this.OrderParams = orderParams
   }
 }
 
