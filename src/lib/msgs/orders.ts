@@ -1,25 +1,22 @@
 // tslint:disable:max-classes-per-file
-import { BigNumber } from 'bignumber.js'
+// import { BigNumber } from 'bignumber.js'
 
 export class CreateOrderMsg {
   public readonly Originator: string
-  public readonly Pair: string
-  public readonly Side: string
-  public readonly Quantity: string
-  public readonly Price: string
-
+  // public readonly Pair: string
+  // public readonly Side: string
+  // public readonly Quantity: string
+  // public readonly Price: string
+  public readonly OrderParams: object
   constructor({
     originator,
-    pair,
-    side,
-    quantity,
-    price,
+    orderParams,
   }) {
     this.Originator = originator
-    this.Pair = pair
-    this.Side = side
-    this.Quantity = quantity
-    this.Price = new BigNumber(price).toFixed(18)  // decimal is precision 18
+    this.OrderParams = orderParams
+    // this.Side = side
+    // this.Quantity = quantity
+    // this.Price = new BigNumber(price).toFixed(18)  // decimal is precision 18
   }
 }
 

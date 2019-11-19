@@ -73,7 +73,6 @@ export class Wallet {
       const { result } = await this.getAccount()
       sequence = result.value.sequence
     }
-
     const memo = options.memo || ''
     const stdSignMsg = new StdSignDoc({
       accountNumber: this.accountNumber,

@@ -7,16 +7,16 @@ import { TransactionOptions } from '../containers/Transaction'
 interface Options extends SignMessageOptions, TransactionOptions {}
 
 export interface PlaceOrderParams {
-  pair: string,
-  side: string,
-  quantity: string,
-  price: string,
+  Pair: string,
+  Side: string,
+  Quantity: string,
+  Price: string,
 }
 export async function placeOrder(wallet: Wallet, params: PlaceOrderParams, options?: Options) {
   const address = wallet.pubKeyBech32
   const msg = new msgs.CreateOrderMsg({
-    ...params,
     originator: address,
+    orderParams: JSON.stringify(params),
   })
   const signature = await wallet.signMessage(msg, options)
   const broadcastTxBody = new containers.Transaction(
