@@ -13,10 +13,10 @@ wallet.Wallet.connect(privateKey).then((_wallet) => {
     const { sequence } = value
 
     const params = {
-      pair: 'swth_eth',
-      side: 'buy',
-      quantity: '100',
-      price: '0.01',
+      Market: 'swth_eth',
+      Side: 'buy',
+      Quantity: '100',
+      Price: '0.01',
     }
     const firstSequence = sequence
     const secondSequence = (parseInt(sequence) + 1).toString()

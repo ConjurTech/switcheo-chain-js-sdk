@@ -11,7 +11,7 @@ const net = 'LOCALHOST'
 
 wallet.Wallet.connect(privateKey).then((_wallet) => {
   const params = {
-    Pair: 'swth_eth',
+    Market: 'swth_eth',
     Side: 'buy',
     Quantity: '100',
     Price: new BigNumber(1.01).toFixed(18),
