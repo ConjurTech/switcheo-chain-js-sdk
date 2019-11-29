@@ -81,7 +81,7 @@ function randomPrice(tick) {
 
 function createSwthEthOrder(address) {
   const params = {
-    Pair: 'swth_eth',
+    Market: 'swth_eth',
     Side: Math.random() >= 0.5 ? 'buy' : 'sell',
     Quantity: randomQuantity(100).toString(),
     Price: new BigNumber(randomPrice(0.01)).toFixed(18),
@@ -137,7 +137,7 @@ function start(mnemonic, accountNumber) {
         
         for (let i = 0; i < loops; i++) {
           let txn
-          // 40% change of generating a cancel order
+          // 45% change of generating a cancel order
           if (Math.random() >= 0.45 || openOrders === null || openOrders.length < loops) {
             txn = createSwthEthOrder(wallet.pubKeyBech32)
             // // 70% chance for generating swth_eth order
