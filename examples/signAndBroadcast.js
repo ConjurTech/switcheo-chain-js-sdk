@@ -60,7 +60,7 @@ async function getSequeunce(address) {
 }
 
 async function getOpenOrders(address) {
-  const response = await axios.get(`http://localhost:1317/broker/accountOpenOrders/${address}`)
+  const response = await axios.get(`http://localhost:1317/broker/open_orders/${address}`)
   return response.data.result
 }
 
