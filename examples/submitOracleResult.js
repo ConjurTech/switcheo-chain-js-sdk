@@ -3,8 +3,7 @@ const SDK = require('../.')
 const { wallet, api } = SDK
 const { BigNumber } = require('bignumber.js')
 
-// const mnemonic = 'swamp opinion jewel tuition cook harvest game weird walk ridge giraffe crystal ridge lock betray path sleep mango tide sell fashion elegant transfer mosquito'
-const mnemonic = 'coin chuckle empty sponsor demise foil ignore pilot draw rally chair solution eyebrow donate raccoon main second outdoor crowd impact frozen stamp wonder stay'
+const mnemonic = 'bring dad camp afford develop share impose subject lunch flock riot area habit chalk pole try top put gossip hill token pony kiwi approve'
 const privateKey = wallet.getPrivKeyFromMnemonic(mnemonic)
 
 const net = 'LOCALHOST'
