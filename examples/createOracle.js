@@ -13,10 +13,10 @@ const net = 'LOCALHOST'
 wallet.Wallet.connect(privateKey).then((_wallet) => {
   const params = {
     OracleName: 'BTC_USD',
-    Time: parseInt(Date.now() / 1000).toString(),
-    Data: JSON.stringify(50000)
+    Description: 'Calculated based on an average of price feeds from Binance and Coinbase, ... more info ...',
+    MinConsensusThreshold: '66'
   }
   console.log(params)
-  api.submitOracleResult(_wallet, params)
+  api.createOracle(_wallet, params)
      .then(console.log)
 })

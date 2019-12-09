@@ -6,10 +6,34 @@ import { TransactionOptions } from '../containers/Transaction'
 
 interface Options extends SignMessageOptions, TransactionOptions {}
 
+export interface CreateOracleParams {
+	OracleName: string,
+	Description: string,
+	MinConsensusThreshold: string,
+}
+
 export interface SubmitOracleResultParams {
   OracleName: string,
-  Time: number,
+  Time: string,
 	Data: string,
+}
+
+export async function createOracle(wallet: Wallet, params: CreateOracleParams, options?: Options) {
+  const address = wallet.pubKeyBech32
+  const msg = new msgs.AddOracleMsg({
+    oracleName: params.OracleName,
+    description: params.Description,
+		minConsensusThreshold: params.MinConsensusThreshold,
+    originator: address,
+  })
+  const signature = await wallet.signMessage(msg, options)
+  const broadcastTxBody = new containers.Transaction(
+    types.ADD_ORACLE,
+    msg,
+    signature,
+    options,
+  )
+  return wallet.broadcast(broadcastTxBody)
 }
 
 export async function submitOracleResult(wallet: Wallet, params: SubmitOracleResultParams, options?: Options) {
