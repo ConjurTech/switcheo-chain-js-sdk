@@ -2,8 +2,9 @@
 const SDK = require('../.')
 const { wallet, api } = SDK
 const { BigNumber } = require('bignumber.js')
+const mnemonics = require('../mnemonics.json')
 
-const mnemonic = 'amazing cake include draft pool frame valid cup screen used poet nominee cage clarify edge early job magnet april suspect super lonely space fire'
+const mnemonic = mnemonics[1]
 const privateKey = wallet.getPrivKeyFromMnemonic(mnemonic)
 
 const net = 'LOCALHOST'
