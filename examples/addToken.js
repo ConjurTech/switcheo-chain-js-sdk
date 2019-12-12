@@ -3,11 +3,7 @@ const SDK = require('../build/main')
 const { wallet, api } = SDK
 const mnemonics = require('../mnemonics.json')
 
-<<<<<<< HEAD
 const mnemonic = mnemonics[1]
-=======
-const mnemonic = 'item join cruel state fall stick sword stem punch lava next jewel waste now clock interest end measure gentle boost ignore profit near unlock'
->>>>>>> add market
 const privateKey = wallet.getPrivKeyFromMnemonic(mnemonic)
 
 const net = 'LOCALHOST'
