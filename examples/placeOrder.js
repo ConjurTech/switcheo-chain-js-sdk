@@ -4,7 +4,7 @@ const { wallet, api } = SDK
 const { BigNumber } = require('bignumber.js')
 const mnemonics = require('../mnemonics.json')
 
-const mnemonic = mnemonics[1]
+const mnemonic = 'ten remember other wrong popular bicycle doll pony rural west network advice refuse border genius tool history bargain side worry almost mind infant mistake'
 const privateKey = wallet.getPrivKeyFromMnemonic(mnemonic)
 
 const net = 'LOCALHOST'
@@ -13,7 +13,7 @@ const net = 'LOCALHOST'
 wallet.Wallet.connect(privateKey).then((_wallet) => {
   const params = {
     Market: 'swth_eth',
-    Side: 'buy',
+    Side: 'sell',
     Quantity: '0.987',
     Price: new BigNumber(1.01).toString(),
   }

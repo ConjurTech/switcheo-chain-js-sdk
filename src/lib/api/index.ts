@@ -2,3 +2,4 @@ export { cancelOrder, CancelOrderParams, placeOrder, PlaceOrderParams } from './
 export { mintToken, MintTokenParams } from './mints'
 export { addToken } from './tokens'
 export { createOracle, CreateOracleParams, submitOracleResult, SubmitOracleResultParams } from './oracles'
+export { addMarket } from './markets'
