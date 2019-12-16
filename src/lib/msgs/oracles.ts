@@ -1,6 +1,6 @@
 // tslint:disable:max-classes-per-file
 
-export class AddOracleMsg {
+export class CreateOracleMsg {
   public readonly OracleName: string
   public readonly Description: string
 	public readonly MinConsensusThreshold: string
@@ -19,7 +19,7 @@ export class AddOracleMsg {
   }
 }
 
-export class AddOracleResultMsg {
+export class CreateOracleResultMsg {
   public readonly OracleName: string
   public readonly Time: string
 	public readonly Data: string

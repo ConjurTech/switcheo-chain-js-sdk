@@ -20,7 +20,7 @@ export interface SubmitOracleResultParams {
 
 export async function createOracle(wallet: Wallet, params: CreateOracleParams, options?: Options) {
   const address = wallet.pubKeyBech32
-  const msg = new msgs.AddOracleMsg({
+  const msg = new msgs.CreateOracleMsg({
     oracleName: params.OracleName,
     description: params.Description,
 		minConsensusThreshold: params.MinConsensusThreshold,
@@ -28,7 +28,7 @@ export async function createOracle(wallet: Wallet, params: CreateOracleParams, o
   })
   const signature = await wallet.signMessage(msg, options)
   const broadcastTxBody = new containers.Transaction(
-    types.ADD_ORACLE,
+    types.CREATE_ORACLE,
     msg,
     signature,
     options,
@@ -38,7 +38,7 @@ export async function createOracle(wallet: Wallet, params: CreateOracleParams, o
 
 export async function submitOracleResult(wallet: Wallet, params: SubmitOracleResultParams, options?: Options) {
   const address = wallet.pubKeyBech32
-  const msg = new msgs.AddOracleResultMsg({
+  const msg = new msgs.CreateOracleResultMsg({
     oracleName: params.OracleName,
     time: params.Time,
     data: params.Data,
@@ -46,7 +46,7 @@ export async function submitOracleResult(wallet: Wallet, params: SubmitOracleRes
   })
   const signature = await wallet.signMessage(msg, options)
   const broadcastTxBody = new containers.Transaction(
-    types.ADD_ORACLE_RESULT_TYPE,
+    types.CREATE_ORACLE_RESULT_TYPE,
     msg,
     signature,
     options,
