@@ -6,7 +6,9 @@ const mnemonics = require('../mnemonics.json')
 const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[1])
 const voterKey = wallet.getPrivKeyFromMnemonic(mnemonics[2])
 
-Promise.all([ Wallet.connect(privateKey), Wallet.connect(voterKey) ]).then(([ wallet, voterWallet ]) => {
+async function createOracleVoter() {
+	const wallet = await Wallet.connect(privateKey)
+	const voterWallet = await Wallet.connect(voterKey)
 
 	const params = {
 		OracleName: 'BTC_USD',
@@ -14,6 +16,6 @@ Promise.all([ Wallet.connect(privateKey), Wallet.connect(voterKey) ]).then(([ wa
 	}
 
 	api.createOracleVoter(wallet, params).then(console.log)
-})
+}
 
 
