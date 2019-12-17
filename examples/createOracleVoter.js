@@ -7,15 +7,15 @@ const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[1])
 const voterKey = wallet.getPrivKeyFromMnemonic(mnemonics[2])
 
 async function createOracleVoter() {
-	const wallet = await Wallet.connect(privateKey)
-	const voterWallet = await Wallet.connect(voterKey)
+  const wallet = await Wallet.connect(privateKey)
+  voterWallet = await Wallet.connect(voterKey)
 
-	const params = {
-		OracleName: 'BTC_USD',
-		Voter: voterWallet.pubKeyBech32
-	}
+  const params = {
+    OracleName: 'BTC_USD',
+    Voter: voterWallet.pubKeyBech32
+  }
 
-	api.createOracleVoter(wallet, params).then(console.log)
+  api.createOracleVoter(wallet, params).then(console.log)
 }
 
 createOracleVoter();
