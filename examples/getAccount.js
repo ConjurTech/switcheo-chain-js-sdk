@@ -13,4 +13,5 @@ async function getAccount() {
   const wallet = await Wallet.connect(privateKey, net)
   wallet.getAccount().then(console.log)
 }
+
 getAccount()

@@ -17,4 +17,5 @@ async function placeOrder() {
   }
   api.placeOrder(wallet, params).then(console.log)
 }
+
 placeOrder()

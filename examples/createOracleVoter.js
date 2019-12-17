@@ -17,4 +17,5 @@ async function createOracleVoter() {
   }
   api.createOracleVoter(wallet, params).then(console.log)
 }
+
 createOracleVoter()

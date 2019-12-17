@@ -23,4 +23,5 @@ async function asyncPlaceOrders() {
   api.placeOrder(wallet, params, { mode: 'async', sequence: secondSequence })
     .then(console.log)
 }
+
 asyncPlaceOrders()

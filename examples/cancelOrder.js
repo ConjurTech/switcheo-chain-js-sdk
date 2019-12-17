@@ -13,4 +13,5 @@ async function cancelOrder() {
   }
   api.cancelOrder(wallet, params).then(console.log)
 }
+
 cancelOrder()

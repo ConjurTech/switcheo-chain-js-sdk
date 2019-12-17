@@ -17,4 +17,5 @@ async function addToken() {
   }
   api.addToken(wallet, params).then(console.log)
 }
+
 addToken()

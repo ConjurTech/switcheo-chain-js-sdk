@@ -15,4 +15,5 @@ async function createOracle() {
   }
 	api.createOracle(wallet, params).then(console.log)
 }
+
 createOracle()

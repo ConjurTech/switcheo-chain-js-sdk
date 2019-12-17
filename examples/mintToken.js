@@ -16,4 +16,5 @@ async function mintToken() {
   }
   api.mintToken(wallet, params).then(console.log)
 }
+
 mintToken()

@@ -20,4 +20,5 @@ async function newAccountAndMint() {
   }
   api.mintToken(wallet, params).then(console.log)
 }
+
 newAccountAndMint()

@@ -15,4 +15,5 @@ async function createOracleResult() {
   }
   api.createOracleResult(wallet, params).then(console.log)
 }
+
 createOracleResult()
