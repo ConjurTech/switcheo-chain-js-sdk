@@ -37,3 +37,19 @@ export class CreateOracleResultMsg {
     this.Originator = originator
   }
 }
+
+export class CreateOracleVoterMsg {
+  public readonly OracleName: string
+  public readonly Voter: string
+  public readonly Originator: string
+
+  constructor({
+    oracleName,
+    voter,
+    originator,
+  }) {
+    this.OracleName = oracleName
+    this.Voter = voter
+    this.Originator = originator
+  }
+}

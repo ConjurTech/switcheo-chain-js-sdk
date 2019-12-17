@@ -1,5 +1,5 @@
 export { MintTokenMsg } from './mints'
 export { CreateOrderMsg, CancelOrderMsg } from './orders'
 export { AddTokenMsg } from './tokens'
-export { CreateOracleMsg, CreateOracleResultMsg } from './oracles'
+export { CreateOracleMsg, CreateOracleResultMsg, CreateOracleVoterMsg } from './oracles'
 export { AddMarketMsg } from './markets'
