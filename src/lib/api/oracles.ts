@@ -12,7 +12,7 @@ export interface CreateOracleParams {
 	MinConsensusThreshold: string,
 }
 
-export interface SubmitOracleResultParams {
+export interface CreateOracleResultParams {
   OracleName: string,
   Time: string,
 	Data: string,
@@ -36,7 +36,7 @@ export async function createOracle(wallet: Wallet, params: CreateOracleParams, o
   return wallet.broadcast(broadcastTxBody)
 }
 
-export async function submitOracleResult(wallet: Wallet, params: SubmitOracleResultParams, options?: Options) {
+export async function createOracleResult(wallet: Wallet, params: CreateOracleResultParams, options?: Options) {
   const address = wallet.pubKeyBech32
   const msg = new msgs.CreateOracleResultMsg({
     oracleName: params.OracleName,

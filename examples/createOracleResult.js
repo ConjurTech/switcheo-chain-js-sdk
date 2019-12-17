@@ -17,6 +17,6 @@ wallet.Wallet.connect(privateKey).then((_wallet) => {
     Data: JSON.stringify(50000)
   }
   console.log(params)
-  api.submitOracleResult(_wallet, params)
+  api.createOracleResult(_wallet, params)
      .then(console.log)
 })
