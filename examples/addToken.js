@@ -15,6 +15,6 @@ async function addToken() {
     nativeBlockchain: 'eos',
     usdValue: '0.01',
   }
-  api.addToken(_wallet, params).then(console.log)
+  api.addToken(wallet, params).then(console.log)
 }
 addToken()

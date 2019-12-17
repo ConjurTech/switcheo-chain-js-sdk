@@ -8,7 +8,7 @@ const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[1])
 
 async function asyncPlaceOrders() {
   const wallet = await Wallet.connect(privateKey)
-  const sequence = await wallet.getAccount().result.value.sequence
+  const sequence = (await wallet.getAccount()).result.value.sequence
   const params = {
     Market: 'swth_eth',
     Side: 'buy',

@@ -3,7 +3,7 @@ const SDK = require('../.')
 const { wallet, api } = SDK
 const { Wallet } = wallet
 const { BigNumber } = require('bignumber.js')
-// const mnemonics = require('../mnemonics.json')
+ const mnemonics = require('../mnemonics.json')
 
 const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[1])
 
