@@ -3,12 +3,13 @@ const SDK = require('../.')
 const { wallet } = SDK
 const mnemonics = require('../mnemonics.json')
 
-const mnemonic = mnemonics[1]
-const privateKey = wallet.getPrivKeyFromMnemonic(mnemonic)
+const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[1])
 
 const net = 'LOCALHOST'
 // const net = 'DEVNET'
 
-wallet.Wallet.connect(privateKey, net).then((_wallet) => {
-  _wallet.getAccount().then(console.log)
-})
+async function getAccount() {
+  const wallet = await wallet.Wallet.connect(privateKey, net)
+  wallet.getAccount().then(console.log)
+}
+getAccount()

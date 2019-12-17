@@ -3,19 +3,16 @@ const SDK = require('../.')
 const { wallet, api } = SDK
 const mnemonics = require('../mnemonics.json')
 
-const mnemonic = mnemonics[1]
-const privateKey = wallet.getPrivKeyFromMnemonic(mnemonic)
+const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[1])
 
-const net = 'LOCALHOST'
-// const net = 'DEVNET'
-
-wallet.Wallet.connect(privateKey).then((_wallet) => {
+async function mintToken() {
+  const wallet = await wallet.Wallet.connect(privateKey)
   const toAddress = 'cosmos1rzdwrr33z5pxw2ndtsdluxhce9p26emfs0f5dm'
   const params = {
     toAddress,
     amount: '1000',
     denom: 'swth',
   }
-  api.mintToken(_wallet, params)
-    .then(console.log)
-})
+  api.mintToken(wallet, params).then(console.log)
+}
+mintToken()
