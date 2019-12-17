@@ -1,23 +1,21 @@
 // const SDK = require('switcheo-chain-js-sdk') // use this instead if running this sdk as a library
 const SDK = require('../.')
 const { wallet, api } = SDK
+const { Wallet } = wallet
 const { BigNumber } = require('bignumber.js')
-const mnemonics = require('../mnemonics.json')
+ const mnemonics = require('../mnemonics.json')
 
-const mnemonic = 'ten remember other wrong popular bicycle doll pony rural west network advice refuse border genius tool history bargain side worry almost mind infant mistake'
-const privateKey = wallet.getPrivKeyFromMnemonic(mnemonic)
+const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[1])
 
-const net = 'LOCALHOST'
-// const net = 'DEVNET'
-
-wallet.Wallet.connect(privateKey).then((_wallet) => {
+async function placeOrder() {
+  const wallet = await Wallet.connect(privateKey)
   const params = {
     Market: 'swth_eth',
     Side: 'sell',
     Quantity: '0.987',
     Price: new BigNumber(1.01).toString(),
   }
-  console.log(params)
-  api.placeOrder(_wallet, params)
-    .then(console.log)
-})
+  api.placeOrder(wallet, params).then(console.log)
+}
+
+placeOrder()

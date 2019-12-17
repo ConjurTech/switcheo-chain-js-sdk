@@ -1,30 +1,27 @@
 // const SDK = require('switcheo-chain-js-sdk') // use this instead if running this sdk as a library
 const SDK = require('../.')
 const { wallet, api } = SDK
+const { Wallet } = wallet
 const mnemonics = require('../mnemonics.json')
 
-const mnemonic = mnemonics[1]
-const privateKey = wallet.getPrivKeyFromMnemonic(mnemonic)
+const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[1])
 
-const net = 'LOCALHOST'
-// const net = 'DEVNET'
+async function asyncPlaceOrders() {
+  const wallet = await Wallet.connect(privateKey)
+  const sequence = (await wallet.getAccount()).result.value.sequence
+  const params = {
+    Market: 'swth_eth',
+    Side: 'buy',
+    Quantity: '100',
+    Price: '0.01',
+  }
+  const firstSequence = sequence
+  const secondSequence = (parseInt(sequence) + 1).toString()
 
-wallet.Wallet.connect(privateKey).then((_wallet) => {
-  _wallet.getAccount().then(({ result: { value } }) => {
-    const { sequence } = value
+  api.placeOrder(wallet, params, { mode: 'async', sequence: firstSequence })
+    .then(console.log)
+  api.placeOrder(wallet, params, { mode: 'async', sequence: secondSequence })
+    .then(console.log)
+}
 
-    const params = {
-      Market: 'swth_eth',
-      Side: 'buy',
-      Quantity: '100',
-      Price: '0.01',
-    }
-    const firstSequence = sequence
-    const secondSequence = (parseInt(sequence) + 1).toString()
-    api.placeOrder(_wallet, params, { mode: 'async', sequence: firstSequence })
-      .then(console.log)
-    api.placeOrder(_wallet, params, { mode: 'async', sequence: secondSequence })
-      .then(console.log)
-
-  })
-})
+asyncPlaceOrders()
