@@ -23,6 +23,13 @@ export interface CreateOracleVoterParams {
   Voter: string
 }
 
+export interface CreateOraclePropositionParams {
+	OracleName: string,
+	Voter: string,
+	Time: string,
+	Data: string
+}
+
 export async function createOracle(wallet: Wallet, params: CreateOracleParams, options?: Options) {
   const address = wallet.pubKeyBech32
   const msg = new msgs.CreateOracleMsg({
@@ -68,12 +75,19 @@ export async function createOracleVoter(wallet: Wallet, params: CreateOracleVote
     originator: address
   })
 
-  const signature = await wallet.signMessage(msg, options)
-  const broadcastTxBody = new containers.Transaction(
-    types.CREATE_ORACLE_VOTER_TYPE,
-    msg,
-    signature,
-    options,
-  )
-  return wallet.broadcast(broadcastTxBody)
+  return wallet.signAndBroadcast(msg, types.CREATE_ORACLE_VOTER_TYPE, options)
+}
+
+export async function createOracleProposition(wallet: Wallet, params: CreateOraclePropositionParams, options?: Options) {
+	const address = wallet.pubKeyBech32
+
+	const msg = new msgs.CreateOraclePropositionMsg({
+		oracleName: params.OracleName,
+		voter: params.Voter,
+		time: params.Time,
+		data: params.Data,
+		originator: address
+	})
+
+	return wallet.signAndBroadcast(msg, types.CREATE_ORACLE_PROPOSTION_TYPE, options)
 }

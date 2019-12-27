@@ -2,7 +2,7 @@ import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
 import fetch from 'node-fetch'
 import { CONFIG, NETWORK, Network } from './config'
-import { Fee, StdSignDoc } from './containers'
+import { Fee, StdSignDoc, Transaction } from './containers'
 import { marshalJSON } from './utils/encoder'
 import { getPath, PrivKeySecp256k1, PubKeySecp256k1 } from './utils/wallet'
 
@@ -85,6 +85,14 @@ export class Wallet {
       sequence,
     })
     return this.sign(marshalJSON(stdSignMsg))
+  }
+
+  public async signAndBroadcast(msg, type, options) {
+    const signature = await this.signMessage(msg, options)
+
+    const broadcastTxBody = new Transaction(type, msg, signature, options)
+
+    return this.broadcast(broadcastTxBody)
   }
 }
 
