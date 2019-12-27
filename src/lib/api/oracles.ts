@@ -26,7 +26,7 @@ export interface CreateOracleVoterParams {
 export interface CreateOraclePropositionParams {
 	OracleName: string,
 	Voter: string,
-	Time: string,
+	Timestamp: string,
 	Data: string
 }
 
@@ -40,7 +40,7 @@ export async function createOracle(wallet: Wallet, params: CreateOracleParams, o
   })
   const signature = await wallet.signMessage(msg, options)
   const broadcastTxBody = new containers.Transaction(
-    types.CREATE_ORACLE,
+    types.CREATE_ORACLE_TYPE,
     msg,
     signature,
     options,
@@ -83,7 +83,7 @@ export async function createOracleProposition(wallet: Wallet, params: CreateOrac
 
 	const msg = new msgs.CreateOraclePropositionMsg({
 		oracleName: params.OracleName,
-		time: params.Time,
+		timestamp: params.Timestamp,
 		data: params.Data,
 		originator: address
 	})

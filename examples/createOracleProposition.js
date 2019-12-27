@@ -9,10 +9,9 @@ const voterKey = wallet.getPrivKeyFromMnemonic(mnemonics[2])
 
 async function createOracleProposition() { //
   const wallet = await Wallet.connect(privateKey)
-  const voterWallet = await Wallet.connect(voterKey)
   const params = {
     OracleName: 'BTC_USD',
-    Time: parseInt(Date.now() / 1000).toString(),
+    Timestamp: parseInt(Date.now() / 1000).toString(),
     Data: '50000'
   }
   api.createOracleProposition(wallet, params).then(console.log)
