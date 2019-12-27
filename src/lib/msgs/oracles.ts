@@ -42,14 +42,35 @@ export class CreateOracleVoterMsg {
 
 export class CreateOraclePropositionMsg {
   public readonly OracleName: string
+<<<<<<< HEAD
 //  public readonly Voter: string
   public readonly Timestamp: string
+||||||| constructed merge base
+  public readonly Voter: string
+  public readonly Time: string
+=======
+//  public readonly Voter: string
+  public readonly Time: string
+>>>>>>> remove voter field in CreatePropositionMsg
   public readonly Data: string
   public readonly Originator: string
 
+<<<<<<< HEAD
   constructor({ oracleName, timestamp, data, originator }) {
+||||||| constructed merge base
+  constructor({ oracleName, voter, time, data, originator }) {
+=======
+  constructor({ oracleName, time, data, originator }) {
+>>>>>>> remove voter field in CreatePropositionMsg
     this.OracleName = oracleName
+<<<<<<< HEAD
     this.Timestamp = timestamp
+||||||| constructed merge base
+    this.Voter = voter
+    this.Time = time
+=======
+    this.Time = time
+>>>>>>> remove voter field in CreatePropositionMsg
     this.Data = data
     this.Originator = originator
   }
