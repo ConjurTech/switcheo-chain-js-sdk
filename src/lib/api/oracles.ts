@@ -84,6 +84,7 @@ export async function createOracleProposition(wallet: Wallet, params: CreateOrac
 	const msg = new msgs.CreateOraclePropositionMsg({
 		oracleName: params.OracleName,
 <<<<<<< HEAD
+<<<<<<< HEAD
 		timestamp: params.Timestamp,
 ||||||| constructed merge base
 		voter: params.Voter,
@@ -91,6 +92,11 @@ export async function createOracleProposition(wallet: Wallet, params: CreateOrac
 =======
 		time: params.Time,
 >>>>>>> remove voter field in CreatePropositionMsg
+||||||| constructed merge base
+		time: params.Time,
+=======
+		timestamp: params.Timestamp,
+>>>>>>> naming
 		data: params.Data,
 		originator: address
 	})

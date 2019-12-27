@@ -11,6 +11,7 @@ async function createOracleProposition() { //
   const params = {
     OracleName: 'BTC_USD',
 <<<<<<< HEAD
+<<<<<<< HEAD
     Timestamp: '1577441295',
     Data: '50000'
 ||||||| constructed merge base
@@ -19,6 +20,11 @@ async function createOracleProposition() { //
     Voter: voterWallet.pubKeyBech32
 =======
     Time: parseInt(Date.now() / 1000).toString(),
+||||||| constructed merge base
+    Time: parseInt(Date.now() / 1000).toString(),
+=======
+    Timestamp: parseInt(Date.now() / 1000).toString(),
+>>>>>>> naming
     Data: '50000'
 >>>>>>> remove voter field in CreatePropositionMsg
   }
