@@ -83,7 +83,6 @@ export async function createOracleProposition(wallet: Wallet, params: CreateOrac
 
 	const msg = new msgs.CreateOraclePropositionMsg({
 		oracleName: params.OracleName,
-		voter: params.Voter,
 		time: params.Time,
 		data: params.Data,
 		originator: address
