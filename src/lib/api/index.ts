@@ -8,4 +8,4 @@ export {
   createOracleProposition, CreateOraclePropositionParams
 } from './oracles'
 export { addMarket } from './markets'
-export { WsWrapper } from './ws_wrapper'
+export { ICandlesticksGetParams, ISubParams, ICandlesticksSubParams, WsWrapper } from './ws_wrapper'

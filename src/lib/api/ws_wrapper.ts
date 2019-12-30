@@ -33,7 +33,7 @@ export interface ICandlesticksSubParams extends ISubParams {
     resolution: number,
 }
 
-export interface IChannelId {
+interface IChannelId {
     eventType: string,
     pair: string,
     params: any
