@@ -11,7 +11,7 @@ async function createOracleProposition() { //
   const wallet = await Wallet.connect(privateKey)
   const params = {
     OracleName: 'BTC_USD',
-    Timestamp: parseInt(Date.now() / 1000).toString(),
+    Timestamp: '1577441295',
     Data: '50000'
   }
   api.createOracleProposition(wallet, params).then(console.log)

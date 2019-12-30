@@ -24,7 +24,7 @@ export class Transaction {
 
   constructor(type, msg, signature, options: TransactionOptions = {}) {
     const fee = options.fee || new Fee([], CONFIG.DEFAULT_GAS)
-    const mode = options.mode || 'sync'
+    const mode = options.mode || 'block'
     this.tx = {
       fee,
       msg: [{
