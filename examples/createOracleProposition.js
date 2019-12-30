@@ -12,6 +12,7 @@ async function createOracleProposition() { //
     OracleName: 'BTC_USD',
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     Timestamp: '1577441295',
     Data: '50000'
 ||||||| constructed merge base
@@ -25,6 +26,11 @@ async function createOracleProposition() { //
 =======
     Timestamp: parseInt(Date.now() / 1000).toString(),
 >>>>>>> naming
+||||||| constructed merge base
+    Timestamp: parseInt(Date.now() / 1000).toString(),
+=======
+    Timestamp: '1577441295',
+>>>>>>> hardcode timestamp in examples;
     Data: '50000'
 >>>>>>> remove voter field in CreatePropositionMsg
   }
