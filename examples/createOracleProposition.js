@@ -6,7 +6,7 @@ const mnemonics = require('../mnemonics.json')
 
 const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[0])
 
-async function createOracleProposition() { //
+async function createOracleProposition() {
   const wallet = await Wallet.connect(privateKey)
   const params = {
     OracleName: 'BTC_USD',
