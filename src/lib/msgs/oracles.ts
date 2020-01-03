@@ -43,6 +43,7 @@ export class CreateOracleVoterMsg {
 export class CreateOraclePropositionMsg {
   public readonly OracleName: string
 <<<<<<< HEAD
+<<<<<<< HEAD
 //  public readonly Voter: string
   public readonly Timestamp: string
 ||||||| constructed merge base
@@ -58,9 +59,17 @@ export class CreateOraclePropositionMsg {
 =======
   public readonly Timestamp: string
 >>>>>>> naming
+||||||| 4bc461f
+  public readonly Voter: string
+  public readonly Time: string
+=======
+//  public readonly Voter: string
+  public readonly Timestamp: string
+>>>>>>> 5fe5bab725f30871c5b4a7a63a72cc74c6d3eb38
   public readonly Data: string
   public readonly Originator: string
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
   constructor({ oracleName, timestamp, data, originator }) {
@@ -74,7 +83,13 @@ export class CreateOraclePropositionMsg {
 =======
   constructor({ oracleName, timestamp, data, originator }) {
 >>>>>>> naming
+||||||| 4bc461f
+  constructor({ oracleName, voter, time, data, originator }) {
+=======
+  constructor({ oracleName, timestamp, data, originator }) {
+>>>>>>> 5fe5bab725f30871c5b4a7a63a72cc74c6d3eb38
     this.OracleName = oracleName
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
     this.Timestamp = timestamp
@@ -89,6 +104,12 @@ export class CreateOraclePropositionMsg {
 =======
     this.Timestamp = timestamp
 >>>>>>> naming
+||||||| 4bc461f
+    this.Voter = voter
+    this.Time = time
+=======
+    this.Timestamp = timestamp
+>>>>>>> 5fe5bab725f30871c5b4a7a63a72cc74c6d3eb38
     this.Data = data
     this.Originator = originator
   }

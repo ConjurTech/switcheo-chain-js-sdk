@@ -13,6 +13,7 @@ async function createOracleProposition() {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     Timestamp: '1577441295',
     Data: '50000'
 ||||||| constructed merge base
@@ -33,6 +34,14 @@ async function createOracleProposition() {
 >>>>>>> hardcode timestamp in examples;
     Data: '50000'
 >>>>>>> remove voter field in CreatePropositionMsg
+||||||| 4bc461f
+    Time: parseInt(Date.now() / 1000).toString(),
+    Data: '50000',
+    Voter: voterWallet.pubKeyBech32
+=======
+    Timestamp: '1577441295',
+    Data: '50000'
+>>>>>>> 5fe5bab725f30871c5b4a7a63a72cc74c6d3eb38
   }
   api.createOracleProposition(wallet, params).then(console.log)
 }
