@@ -42,15 +42,14 @@ export class CreateOracleVoterMsg {
 
 export class CreateOraclePropositionMsg {
   public readonly OracleName: string
-  public readonly Voter: string
-  public readonly Time: string
+//  public readonly Voter: string
+  public readonly Timestamp: string
   public readonly Data: string
   public readonly Originator: string
 
-  constructor({ oracleName, voter, time, data, originator }) {
+  constructor({ oracleName, timestamp, data, originator }) {
     this.OracleName = oracleName
-    this.Voter = voter
-    this.Time = time
+    this.Timestamp = timestamp
     this.Data = data
     this.Originator = originator
   }
