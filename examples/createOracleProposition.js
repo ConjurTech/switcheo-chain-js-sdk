@@ -4,10 +4,9 @@ const { wallet, api } = SDK
 const { Wallet } = wallet
 const mnemonics = require('../mnemonics.json')
 
-const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[1])
-const voterKey = wallet.getPrivKeyFromMnemonic(mnemonics[2])
+const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[0])
 
-async function createOracleProposition() { //
+async function createOracleProposition() {
   const wallet = await Wallet.connect(privateKey)
   const params = {
     OracleName: 'BTC_USD',
