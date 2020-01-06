@@ -91,7 +91,7 @@ export class WsWrapper {
                 let parsedMsg: any
                 parsedMsg = JSON.parse(msg.data)
                 console.log(parsedMsg)
-                if (parsedMsg.id && this.candlesticksRequests.includes(parsedMsg.id)) { // Check if get_candlestick resp
+                if (parsedMsg.id && parsedMsg.result && this.candlesticksRequests.includes(parsedMsg.id)) { // Check if get_candlestick resp
                     this.handleGetCandlesticksResp(parsedMsg)
                 }
                 else if (parsedMsg.id && Object.keys(this.candlesticksSubscriptions).includes(parsedMsg.id)) { // Check if sub_candlestick resp
