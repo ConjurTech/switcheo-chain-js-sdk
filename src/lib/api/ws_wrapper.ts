@@ -94,7 +94,7 @@ export class WsWrapper {
                 if (parsedMsg.id && parsedMsg.result && this.candlesticksRequests.includes(parsedMsg.id)) { // Check if get_candlestick resp
                     this.handleGetCandlesticksResp(parsedMsg)
                 }
-                else if (parsedMsg.id && Object.keys(this.candlesticksSubscriptions).includes(parsedMsg.id)) { // Check if sub_candlestick resp
+                else if (parsedMsg.channel && Object.keys(this.candlesticksSubscriptions).includes(parsedMsg.channel)) { // Check if sub_candlestick resp
                     const lastBar = { ...parsedMsg.result, time: parsedMsg.result.time * 1000 }
                     this.candlesticksOnRealtimeCallback(lastBar)
                 }
