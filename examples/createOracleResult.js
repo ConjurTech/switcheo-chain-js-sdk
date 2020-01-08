@@ -6,6 +6,7 @@ const mnemonics = require('../mnemonics.json')
 
 const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[1])
 
+/* DEPRECATED
 async function createOracleResult() {
   const wallet = await Wallet.connect(privateKey)
   const params = {
@@ -17,3 +18,4 @@ async function createOracleResult() {
 }
 
 createOracleResult()
+*/

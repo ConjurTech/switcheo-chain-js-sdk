@@ -2,8 +2,8 @@ export { cancelOrder, CancelOrderParams, placeOrder, PlaceOrderParams } from './
 export { mintToken, MintTokenParams } from './mints'
 export { addToken } from './tokens'
 export {
-  createOracle, CreateOracleParams,
-  createProposition, CreatePropositionParams,
+  createOracle, CreateOracleMsg,
+  createProposition, CreatePropositionMsg,
 } from './oracles'
 export { addMarket } from './markets'
 export { ICandlesticksGetParams, ISubParams, ICandlesticksSubParams, WsWrapper } from './ws_wrapper'

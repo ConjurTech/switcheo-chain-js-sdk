@@ -11,9 +11,9 @@ async function createProposition() { //
   const params = {
     OracleName: 'BTC_USD',
     Timestamp: '1577441290',
-    Data: '50000'
+    Data: '60000'
   }
-  api.createOracleProposition(wallet, params).then(console.log)
+  api.createProposition(wallet, params).then(console.log)
 }
 
 createProposition()
