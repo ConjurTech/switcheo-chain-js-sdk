@@ -67,18 +67,20 @@ export class WsWrapper {
       switch (p.eventType) {
         case 'candlesticks':
           // Guard for valid candlestick request
-          if (p.otherParams.hasOwnProperty('resolution') 
+          if (p.otherParams.hasOwnProperty('resolution')
             && p.otherParams.hasOwnProperty('from') && p.otherParams.hasOwnProperty('to')) {
-              let id: string = `${(this.currMsgIdNum++).toString()}.get_candlesticks`
-              const msg = JSON.stringify({
-                id: id,
-                method: 'get_candlesticks',
-                params: { market: p.market, resolution: p.otherParams.resolution, 
-                  from: p.otherParams.from, to: p.otherParams.to }
-                })
-                // Add candlestick request
-                console.log(msg)
-                this.socket.send(msg)
+            let id: string = `${(this.currMsgIdNum++).toString()}.get_candlesticks`
+            const msg = JSON.stringify({
+              id: id,
+              method: 'get_candlesticks',
+              params: {
+                market: p.market, resolution: p.otherParams.resolution,
+                from: p.otherParams.from, to: p.otherParams.to
+              }
+            })
+            // Add candlestick request
+            console.log(msg)
+            this.socket.send(msg)
           }
           else {
             throw new Error("Invalid candlesticks params")
@@ -86,14 +88,14 @@ export class WsWrapper {
           break
         case 'recent_trades':
           let id: string = `${(this.currMsgIdNum++).toString()}.get_recent_trades`
-              const msg = JSON.stringify({
-                id: id,
-                method: 'get_recent_trades',
-                params: { market: p.market }
-                })
-                console.log(msg)
-                this.socket.send(msg)
-            break
+          const msg = JSON.stringify({
+            id: id,
+            method: 'get_recent_trades',
+            params: { market: p.market }
+          })
+          console.log(msg)
+          this.socket.send(msg)
+          break
         default:
           throw new Error("Invalid request")
       }
