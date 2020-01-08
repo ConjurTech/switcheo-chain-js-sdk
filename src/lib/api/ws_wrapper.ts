@@ -8,7 +8,6 @@
     request
     subscribe
     unsubscribe
-    resubscribe
 */
 
 export interface IParams {
@@ -132,12 +131,6 @@ export class WsWrapper {
       this.socket.send(msg)
       this.subscriptions = this.subscriptions.filter((sub) => !channelIds.includes(sub))
     } catch (e) { console.log(e.message) }
-  }
-
-  public resubscribe(params: IParams[]) {
-    this.unsubscribe(params)
-    setTimeout(() => { }, 1000)
-    this.subscribe(params)
   }
 
   private generateChannelId(p: IParams): string {
