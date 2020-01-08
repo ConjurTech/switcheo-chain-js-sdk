@@ -24,7 +24,6 @@ export class WsWrapper {
   isConnected: boolean = false
   onMsgCallback: any
 
-  requests: string[] = [] // List of request id 
   subscriptions: string[] = [] // List of subscribed channelIds
 
   constructor(serverWsUrl: string, onMsgCallback: any) {
@@ -78,7 +77,6 @@ export class WsWrapper {
                   from: p.otherParams.from, to: p.otherParams.to }
                 })
                 // Add candlestick request
-                this.requests.push(id.toString())
                 console.log(msg)
                 this.socket.send(msg)
           }
@@ -87,7 +85,15 @@ export class WsWrapper {
           }
           break
         case 'recent_trades':
-        case 'books':
+          let id: string = `${(this.currMsgIdNum++).toString()}.get_recent_trades`
+              const msg = JSON.stringify({
+                id: id,
+                method: 'get_recent_trades',
+                params: { market: p.market }
+                })
+                console.log(msg)
+                this.socket.send(msg)
+            break
         default:
           throw new Error("Invalid request")
       }
