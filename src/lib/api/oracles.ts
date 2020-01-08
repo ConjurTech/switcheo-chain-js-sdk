@@ -22,13 +22,13 @@ export interface CreatePropositionMsg {
 }
 
 export async function createOracle(wallet: Wallet, msg: CreateOracleMsg, options?: Options) {
-	if(msg.Originator === "") msg.Originator = wallet.pubKeyBech32
+	if(!msg.Originator) msg.Originator = wallet.pubKeyBech32
 
   return wallet.signAndBroadcast(msg, types.CREATE_ORACLE_TYPE, options)
 }
 
 export async function createProposition(wallet: Wallet, msg: CreatePropositionMsg, options?: Options) {
-	if(msg.Originator === "") msg.Originator = wallet.pubKeyBech32
+	if(!msg.Originator) msg.Originator = wallet.pubKeyBech32
 
 	return wallet.signAndBroadcast(msg, types.CREATE_PROPOSITION_TYPE, options)
 }

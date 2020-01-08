@@ -8,12 +8,12 @@ const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[0])
 
 async function createProposition() { //
   const wallet = await Wallet.connect(privateKey)
-  const params = {
+  const msg = {
     OracleName: 'BTC_USD',
     Timestamp: '1577441290',
     Data: '60000'
   }
-  api.createProposition(wallet, params).then(console.log)
+  api.createProposition(wallet, msg).then(console.log)
 }
 
 createProposition()
