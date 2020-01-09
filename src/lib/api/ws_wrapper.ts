@@ -23,12 +23,9 @@ export class WsWrapper {
   isConnected: boolean = false
   onMsgCallback: any
 
-  subscriptions: string[] = [] // List of subscribed channelIds
-
   constructor(serverWsUrl: string, onMsgCallback: any) {
     this.serverWsUrl = serverWsUrl
     this.onMsgCallback = onMsgCallback
-    this.msgNum = 0
   }
 
   public connect() {
@@ -61,16 +58,15 @@ export class WsWrapper {
   }
 
   // Request one at a time
-  public request(p: IParams) {
+  public request(msgId: string, p: IParams) {
     try {
       switch (p.eventType) {
         case 'candlesticks':
           // Guard for valid candlestick request
           if (p.otherParams.hasOwnProperty('resolution')
             && p.otherParams.hasOwnProperty('from') && p.otherParams.hasOwnProperty('to')) {
-            let id: string = `${(this.msgNum++).toString()}.get_candlesticks`
             const msg = JSON.stringify({
-              id: id,
+              id: msgId,
               method: 'get_candlesticks',
               params: {
                 market: p.market, resolution: p.otherParams.resolution,
@@ -86,9 +82,8 @@ export class WsWrapper {
           }
           break
         case 'recent_trades':
-          let id: string = `${(this.msgNum++).toString()}.get_recent_trades`
           const msg = JSON.stringify({
-            id: id,
+            id: msgId,
             method: 'get_recent_trades',
             params: { market: p.market }
           })
@@ -102,34 +97,29 @@ export class WsWrapper {
   }
 
   // Events are either "recent_trades", "books" or "candlesticks"
-  public subscribe(params: IParams[]) { // List of params
+  public subscribe(msgId: string, params: IParams[]) { // List of params
     try {
       let channelIds: string[] = params.map((p) => this.generateChannelId(p))
-      let messageId: string = `${(this.msgNum++).toString()}.sub.${channelIds.join('.')}` // Generate messageId
-      console.log("Subscribing to " + channelIds)
+      console.log("Subscribing to " + msgId)
       const msg = JSON.stringify({
-        id: messageId,
+        id: msgId,
         method: 'subscribe',
         params: { "channels": [...channelIds] }
       })
       this.socket.send(msg)
-      // Add subscription
-      this.subscriptions.push(...channelIds)
     } catch (e) { console.log(e.message) }
   }
 
-  public unsubscribe(params: IParams[]) {
+  public unsubscribe(msgId: string, params: IParams[]) {
     try {
       let channelIds: string[] = params.map((p) => this.generateChannelId(p))
-      let messageId: string = `${(this.msgNum++).toString()}.unsub.${channelIds.join('.')}`
       console.log("Unsubscribing to " + channelIds)
       const msg = JSON.stringify({
-        id: messageId,
+        id: msgId,
         method: 'unsubscribe',
         params: { "channels": [...channelIds] }
       })
       this.socket.send(msg)
-      this.subscriptions = this.subscriptions.filter((sub) => !channelIds.includes(sub))
     } catch (e) { console.log(e.message) }
   }
 
