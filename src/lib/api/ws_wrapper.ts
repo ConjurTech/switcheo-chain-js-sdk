@@ -133,7 +133,7 @@ export class WsWrapper {
     } catch (e) { console.log(e.message) }
   }
 
-  private generateChannelId(p: IParams): string {
+  public generateChannelId(p: IParams): string {
     switch (p.eventType) {
       case 'candlesticks':
         if (!p.otherParams.hasOwnProperty("resolution")) { // Ensure resolution given
