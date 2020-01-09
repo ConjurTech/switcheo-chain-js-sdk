@@ -123,6 +123,27 @@ export class WsWrapper {
     } catch (e) { console.log(e.message) }
   }
 
+  public parseChannelId = (rawChannelId: string): IParams => {
+    const [eventType, market, ...otherParams] = rawChannelId.split(".")
+    switch (eventType) {
+      case 'candlesticks':
+        return {
+          eventType: eventType,
+          market: market,
+          otherParams: { resolution: otherParams[0] } // Resolution
+        }
+      case 'books':
+      case 'recent_trades':
+        return {
+          eventType: eventType,
+          market: market,
+          otherParams: {}
+        }
+      default:
+        throw new Error("Error parsing channelId")
+    }
+  }
+  
   public generateChannelId(p: IParams): string {
     switch (p.eventType) {
       case 'candlesticks':
