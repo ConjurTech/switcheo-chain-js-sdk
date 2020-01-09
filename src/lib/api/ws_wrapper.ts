@@ -19,7 +19,7 @@ export interface IParams {
 export class WsWrapper {
   serverWsUrl: string
   socket: any
-  currMsgIdNum: number
+  msgNum: number
   isConnected: boolean = false
   onMsgCallback: any
 
@@ -28,7 +28,7 @@ export class WsWrapper {
   constructor(serverWsUrl: string, onMsgCallback: any) {
     this.serverWsUrl = serverWsUrl
     this.onMsgCallback = onMsgCallback
-    this.currMsgIdNum = 0
+    this.msgNum = 0
   }
 
   public connect() {
@@ -68,7 +68,7 @@ export class WsWrapper {
           // Guard for valid candlestick request
           if (p.otherParams.hasOwnProperty('resolution')
             && p.otherParams.hasOwnProperty('from') && p.otherParams.hasOwnProperty('to')) {
-            let id: string = `${(this.currMsgIdNum++).toString()}.get_candlesticks`
+            let id: string = `${(this.msgNum++).toString()}.get_candlesticks`
             const msg = JSON.stringify({
               id: id,
               method: 'get_candlesticks',
@@ -86,7 +86,7 @@ export class WsWrapper {
           }
           break
         case 'recent_trades':
-          let id: string = `${(this.currMsgIdNum++).toString()}.get_recent_trades`
+          let id: string = `${(this.msgNum++).toString()}.get_recent_trades`
           const msg = JSON.stringify({
             id: id,
             method: 'get_recent_trades',
@@ -105,7 +105,7 @@ export class WsWrapper {
   public subscribe(params: IParams[]) { // List of params
     try {
       let channelIds: string[] = params.map((p) => this.generateChannelId(p))
-      let messageId: string = `${(this.currMsgIdNum++).toString()}.sub.${channelIds.join('.')}` // Generate messageId
+      let messageId: string = `${(this.msgNum++).toString()}.sub.${channelIds.join('.')}` // Generate messageId
       console.log("Subscribing to " + channelIds)
       const msg = JSON.stringify({
         id: messageId,
@@ -121,7 +121,7 @@ export class WsWrapper {
   public unsubscribe(params: IParams[]) {
     try {
       let channelIds: string[] = params.map((p) => this.generateChannelId(p))
-      let messageId: string = `${(this.currMsgIdNum++).toString()}.unsub.${channelIds.join('.')}`
+      let messageId: string = `${(this.msgNum++).toString()}.unsub.${channelIds.join('.')}`
       console.log("Unsubscribing to " + channelIds)
       const msg = JSON.stringify({
         id: messageId,
