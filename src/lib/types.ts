@@ -6,3 +6,4 @@ export const ADD_MARKET_MSG_TYPE = 'broker/AddMarket'
 
 export const CREATE_ORACLE_TYPE = 'oracle/CreateOracle'
 export const CREATE_PROPOSITION_TYPE = 'oracle/CreateProposition'
+export const PROPOSE_DEPOSIT_TYPE = 'deposit/ProposeDeposit'
