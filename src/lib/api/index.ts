@@ -1,4 +1,4 @@
-export { cancelOrder, CancelOrderParams, placeOrder, PlaceOrderParams } from './orders'
+export { cancelOrder, CancelOrderParams, createOrder, CreateOrderParams } from './orders'
 export { mintToken, MintTokenParams } from './mints'
 export { addToken } from './tokens'
 export { createOracle, CreateOracleMsg, createProposition, CreatePropositionMsg } from './oracles'

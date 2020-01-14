@@ -6,13 +6,13 @@ import { TransactionOptions } from '../containers/Transaction'
 
 interface Options extends SignMessageOptions, TransactionOptions {}
 
-export interface PlaceOrderParams {
+export interface CreateOrderParams {
   Market: string,
   Side: string,
   Quantity: string,
   Price: string,
 }
-export async function placeOrder(wallet: Wallet, params: PlaceOrderParams, options?: Options) {
+export async function createOrder(wallet: Wallet, params: CreateOrderParams, options?: Options) {
   const address = wallet.pubKeyBech32
   const msg = new msgs.CreateOrderMsg({
     originator: address,
@@ -20,7 +20,7 @@ export async function placeOrder(wallet: Wallet, params: PlaceOrderParams, optio
   })
   const signature = await wallet.signMessage(msg, options)
   const broadcastTxBody = new containers.Transaction(
-    types.PLACE_ORDER_MSG_TYPE,
+    types.CREATE_ORDER_MSG_TYPE,
     msg,
     signature,
     options,

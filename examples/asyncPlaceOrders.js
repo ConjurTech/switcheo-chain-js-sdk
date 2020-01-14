@@ -6,7 +6,7 @@ const mnemonics = require('../mnemonics.json')
 
 const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[1])
 
-async function asyncPlaceOrders() {
+async function asyncCreateOrders() {
   const wallet = await Wallet.connect(privateKey)
   const sequence = (await wallet.getAccount()).result.value.sequence
   const params = {
@@ -18,10 +18,10 @@ async function asyncPlaceOrders() {
   const firstSequence = sequence
   const secondSequence = (parseInt(sequence) + 1).toString()
 
-  api.placeOrder(wallet, params, { mode: 'async', sequence: firstSequence })
+  api.createOrder(wallet, params, { mode: 'async', sequence: firstSequence })
     .then(console.log)
-  api.placeOrder(wallet, params, { mode: 'async', sequence: secondSequence })
+  api.createOrder(wallet, params, { mode: 'async', sequence: secondSequence })
     .then(console.log)
 }
 
-asyncPlaceOrders()
+asyncCreateOrders()
