@@ -31,3 +31,4 @@ export async function addMarket(wallet: Wallet, params: AddMarketParams, options
   )
   return wallet.broadcast(broadcastTxBody)
 }
+

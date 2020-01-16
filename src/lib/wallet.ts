@@ -15,7 +15,7 @@ export class Wallet {
       throw new Error('network must be LOCALHOST/DEVNET')
     }
     const pubKeyBech32 = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex')).toPubKey().toAddress().toBech32('cosmos')
-    const { result: { value }} = await fetch(`${network.REST_URL}/auth/accounts/${pubKeyBech32}`)
+    const { result: { value }} = await fetch(`${network.REST_COSMOS_URL}/auth/accounts/${pubKeyBech32}`)
       .then(res => res.json())
     return new Wallet(privateKey, value.account_number, network)
   }
@@ -57,12 +57,52 @@ export class Wallet {
   }
 
   public broadcast(body) {
-    return fetch(`${this.network.REST_URL}/txs`, { method: 'POST', body: JSON.stringify(body) })
+    return fetch(`${this.network.REST_COSMOS_URL}/txs`, { method: 'POST', body: JSON.stringify(body) })
       .then(res => res.json()) // expecting a json response
   }
 
   public getAccount() {
-    return fetch(`${this.network.REST_URL}/auth/accounts/${this.pubKeyBech32}`)
+    return fetch(`${this.network.REST_COSMOS_URL}/auth/accounts/${this.pubKeyBech32}`)
+      .then(res => res.json()) // expecting a json response
+  }
+
+  public getTokens() {
+    return fetch(`${this.network.REST_URL}/get_tokens`)
+      .then(res => res.json()) // expecting a json response
+  }
+
+  public getToken(token: string) {
+    return fetch(`${this.network.REST_URL}/token?token=${token}`)
+      .then(res => res.json()) // expecting a json response
+  } 
+
+  public getMarkets() {
+    return fetch(`${this.network.REST_URL}/get_markets`)
+      .then(res => res.json()) // expecting a json response
+  }
+
+  public getMarket(market: string) {
+    return fetch(`${this.network.REST_URL}/get_market?market=${market}`)
+      .then(res => res.json()) // expecting a json response
+  }
+
+  public getOrderbook(market: string) {
+    return fetch(`${this.network.REST_URL}/get_orderbook?market=${market}`)
+      .then(res => res.json()) // expecting a json response
+  }
+
+  public getOrder(orderID: string) {
+    return fetch(`${this.network.REST_URL}/get_order?order_id=${orderID}`)
+      .then(res => res.json()) // expecting a json response
+  }
+  
+  public getOrders(account: string) {
+    return fetch(`${this.network.REST_URL}/get_orders?account=${account}`)
+      .then(res => res.json()) // expecting a json response
+  }
+
+  public getOpenOrders(account: string) {
+    return fetch(`${this.network.REST_URL}/get_orders?account=${account}&order_status=open`)
       .then(res => res.json()) // expecting a json response
   }
 
