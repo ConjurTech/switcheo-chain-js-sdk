@@ -10,7 +10,7 @@ function makeCreateBroadcastTxBody({
     tx: {
       msg: [
         {
-          type: 'broker/PlaceOrder',
+          type: 'broker/CreateOrder',
           value: {
             // orderParams
             Originator: address,

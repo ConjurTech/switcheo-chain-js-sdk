@@ -16,6 +16,6 @@ wallet.Wallet.connect(privateKey).then((_wallet) => {
     Quantity: '100',
     Price: new BigNumber(1.01).toFixed(18),
   }
-  api.placeOrder(_wallet, params)
+  api.createOrder(_wallet, params)
     .then(console.log)
 })
