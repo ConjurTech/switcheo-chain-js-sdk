@@ -5,7 +5,7 @@ import { TransactionOptions } from '../containers/Transaction'
 interface Options extends SignMessageOptions, TransactionOptions {}
 
 export interface CreateOracleMsg {
-	OracleName: string,
+	Name: string,
 	Description: string,
 	MinConsensusThreshold: string,
 	SecurityType: string,
