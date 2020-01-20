@@ -7,6 +7,8 @@ import { TransactionOptions } from '../containers/Transaction'
 interface Options extends SignMessageOptions, TransactionOptions {}
 
 export interface CreateOrderParams {
+  OrderType?: string,
+  StopPrice?: string,
   Market: string,
   Side: string,
   Quantity: string,
