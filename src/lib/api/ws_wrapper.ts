@@ -16,6 +16,12 @@ export interface IParams {
   otherParams: any,
 }
 
+export interface GetOrderHistoryByMarketParams {
+  eventType: string,
+  market: string,
+  address: string,
+}
+
 export class WsWrapper {
   serverWsUrl: string
   socket: any
@@ -31,7 +37,7 @@ export class WsWrapper {
   public connect() {
     this.socket = new WebSocket(this.serverWsUrl)
 
-    // Config socket 
+    // Config socket
     this.socket.onopen = () => {
       this.isConnected = true
       console.log('socket is connected')
@@ -57,15 +63,27 @@ export class WsWrapper {
     return this.isConnected
   }
 
+  public getOrderHistoryByMarket(msgId: string, params: GetOrderHistoryByMarketParams) {
+    try {
+      const msg = JSON.stringify({
+        id: msgId,
+        method: 'get_order_history_by_market',
+        params: { market: params.market, address: params.address }
+      })
+      this.socket.send(msg)
+    } catch (e) { console.log(e.message) }
+  }
+
   // Request one at a time
   public request(msgId: string, p: IParams) {
     try {
+      let msg
       switch (p.eventType) {
         case 'candlesticks':
           // Guard for valid candlestick request
           if (p.otherParams.hasOwnProperty('resolution')
             && p.otherParams.hasOwnProperty('from') && p.otherParams.hasOwnProperty('to')) {
-            const msg = JSON.stringify({
+            msg = JSON.stringify({
               id: msgId,
               method: 'get_candlesticks',
               params: {
@@ -82,7 +100,7 @@ export class WsWrapper {
           }
           break
         case 'recent_trades':
-          const msg = JSON.stringify({
+          msg = JSON.stringify({
             id: msgId,
             method: 'get_recent_trades',
             params: { market: p.market }
@@ -96,7 +114,6 @@ export class WsWrapper {
     } catch (e) { console.log(e.message) }
   }
 
-  // Events are either "recent_trades", "books" or "candlesticks"
   public subscribe(msgId: string, params: IParams[]) { // List of params
     try {
       let channelIds: string[] = params.map((p) => this.generateChannelId(p))
@@ -143,7 +160,7 @@ export class WsWrapper {
         throw new Error("Error parsing channelId")
     }
   }
-  
+
   public generateChannelId(p: IParams): string {
     switch (p.eventType) {
       case 'candlesticks':
