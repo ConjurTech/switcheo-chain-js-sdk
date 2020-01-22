@@ -1,5 +1,5 @@
 export { cancelOrder, CancelOrderParams, createOrder, CreateOrderParams } from './orders'
-export { mintToken, MintTokenParams } from './mints'
+export { mintTokens, MintTokenRequest } from './mints'
 export { addToken } from './tokens'
 export { createOracle, CreateOracleMsg, createProposition, CreatePropositionMsg } from './oracles'
 export { proposeDeposit, ProposeDepositMsg } from './deposit'

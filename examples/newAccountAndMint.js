@@ -2,23 +2,19 @@
 const SDK = require('../.')
 const { wallet, api } = SDK
 const { Wallet } = wallet
-const mnemonics = require('../mnemonics.json')
-
-const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[1])
 const newAccount = wallet.newAccount()
 
 async function newAccountAndMint() {
-  const newWallet = await Wallet.connect(newAccount.privateKey)
-  const newAddress = newWallet.pubKeyBech32
-  console.log(newAccount, newAddress)
+  const wallet = await Wallet.connect(newAccount.privateKey)
+  console.log(newAccount)
+  console.log(wallet.pubKeyBech32)
 
-  const wallet = await Wallet.connect(privateKey)
-  const params = {
-    toAddress: newAddress,
+  const tokenReq = {
+    address: wallet.pubKeyBech32,
     amount: '1000',
     denom: 'swth',
   }
-  api.mintToken(wallet, params).then(console.log)
+  api.mintTokens(tokenReq).then(console.log).catch(console.log)
 }
 
 newAccountAndMint()
