@@ -106,6 +106,11 @@ export class Wallet {
       .then(res => res.json()) // expecting a json response
   }
 
+  public getWalletBalance(account: string) {
+    return fetch(`${this.network.REST_URL}/get_balance?account=${account}`)
+      .then(res => res.json()) // expecting a json response
+  }
+
   public async signMessage(msg, options: SignMessageOptions = {}) {
     let sequence: string = options.sequence
 
