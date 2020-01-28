@@ -2,6 +2,8 @@
 const PrivateKeyProvider = require('truffle-privatekey-provider')
 const Web3 = require('web3')
 const SDK = require('../.')
+const { ETH_BLOCKCHAIN } = require('../src/lib/constants/blockchains')
+const { ETH_ASSET_ID } = require('../src/lib/constants/addresses')
 const { wallet, api } = SDK
 const { Wallet } = wallet
 const mnemonics = require('../mnemonics.json')
@@ -19,7 +21,7 @@ async function deposit() {
 
   const params = {
     Blockchain: 'eth',
-  	AssetID: '0x000000000000000000000000000000008000003c',
+  	AssetID: ETH_ASSET_ID,
   	Amount: "0.1",
   }
 

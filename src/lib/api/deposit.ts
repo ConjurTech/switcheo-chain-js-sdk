@@ -1,6 +1,8 @@
 import * as types from '../types'
 import { Wallet, SignMessageOptions }  from '../wallet'
 import { TransactionOptions } from '../containers/Transaction'
+import { ETH_BLOCKCHAIN } from '../constants/blockchains'
+import { ETH_ASSET_ID } from '../constants/addresses'
 
 interface Options extends SignMessageOptions, TransactionOptions {}
 
@@ -29,10 +31,22 @@ export async function proposeDeposit(wallet: Wallet, msg: ProposeDepositMsg, opt
 }
 
 export async function deposit(wallet: Wallet, params: DepositParams) {
-  if (wallet.eth === undefined) {
-    throw new Error('Ethereum wallet not connected')
+  if (params.Blockchain === ETH_BLOCKCHAIN) {
+    if (wallet.eth === undefined) {
+      throw new Error('Ethereum wallet not connected')
+    }
+
+    if (params.AssetID === ETH_ASSET_ID) {
+      return depositEth(wallet, params)
+    } else {
+      return depositEthToken(wallet, params)
+    }
   }
 
+  throw new Error('Unsupported blockchain')
+}
+
+async function depositEth(wallet: Wallet, params: DepositParams) {
   const vault = wallet.eth.getVault()
   const { utils } = wallet.eth.web3
 
@@ -49,5 +63,11 @@ export async function deposit(wallet: Wallet, params: DepositParams) {
     data: method.encodeABI()
   }
 
-  return await wallet.eth.sendTransaction(transaction)
+  return wallet.eth.sendTransaction(transaction)
+}
+
+async function depositEthToken(wallet: Wallet, params: DepositParams) {
+  // check approved amount
+  // approve amount if needed
+  // send depositToken transaction
 }
