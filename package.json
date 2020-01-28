@@ -65,7 +65,9 @@
     "node-fetch": "^2.6.0",
     "ripemd160": "^2.0.2",
     "secp256k1": "^3.7.1",
-    "sha.js": "^2.4.11"
+    "sha.js": "^2.4.11",
+    "truffle-privatekey-provider": "^1.3.0",
+    "web3": "^1.2.5"
   },
   "devDependencies": {
     "@bitjson/npm-scripts-info": "^1.0.0",

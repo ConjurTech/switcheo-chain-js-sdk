@@ -6,3 +6,7 @@
 
 symlink mnemonics.json from switcheo-chain
 `ln -s ~/go/src/github.com/ConjurTech/switcheo-chain/mnemonics.json mnemonics.json`
+
+## Deposit Example
+The deposit example can be run with:
+ethKey=<eth private key> ethUrl=<e.g. https://ropsten.infura.io/v3/[infura-id]> node examples/deposit.js

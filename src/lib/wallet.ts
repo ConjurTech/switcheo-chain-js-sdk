@@ -3,6 +3,7 @@ import * as bip39 from 'bip39'
 import fetch from 'node-fetch'
 import { CONFIG, NETWORK, Network } from './config'
 import { Fee, StdSignDoc, Transaction } from './containers'
+import { EthWallet } from './ethWallet'
 import { marshalJSON } from './utils/encoder'
 import { getPath, PrivKeySecp256k1, PubKeySecp256k1 } from './utils/wallet'
 
@@ -28,6 +29,7 @@ export class Wallet {
   public readonly gas: string
   public readonly network: Network
   public readonly accountNumber: string
+  public eth: EthWallet
   public broadcastMode: string
 
   constructor(privateKey, accountNumber, network) {
@@ -41,6 +43,10 @@ export class Wallet {
     this.gas = CONFIG.DEFAULT_GAS
     this.accountNumber = accountNumber
     this.network = network
+  }
+
+  public connectEthWallet(web3) {
+    this.eth = new EthWallet(web3)
   }
 
   public sign(message) {
@@ -74,7 +80,7 @@ export class Wallet {
   public getToken(token: string) {
     return fetch(`${this.network.REST_URL}/token?token=${token}`)
       .then(res => res.json()) // expecting a json response
-  } 
+  }
 
   public getMarkets() {
     return fetch(`${this.network.REST_URL}/get_markets`)
@@ -95,7 +101,7 @@ export class Wallet {
     return fetch(`${this.network.REST_URL}/get_order?order_id=${orderID}`)
       .then(res => res.json()) // expecting a json response
   }
-  
+
   public getOrders(account: string) {
     return fetch(`${this.network.REST_URL}/get_orders?account=${account}`)
       .then(res => res.json()) // expecting a json response
