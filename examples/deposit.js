@@ -24,8 +24,8 @@ async function deposit() {
   	Amount: web3.utils.toWei("0.1", 'ether'),
   }
 
-  // const result = await api.deposit(wallet, params)
-  // console.log('result', result)
+  const result = await api.deposit(wallet, params)
+  console.log('result', result)
 }
 
 deposit()
