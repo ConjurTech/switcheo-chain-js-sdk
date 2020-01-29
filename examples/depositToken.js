@@ -2,12 +2,14 @@
 const PrivateKeyProvider = require('truffle-privatekey-provider')
 const Web3 = require('web3')
 const SDK = require('../.')
-const { ETH_ASSET_ID } = require('../src/lib/constants/addresses')
 const { wallet, api } = SDK
 const { Wallet } = wallet
+const { formatAmount } = require('../src/lib/utils')
 const mnemonics = require('../mnemonics.json')
 
 const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[0])
+
+const JRC_ASSET_ID = '0xc6e36e1d6f3dc19ec734246d7d0435bf04117c85'
 
 async function deposit() {
   const wallet = await Wallet.connect(privateKey)
@@ -20,12 +22,12 @@ async function deposit() {
 
   const params = {
     Blockchain: 'eth',
-  	AssetID: ETH_ASSET_ID,
-  	Amount: web3.utils.toWei("0.1", 'ether'),
+  	AssetID: JRC_ASSET_ID,
+  	Amount: formatAmount(100, 18)
   }
 
-  // const result = await api.deposit(wallet, params)
-  // console.log('result', result)
+  const result = await api.deposit(wallet, params)
+  console.log('result', result)
 }
 
 deposit()

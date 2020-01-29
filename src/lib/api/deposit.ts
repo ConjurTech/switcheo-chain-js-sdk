@@ -1,10 +1,15 @@
 import * as types from '../types'
+import { ETH_VAULT_ADDRESS } from '../constants/addresses'
 import { Wallet, SignMessageOptions }  from '../wallet'
 import { TransactionOptions } from '../containers/Transaction'
 import { ETH_BLOCKCHAIN } from '../constants/blockchains'
 import { ETH_ASSET_ID } from '../constants/addresses'
+import { bn } from '../utils'
 
 interface Options extends SignMessageOptions, TransactionOptions {}
+
+// max allowance is 2^256
+const MAX_ALLOWANCE = "115792089237316195423570985008687907853269984665640564039457584007913129639935"
 
 export interface ProposeDepositMsg {
   Blockchain: string,
@@ -50,24 +55,46 @@ async function depositEth(wallet: Wallet, params: DepositParams) {
   const vault = wallet.eth.getVault()
   const { utils } = wallet.eth.web3
 
-  const method = vault.methods.deposit(
+  const depositMethod = vault.methods.deposit(
     utils.asciiToHex(wallet.pubKeyBech32),
     utils.asciiToHex('cosmos_sig')
   )
 
-  const value = utils.toWei(params.Amount, 'ether')
-
-  const transaction = {
+  return wallet.eth.sendTransaction({
     to: vault.options.address,
-    value: value,
-    data: method.encodeABI()
-  }
-
-  return wallet.eth.sendTransaction(transaction)
+    value: params.Amount.toString(),
+    data: depositMethod.encodeABI()
+  })
 }
 
 async function depositEthToken(wallet: Wallet, params: DepositParams) {
-  // check approved amount
-  // approve amount if needed
-  // send depositToken transaction
+  const { utils } = wallet.eth.web3
+  const token = wallet.eth.getErc20(params.AssetID)
+  const sender = await wallet.eth.getAddress()
+  const allowance = bn(await token.methods.allowance(sender, ETH_VAULT_ADDRESS).call())
+  const amount = bn(params.Amount)
+  if (amount.isGreaterThan(allowance)) {
+    const approveMethod = token.methods.approve(ETH_VAULT_ADDRESS, MAX_ALLOWANCE)
+    wallet.eth.sendTransaction({
+      to: token.options.address,
+      data: approveMethod.encodeABI()
+    })
+  }
+
+  // TODO: handle custom expected amounts
+  const expectedAmount = amount
+
+  const vault = wallet.eth.getVault()
+  const depositTokenMethod = vault.methods.depositToken(
+    params.AssetID,
+    amount.toString(),
+    expectedAmount.toString(),
+    utils.asciiToHex(wallet.pubKeyBech32),
+    utils.asciiToHex('cosmos_sig')
+  )
+
+  return wallet.eth.sendTransaction({
+    to: vault.options.address,
+    data: depositTokenMethod.encodeABI()
+  })
 }

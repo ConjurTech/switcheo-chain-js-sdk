@@ -1,6 +1,7 @@
 import Web3 from 'web3'
-import VaultAbi from './eth/abi/vault.json'
-import { ETH_VAULT } from './constants/addresses'
+import VAULT_ABI from './eth/abis/vault.json'
+import ERC20_ABI from './eth/abis/erc20.json'
+import { ETH_VAULT_ADDRESS } from './constants/addresses'
 
 export class EthWallet {
   public readonly web3: Web3
@@ -14,7 +15,11 @@ export class EthWallet {
   }
 
   public getVault() {
-    return this.createContract({ abi: VaultAbi, address: ETH_VAULT})
+    return this.createContract({ abi: VAULT_ABI, address: ETH_VAULT_ADDRESS})
+  }
+
+  public getErc20(address) {
+    return this.createContract({ abi: ERC20_ABI, address })
   }
 
   public createContract({ abi, address }) {
