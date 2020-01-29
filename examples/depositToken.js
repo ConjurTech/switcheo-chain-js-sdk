@@ -2,9 +2,8 @@
 const PrivateKeyProvider = require('truffle-privatekey-provider')
 const Web3 = require('web3')
 const SDK = require('../.')
-const { wallet, api } = SDK
+const { wallet, api, utils } = SDK
 const { Wallet } = wallet
-const { formatAmount } = require('../src/lib/utils')
 const mnemonics = require('../mnemonics.json')
 
 const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[0])
@@ -23,11 +22,19 @@ async function deposit() {
   const params = {
     Blockchain: 'eth',
   	AssetID: JRC_ASSET_ID,
-  	Amount: formatAmount(100, 18)
+  	Amount: utils.formatAmount(100, 18)
   }
 
-  const result = await api.deposit(wallet, params)
-  console.log('result', result)
+  try {
+    const { complete, result } = await api.deposit(wallet, params)
+    if (complete) {
+      console.log('deposit succeeded', (await result))
+    } else {
+      console.log('token allowance increase initiated, deposit must be called again after the allowance is increased', (await result))
+    }
+  } catch (e) {
+    console.log('an error occurred', e)
+  }
 }
 
 deposit()

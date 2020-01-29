@@ -53,32 +53,49 @@ export async function deposit(wallet: Wallet, params: DepositParams) {
 
 async function depositEth(wallet: Wallet, params: DepositParams) {
   const vault = wallet.eth.getVault()
-  const { utils } = wallet.eth.web3
+  const { web3 } = wallet.eth
+
+  const amount = bn(params.Amount)
+  const sender = await wallet.eth.getAddress()
+  const balance = bn(await web3.eth.getBalance(sender))
+
+  if (amount.isGreaterThan(balance)) {
+    throw new Error('Insufficient ETH balance for deposit')
+  }
 
   const depositMethod = vault.methods.deposit(
-    utils.asciiToHex(wallet.pubKeyBech32),
-    utils.asciiToHex('cosmos_sig')
+    web3.utils.asciiToHex(wallet.pubKeyBech32),
+    web3.utils.asciiToHex('cosmos_sig')
   )
 
   return wallet.eth.sendTransaction({
     to: vault.options.address,
-    value: params.Amount.toString(),
-    data: depositMethod.encodeABI()
+    value: amount.toString(),
+    method: depositMethod
   })
 }
 
 async function depositEthToken(wallet: Wallet, params: DepositParams) {
-  const { utils } = wallet.eth.web3
+  const { web3 } = wallet.eth
   const token = wallet.eth.getErc20(params.AssetID)
   const sender = await wallet.eth.getAddress()
-  const allowance = bn(await token.methods.allowance(sender, ETH_VAULT_ADDRESS).call())
+
   const amount = bn(params.Amount)
+  const balance = bn(await token.methods.balanceOf(sender).call())
+
+  if (amount.isGreaterThan(balance)) {
+    throw new Error('Insufficient token balance for deposit')
+  }
+
+  const allowance = bn(await token.methods.allowance(sender, ETH_VAULT_ADDRESS).call())
+
   if (amount.isGreaterThan(allowance)) {
     const approveMethod = token.methods.approve(ETH_VAULT_ADDRESS, MAX_ALLOWANCE)
-    wallet.eth.sendTransaction({
+    const result = wallet.eth.sendTransaction({
       to: token.options.address,
-      data: approveMethod.encodeABI()
+      method: approveMethod
     })
+    return { complete: false, result }
   }
 
   // TODO: handle custom expected amounts
@@ -89,12 +106,14 @@ async function depositEthToken(wallet: Wallet, params: DepositParams) {
     params.AssetID,
     amount.toString(),
     expectedAmount.toString(),
-    utils.asciiToHex(wallet.pubKeyBech32),
-    utils.asciiToHex('cosmos_sig')
+    web3.utils.asciiToHex(wallet.pubKeyBech32),
+    web3.utils.asciiToHex('cosmos_sig')
   )
 
-  return wallet.eth.sendTransaction({
+  const result = wallet.eth.sendTransaction({
     to: vault.options.address,
-    data: depositTokenMethod.encodeABI()
+    method: depositTokenMethod
   })
+
+  return { complete: true, result }
 }

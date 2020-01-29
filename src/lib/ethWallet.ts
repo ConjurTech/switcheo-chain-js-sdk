@@ -27,14 +27,62 @@ export class EthWallet {
   }
 
   public async sendTransaction(transaction) {
+    const method = transaction.method
+    if (method === undefined) {
+      throw new Error('transaction.method cannot be empty')
+    }
+    delete transaction.method
+
+    const { web3 } = this
+
     if (transaction.from === undefined) {
       transaction.from = await this.getAddress()
+    }
+    if (transaction.data === undefined) {
+      transaction.data = method.encodeABI()
     }
     if (transaction.chain === undefined) {
       transaction.chain = this.chain
     }
-    console.log('transaction', transaction)
-    return this.web3.eth.sendTransaction(transaction)
+
+    return web3.eth.sendTransaction(transaction)
+  }
+
+  public async forceSendTransaction(transaction) {
+    const method = transaction.method
+    if (method === undefined) {
+      throw new Error('transaction.method cannot be empty')
+    }
+    delete transaction.method
+    console.log('inside forceSendTransaction')
+
+    const { web3 } = this
+    const sender = await this.getAddress()
+    if (transaction.from === undefined) {
+      transaction.from = sender
+    }
+    if (transaction.data === undefined) {
+      transaction.data = method.encodeABI()
+    }
+    if (transaction.value === undefined) {
+      transaction.value = '0x00'
+    }
+    if (transaction.gas === undefined) {
+      transaction.gas = '500000' // await method.estimateGas({ value: transaction.value })
+    }
+    if (transaction.gasPrice === undefined) {
+      transaction.gasPrice = await web3.eth.getGasPrice()
+    }
+    if (transaction.nonce === undefined) {
+      transaction.nonce = await web3.eth.getTransactionCount(sender)
+    }
+    if (transaction.chainId === undefined) {
+      transaction.chainId = await web3.eth.getChainId()
+    }
+    console.log('forceSendTransaction signing transaction')
+    const signedTxn = await web3.eth.signTransaction(transaction)
+    console.log('forceSendTransaction signing transaction')
+    return web3.eth.sendSignedTransaction(signedTxn.raw)
   }
 
   public async getAddress() {
