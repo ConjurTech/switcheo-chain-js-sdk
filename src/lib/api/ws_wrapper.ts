@@ -39,17 +39,27 @@ export interface WsSubscribeRecentTradesParams {
   channel: string,
   market: string,
 }
-export interface WsSubscribeOrderHistoryParams {
+export interface WsSubscribeOrderHistoryByMarketParams {
   channel: string,
   market: string,
   address: string,
 }
 
 export interface WsSubscribeOrderbookParams {
+  channel: string,
   market: string,
 }
 
-export type WsSubscribeParams = WsSubscribeCandlesticksParams | WsSubscribeRecentTradesParams | WsSubscribeOrderHistoryParams
+export interface WsSubscribeWalletBalanceParams {
+  channel: string,
+  address: string,
+}
+
+export type WsSubscribeParams =
+  WsSubscribeCandlesticksParams |
+  WsSubscribeRecentTradesParams |
+  WsSubscribeOrderHistoryByMarketParams |
+  WsSubscribeWalletBalanceParams
 
 /* WS unsubscribe params */
 export interface WsUnsubscribeCandlesticksParams {
@@ -171,24 +181,39 @@ export class WsWrapper {
   }
 
   public parseChannelId = (rawChannelId: string): any => {
-    const [channel, market, resolution] = rawChannelId.split(".")
+    const [channel, market, resolution, address] = rawChannelId.split(".")
     switch (channel) {
       case 'candlesticks':
         return {
-          channel: channel,
-          market: market,
-          resolution: resolution
-        } // Resolution
+          channel,
+          market,
+          resolution,
+        }
       case 'books':
-      case 'recent_trades':
         return {
-          channel: channel,
-          market: market,
+          channel,
+          market,
         }
       case 'recent_trades':
         return {
-          channel: channel,
-          market: market,
+          channel,
+          market,
+        }
+      case 'recent_trades':
+        return {
+          channel,
+          market,
+        }
+      case 'orders':
+        return {
+          channel,
+          market,
+          address,
+        }
+      case 'balances':
+        return {
+          channel,
+          address,
         }
       default:
         throw new Error("Error parsing channelId")
@@ -201,14 +226,21 @@ export class WsWrapper {
         let { channel, market, resolution } = <WsSubscribeCandlesticksParams>p
         return [channel, market, resolution].join('.')
       }
-      case 'books':
+      case 'books': {
+        let { channel, market } = <WsSubscribeOrderbookParams>p
+        return [channel, market].join('.')
+      }
       case 'recent_trades': {
         let { channel, market } = <WsSubscribeRecentTradesParams>p
         return [channel, market].join('.')
       }
-      case 'order_history': {
-        let { channel, market, address } = <WsSubscribeOrderHistoryParams>p
+      case 'orders': {
+        let { channel, market, address } = <WsSubscribeOrderHistoryByMarketParams>p
         return [channel, market, address].join('.')
+      }
+      case 'balances': {
+        let { channel, address } = <WsSubscribeWalletBalanceParams>p
+        return [channel, address].join('.')
       }
       default:
         throw new Error("Invalid subscription")
