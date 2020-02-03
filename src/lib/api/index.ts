@@ -4,4 +4,17 @@ export { addToken } from './tokens'
 export { createOracle, CreateOracleMsg, createProposition, CreatePropositionMsg } from './oracles'
 export { proposeDeposit, ProposeDepositMsg, deposit, DepositParams } from './deposit'
 export { addMarket } from './markets'
-export { GetOrderHistoryByMarketParams, IParams, WsWrapper } from './ws_wrapper'
+export {
+  WsGetOrderHistoryByMarketParams,
+  WsGetRecentTradesParams,
+  WsGetCandlesticksParams,
+  WsWrapper,
+  WsGetRequestParams,
+  WsSubscribeParams,
+  WsSubscribeCandlesticksParams,
+  WsSubscribeOrderHistoryParams,
+  WsSubscribeRecentTradesParams,
+  WsUnsubscribeCandlesticksParams,
+  WsUnsubscribeBookParams,
+  WsUnsubscribeParams,
+} from './ws_wrapper'

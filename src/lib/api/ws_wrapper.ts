@@ -10,17 +10,60 @@
     unsubscribe
 */
 
-export interface IParams {
-  eventType: string,
+/* WS Get Request params */
+export interface WsGetRecentTradesParams {
   market: string,
-  otherParams: any,
 }
 
-export interface GetOrderHistoryByMarketParams {
-  eventType: string,
+export interface WsGetCandlesticksParams {
+  market: string,
+  resolution: string,
+  from?: string,
+  to?: string
+}
+export interface WsGetOrderHistoryByMarketParams {
   market: string,
   address: string,
 }
+
+export type WsGetRequestParams = WsGetRecentTradesParams | WsGetCandlesticksParams | WsGetOrderHistoryByMarketParams
+
+/* WS subscribe params */
+export interface WsSubscribeCandlesticksParams {
+  channel: string,
+  market: string,
+  resolution: string,
+  subscribeUID: string,
+}
+export interface WsSubscribeRecentTradesParams {
+  channel: string,
+  market: string,
+}
+export interface WsSubscribeOrderHistoryParams {
+  channel: string,
+  market: string,
+  address: string,
+}
+
+export interface WsSubscribeOrderbookParams {
+  market: string,
+}
+
+export type WsSubscribeParams = WsSubscribeCandlesticksParams | WsSubscribeRecentTradesParams | WsSubscribeOrderHistoryParams
+
+/* WS unsubscribe params */
+export interface WsUnsubscribeCandlesticksParams {
+  channel: string,
+  market: string,
+  resolution: string,
+}
+
+export interface WsUnsubscribeBookParams {
+  channel: string,
+  market: string,
+}
+
+export type WsUnsubscribeParams = WsUnsubscribeCandlesticksParams | WsUnsubscribeBookParams
 
 export class WsWrapper {
   serverWsUrl: string
@@ -63,7 +106,7 @@ export class WsWrapper {
     return this.isConnected
   }
 
-  public getOrderHistoryByMarket(msgId: string, params: GetOrderHistoryByMarketParams) {
+  public wsGetOrderHistoryByMarket(msgId: string, params: WsGetOrderHistoryByMarketParams) {
     try {
       const msg = JSON.stringify({
         id: msgId,
@@ -74,47 +117,34 @@ export class WsWrapper {
     } catch (e) { console.log(e.message) }
   }
 
-  // Request one at a time
-  public request(msgId: string, p: IParams) {
+  public wsGetRecentTrades(msgId: string, p: WsGetRecentTradesParams) {
     try {
-      let msg
-      switch (p.eventType) {
-        case 'candlesticks':
-          // Guard for valid candlestick request
-          if (p.otherParams.hasOwnProperty('resolution')
-            && p.otherParams.hasOwnProperty('from') && p.otherParams.hasOwnProperty('to')) {
-            msg = JSON.stringify({
-              id: msgId,
-              method: 'get_candlesticks',
-              params: {
-                market: p.market, resolution: p.otherParams.resolution,
-                from: p.otherParams.from, to: p.otherParams.to
-              }
-            })
-            // Add candlestick request
-            console.log(msg)
-            this.socket.send(msg)
-          }
-          else {
-            throw new Error("Invalid candlesticks params")
-          }
-          break
-        case 'recent_trades':
-          msg = JSON.stringify({
-            id: msgId,
-            method: 'get_recent_trades',
-            params: { market: p.market }
-          })
-          console.log(msg)
-          this.socket.send(msg)
-          break
-        default:
-          throw new Error("Invalid request")
-      }
+      const msg = JSON.stringify({
+        id: msgId,
+        method: 'get_recent_trades',
+        params: { market: p.market }
+      })
+
+      this.socket.send(msg)
     } catch (e) { console.log(e.message) }
   }
 
-  public subscribe(msgId: string, params: IParams[]) { // List of params
+  public wsGetCandlesticks(msgId: string, p: WsGetCandlesticksParams) {
+    try {
+      const msg = JSON.stringify({
+        id: msgId,
+        method: 'get_candlesticks',
+        params: {
+          market: p.market, resolution: p.resolution,
+          from: p.from, to: p.to
+        }
+      })
+
+      this.socket.send(msg)
+    } catch (e) { console.log(e.message) }
+  }
+
+  public subscribe(msgId: string, params: WsSubscribeParams[]) { // List of params
     try {
       let channelIds: string[] = params.map((p) => this.generateChannelId(p))
       console.log("Subscribing to " + msgId)
@@ -127,7 +157,7 @@ export class WsWrapper {
     } catch (e) { console.log(e.message) }
   }
 
-  public unsubscribe(msgId: string, params: IParams[]) {
+  public unsubscribe(msgId: string, params: WsUnsubscribeParams[]) {
     try {
       let channelIds: string[] = params.map((p) => this.generateChannelId(p))
       console.log("Unsubscribing to " + channelIds)
@@ -140,37 +170,46 @@ export class WsWrapper {
     } catch (e) { console.log(e.message) }
   }
 
-  public parseChannelId = (rawChannelId: string): IParams => {
-    const [eventType, market, ...otherParams] = rawChannelId.split(".")
-    switch (eventType) {
+  public parseChannelId = (rawChannelId: string): any => {
+    const [channel, market, resolution] = rawChannelId.split(".")
+    switch (channel) {
       case 'candlesticks':
         return {
-          eventType: eventType,
+          channel: channel,
           market: market,
-          otherParams: { resolution: otherParams[0] } // Resolution
-        }
+          resolution: resolution
+        } // Resolution
       case 'books':
       case 'recent_trades':
         return {
-          eventType: eventType,
+          channel: channel,
           market: market,
-          otherParams: {}
+        }
+      case 'recent_trades':
+        return {
+          channel: channel,
+          market: market,
         }
       default:
         throw new Error("Error parsing channelId")
     }
   }
 
-  public generateChannelId(p: IParams): string {
-    switch (p.eventType) {
-      case 'candlesticks':
-        if (!p.otherParams.hasOwnProperty("resolution")) { // Ensure resolution given
-          throw new Error("Missing resolution")
-        }
-        return [p.eventType, p.market, p.otherParams.resolution].join('.')
+  public generateChannelId(p: WsSubscribeParams | WsUnsubscribeParams): string {
+    switch (p.channel) {
+      case 'candlesticks': {
+        let { channel, market, resolution } = <WsSubscribeCandlesticksParams>p
+        return [channel, market, resolution].join('.')
+      }
       case 'books':
-      case 'recent_trades':
-        return [p.eventType, p.market].join('.')
+      case 'recent_trades': {
+        let { channel, market } = <WsSubscribeRecentTradesParams>p
+        return [channel, market].join('.')
+      }
+      case 'order_history': {
+        let { channel, market, address } = <WsSubscribeOrderHistoryParams>p
+        return [channel, market, address].join('.')
+      }
       default:
         throw new Error("Invalid subscription")
     }
