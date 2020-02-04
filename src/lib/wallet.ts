@@ -16,7 +16,7 @@ export class Wallet {
       throw new Error('network must be LOCALHOST/DEVNET')
     }
     const pubKeyBech32 = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex')).toPubKey().toAddress().toBech32('cosmos')
-    const { result: { value }} = await fetch(`${network.REST_COSMOS_URL}/auth/accounts/${pubKeyBech32}`)
+    const { result: { value }} = await fetch(`${network.REST_URL}/get_account?account=${pubKeyBech32}`)
       .then(res => res.json())
     return new Wallet(privateKey, value.account_number, network)
   }
@@ -68,7 +68,7 @@ export class Wallet {
   }
 
   public getAccount() {
-    return fetch(`${this.network.REST_COSMOS_URL}/auth/accounts/${this.pubKeyBech32}`)
+    return fetch(`${this.network.REST_URL}/get_account?account=${this.pubKeyBech32}`)
       .then(res => res.json()) // expecting a json response
   }
 
