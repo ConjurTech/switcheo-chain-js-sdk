@@ -63,7 +63,7 @@ export class Wallet {
   }
 
   public broadcast(body) {
-    return fetch(`${this.network.REST_COSMOS_URL}/txs`, { method: 'POST', body: JSON.stringify(body) })
+    return fetch(`${this.network.REST_URL}/txs`, { method: 'POST', body: JSON.stringify(body) })
       .then(res => res.json()) // expecting a json response
   }
 

@@ -13,6 +13,7 @@ async function createOracle() {
     Description: 'Calculated based on an average of price feeds from Binance and Coinbase, ... more info ...',
     MinConsensusThreshold: '66',
     SecurityType: 'SecuredByValidators',
+    ResultStrategy: 'median',
     Resolution: '10',
     Spec: '{}',
   }
