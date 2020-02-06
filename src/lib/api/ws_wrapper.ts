@@ -26,7 +26,13 @@ export interface WsGetOrderHistoryByMarketParams {
   address: string,
 }
 
-export type WsGetRequestParams = WsGetRecentTradesParams | WsGetCandlesticksParams | WsGetOrderHistoryByMarketParams
+export interface WsGetOpenOrdersByMarketParams {
+  market: string,
+  address: string,
+}
+
+export type WsGetRequestParams = WsGetRecentTradesParams |
+  WsGetCandlesticksParams | WsGetOrderHistoryByMarketParams | WsGetOpenOrdersByMarketParams
 
 /* WS subscribe params */
 export interface WsSubscribeCandlesticksParams {
@@ -123,6 +129,7 @@ export class WsWrapper {
         method: 'get_order_history_by_market',
         params: { market: params.market, address: params.address }
       })
+
       this.socket.send(msg)
     } catch (e) { console.log(e.message) }
   }
@@ -154,6 +161,18 @@ export class WsWrapper {
     } catch (e) { console.log(e.message) }
   }
 
+  public wsGetOpenOrdersByMarket(msgId: string, params: WsGetOpenOrdersByMarketParams) {
+    try {
+      const msg = JSON.stringify({
+        id: msgId,
+        method: 'get_open_order_by_market',
+        params: { market: params.market, address: params.address }
+      })
+
+      this.socket.send(msg)
+    } catch (e) { console.log(e.message) }
+  }
+
   public subscribe(msgId: string, params: WsSubscribeParams[]) { // List of params
     try {
       let channelIds: string[] = params.map((p) => this.generateChannelId(p))
@@ -163,6 +182,7 @@ export class WsWrapper {
         method: 'subscribe',
         params: { "channels": [...channelIds] }
       })
+
       this.socket.send(msg)
     } catch (e) { console.log(e.message) }
   }
@@ -176,6 +196,7 @@ export class WsWrapper {
         method: 'unsubscribe',
         params: { "channels": [...channelIds] }
       })
+
       this.socket.send(msg)
     } catch (e) { console.log(e.message) }
   }

@@ -18,4 +18,5 @@ export {
   WsUnsubscribeCandlesticksParams,
   WsUnsubscribeBookParams,
   WsUnsubscribeParams,
+  WsGetOpenOrdersByMarketParams,
 } from './ws_wrapper'
