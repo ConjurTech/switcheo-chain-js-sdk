@@ -14,6 +14,9 @@ async function createOracle() {
     MinConsensusThreshold: '66',
     SecurityType: 'SecuredByValidators',
     ResultStrategy: 'median',
+    Config: {
+      "median_threshold": '10'
+    },
     Resolution: '10',
     Spec: '{}',
   }

@@ -21,7 +21,7 @@ export async function addToken(wallet: Wallet, params: AddTokenParams, options?:
   })
   const signature = await wallet.signMessage(msg, options)
   const broadcastTxBody = new containers.Transaction(
-    types.ADD_TOKEN_MSG_TYPE,
+    types.CREATE_TOKEN_MSG_TYPE,
     msg,
     signature,
     options,

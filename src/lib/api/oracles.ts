@@ -9,6 +9,8 @@ export interface CreateOracleMsg {
 	Description: string,
 	MinConsensusThreshold: string,
 	SecurityType: string,
+	ResultStrategy: string,
+	Config: string,
 	Resolution: string,
 	Spec: string,
 	Originator: string,
@@ -30,5 +32,5 @@ export async function createOracle(wallet: Wallet, msg: CreateOracleMsg, options
 export async function createProposition(wallet: Wallet, msg: CreatePropositionMsg, options?: Options) {
 	if(!msg.Originator) msg.Originator = wallet.pubKeyBech32
 
-	return wallet.signAndBroadcast(msg, types.CREATE_PROPOSITION_TYPE, options)
+	return wallet.signAndBroadcast(msg, types.CREATE_VOTE_TYPE, options)
 }
