@@ -13,8 +13,8 @@ const JRC_ASSET_ID = '0xc6e36e1d6f3dc19ec734246d7d0435bf04117c85'
 async function deposit() {
   const wallet = await Wallet.connect(privateKey)
   const provider = new PrivateKeyProvider(
-    process.env.ethKey,
-    process.env.ethUrl
+    process.env.ETH_KEY,
+    process.env.ETH_URL,
   )
   const web3 = new Web3(provider)
   wallet.connectEthWallet(web3)

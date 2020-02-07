@@ -9,4 +9,4 @@ symlink mnemonics.json from switcheo-chain
 
 ## Deposit Example
 The deposit example can be run with:
-ethKey=<eth private key> ethUrl=<e.g. https://ropsten.infura.io/v3/[infura-id]> node examples/deposit.js
+ETH_KEY=<eth private key> ETH_URL=<e.g. https://ropsten.infura.io/v3/[infura-id]> node examples/deposit.js
