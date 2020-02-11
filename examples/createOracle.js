@@ -9,9 +9,10 @@ const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[1])
 async function createOracle() {
   const wallet = await Wallet.connect(privateKey)
   const msg = {
-    Name: 'BTC_USDxD',
+    Name: 'BTC_USD_xD',
     Description: 'Calculated based on an average of price feeds from Binance and Coinbase, ... more info ...',
     MinConsensusThreshold: '67',
+    MaxResultAge: '100',
     SecurityType: 'SecuredByValidators',
     ResultStrategy: 'median',
     Config: JSON.stringify({
