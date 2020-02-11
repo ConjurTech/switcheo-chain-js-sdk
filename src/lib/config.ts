@@ -2,14 +2,15 @@ export interface Network {
   REST_URL: string
 }
 
-const localhost = process.env.CHAIN_HOST || '127.0.0.1'
+const localhost = process.env.REST_HOST || '127.0.0.1'
+const port = process.env.REST_PORT || '5001'
 
 export const NETWORK = {
   DEVNET: {
-    REST_URL: 'http://13.250.103.204:5001',
+    REST_URL: `http://13.250.103.204:5001`,
   },
   LOCALHOST: {
-    REST_URL: `http://${localhost}:5001`,
+    REST_URL: `http://${localhost}:${port}`,
   },
 }
 
