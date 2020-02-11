@@ -6,16 +6,20 @@ const mnemonics = require('../mnemonics.json')
 
 const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[1])
 
-async function addToken() {
+async function createToken() {
   const wallet = await Wallet.connect(privateKey)
   const params = {
-    symbol: 'LAYWC',
-    name: 'jiarong coin',
-    decimals: '10',
-    nativeBlockchain: 'eos',
-    usdValue: '0.01',
+    Name: 'jiarong coin',
+    Symbol: 'LAYWC',
+    Denom: 'laywc',
+    Decimals: '10',
+    Blockchain: 'eos',
+    ChainID: '1',
+    AssetID: 'laywc',
+    USDValue: '0.01',
+    IsCollateral: false,
   }
-  api.addToken(wallet, params).then(console.log)
+  api.createToken(wallet, params).then(console.log)
 }
 
-addToken()
+createToken()
