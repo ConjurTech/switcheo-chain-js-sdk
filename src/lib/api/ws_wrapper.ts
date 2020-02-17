@@ -165,7 +165,7 @@ export class WsWrapper {
     try {
       const msg = JSON.stringify({
         id: msgId,
-        method: 'get_open_order_by_market',
+        method: 'get_open_orders_by_market',
         params: { market: params.market, address: params.address }
       })
 
