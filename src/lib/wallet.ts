@@ -120,10 +120,11 @@ export class Wallet {
   public async signMessage(msg, options: SignMessageOptions = {}) {
     let sequence: string = options.sequence
 
-    if (!sequence) { // no sequence override, we get latest from blockchain
+    if (sequence === undefined || sequence === null) { // no sequence override, we get latest from blockchain
       const { result } = await this.getAccount()
       sequence = result.value.sequence
     }
+
     const memo = options.memo || ''
     const stdSignMsg = new StdSignDoc({
       accountNumber: this.accountNumber,
