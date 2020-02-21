@@ -3,19 +3,25 @@ const SDK = require('../.')
 const { wallet, api } = SDK
 const { Wallet } = wallet
 const { BigNumber } = require('bignumber.js')
-const mnemonics = require('../mnemonics.json')
-
-const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[1])
 
 async function createOrder() {
-  const wallet = await Wallet.connect(privateKey)
+  const newAccount = wallet.newAccount()
+  const tokenReq = {
+    address: newAccount.pubKeyBech32,
+    amount: '1000',
+    denom: 'swth',
+  }
+  await api.mintTokens(tokenReq)
+
+  const accountWallet = await Wallet.connect(newAccount.privateKey)
   const params = {
     Market: 'swth_eth',
     Side: 'sell',
-    Quantity: '0.987',
-    Price: new BigNumber(1.01).toString(),
+    Quantity: '200',
+    Price: '1.01',
   }
-  api.createOrder(wallet, params).then(console.log)
+  const result = await api.createOrder(accountWallet, params)
+  console.log('result', result)
 }
 
 createOrder()

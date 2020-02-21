@@ -150,9 +150,12 @@ export class Wallet {
 
 export function newAccount() {
   const mnemonic = bip39.generateMnemonic()
+  const privateKey = getPrivKeyFromMnemonic(mnemonic)
+  const pubKeyBech32 = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex')).toPubKey().toAddress().toBech32('cosmos')
   return {
     mnemonic,
-    privateKey: getPrivKeyFromMnemonic(mnemonic),
+    privateKey,
+    pubKeyBech32,
   }
 }
 
