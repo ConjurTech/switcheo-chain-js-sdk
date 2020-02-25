@@ -9,6 +9,8 @@ export {
   WsGetOrderHistoryByMarketParams,
   WsGetRecentTradesParams,
   WsGetCandlesticksParams,
+  WsGetOpenOrdersByMarketParams,
+  WsGetAccountTradesByMarketParams,
   WsWrapper,
   WsGetRequestParams,
   WsSubscribeParams,
@@ -19,5 +21,4 @@ export {
   WsUnsubscribeCandlesticksParams,
   WsUnsubscribeBookParams,
   WsUnsubscribeParams,
-  WsGetOpenOrdersByMarketParams,
 } from './ws_wrapper'
