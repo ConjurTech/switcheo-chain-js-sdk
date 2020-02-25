@@ -7,7 +7,7 @@ import { EthWallet } from './ethWallet'
 import { marshalJSON } from './utils/encoder'
 import { getPath, PrivKeySecp256k1, PubKeySecp256k1 } from './utils/wallet'
 
-export interface SignMessageOptions { memo?: string, sequence?: string }
+export interface SignMessageOptions { memo?: string, sequence?: string, useCosmosFormat?: boolean }
 
 export class Wallet {
   public static async connect(privateKey: string, net = 'LOCALHOST') {
@@ -64,6 +64,11 @@ export class Wallet {
 
   public broadcast(body) {
     return fetch(`${this.network.REST_URL}/txs`, { method: 'POST', body: JSON.stringify(body) })
+      .then(res => res.json()) // expecting a json response
+  }
+
+  public getValidators() {
+    return fetch(`${this.network.COSMOS_URL}/staking/validators`)
       .then(res => res.json()) // expecting a json response
   }
 
@@ -140,8 +145,15 @@ export class Wallet {
   }
 
   public async signAndBroadcast(msg, type, options) {
-    const signature = await this.signMessage(msg, options)
+    let messageToSign = msg
+    if (options !== undefined && options.useCosmosFormat === true) {
+      messageToSign = {
+        type,
+        value: msg
+      }
+    }
 
+    const signature = await this.signMessage(messageToSign, options)
     const broadcastTxBody = new Transaction(type, msg, signature, options)
 
     return this.broadcast(broadcastTxBody)

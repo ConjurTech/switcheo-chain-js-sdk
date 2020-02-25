@@ -4,6 +4,7 @@ export { createToken, CreateTokenMsg } from './tokens'
 export { createOracle, CreateOracleMsg, createProposition, CreatePropositionMsg } from './oracles'
 export { proposeDeposit, ProposeDepositMsg, deposit, DepositParams } from './deposit'
 export { addMarket } from './markets'
+export { delegateTokens } from './staking'
 export {
   WsGetOrderHistoryByMarketParams,
   WsGetRecentTradesParams,

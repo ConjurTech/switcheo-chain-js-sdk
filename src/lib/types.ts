@@ -8,3 +8,5 @@ export const CREATE_TOKEN_MSG_TYPE = 'coin/CreateToken'
 export const CREATE_ORACLE_TYPE = 'oracle/CreateOracle'
 export const CREATE_VOTE_TYPE = 'oracle/CreateVote'
 export const PROPOSE_DEPOSIT_TYPE = 'deposit/ProposeDeposit'
+
+export const DELEGATE_TOKENS_MSG_TYPE = 'cosmos-sdk/MsgDelegate'

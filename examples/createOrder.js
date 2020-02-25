@@ -2,7 +2,6 @@
 const SDK = require('../.')
 const { wallet, api } = SDK
 const { Wallet } = wallet
-const { BigNumber } = require('bignumber.js')
 
 async function createOrder() {
   const newAccount = wallet.newAccount()
