@@ -186,7 +186,7 @@ export class WsWrapper {
     } catch (e) { console.log(e.message) }
   }
 
-  public getAccountTradesByMarket(msgId: string, params: WsGetAccountTradesByMarketParams) {
+  public wsGetAccountTradesByMarket(msgId: string, params: WsGetAccountTradesByMarketParams) {
     try {
       const msg = JSON.stringify({
         id: msgId,
