@@ -66,7 +66,7 @@ export class PubKeySecp256k1 {
   }
 }
 
-class Address {
+export class Address {
   public readonly address: Buffer
   constructor(address) {
     this.address = address

@@ -26,6 +26,8 @@ export class Wallet {
   public readonly pubKeySecp256k1: PubKeySecp256k1
   public readonly pubKeyBase64: string
   public readonly pubKeyBech32: string
+  public readonly validatorBech32: string
+  public readonly consensusBech32: string
   public readonly gas: string
   public readonly network: Network
   public readonly accountNumber: string
@@ -40,6 +42,8 @@ export class Wallet {
     this.pubKeySecp256k1 = privKey.toPubKey()
     this.pubKeyBase64 = this.pubKeySecp256k1.pubKey.toString('base64')
     this.pubKeyBech32 = this.pubKeySecp256k1.toAddress().toBech32('cosmos')
+    this.validatorBech32 = this.pubKeySecp256k1.toAddress().toBech32('cosmosvaloper')
+    this.consensusBech32 = this.pubKeySecp256k1.toAddress().toBech32('cosmosvalconspub')
     this.gas = CONFIG.DEFAULT_GAS
     this.accountNumber = accountNumber
     this.network = network

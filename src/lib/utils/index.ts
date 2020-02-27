@@ -1,4 +1,5 @@
 const { BigNumber } = require('bignumber.js')
+export { Address, PrivKeySecp256k1 } from './wallet'
 
 export function bn(n) {
   return new BigNumber(n)

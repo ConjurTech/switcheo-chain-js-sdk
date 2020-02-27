@@ -9,4 +9,5 @@ export const CREATE_ORACLE_TYPE = 'oracle/CreateOracle'
 export const CREATE_VOTE_TYPE = 'oracle/CreateVote'
 export const PROPOSE_DEPOSIT_TYPE = 'deposit/ProposeDeposit'
 
+export const CREATE_VALIDATOR_MSG_TYPE = 'cosmos-sdk/MsgCreateValidator'
 export const DELEGATE_TOKENS_MSG_TYPE = 'cosmos-sdk/MsgDelegate'
