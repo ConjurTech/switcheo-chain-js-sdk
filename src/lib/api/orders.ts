@@ -31,7 +31,7 @@ export async function createOrder(wallet: Wallet, params: CreateOrderParams, opt
 }
 
 export interface CancelOrderParams {
-  id: string,
+  orderID: string,
 }
 
 export async function cancelOrder(wallet: Wallet, params: CancelOrderParams, options?: Options) {

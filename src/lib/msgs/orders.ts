@@ -22,14 +22,14 @@ export class CreateOrderMsg {
 
 export class CancelOrderMsg {
   public readonly Originator: string
-  public readonly ID: string
+  public readonly OrderID: string
 
   constructor({
     originator,
-    id,
+    orderID,
   }) {
     this.Originator = originator
-    this.ID = id
+    this.OrderID = orderID
   }
 }
 
