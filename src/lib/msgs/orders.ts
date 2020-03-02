@@ -32,3 +32,19 @@ export class CancelOrderMsg {
     this.ID = id
   }
 }
+
+export class EditOrderMsg {
+  public readonly Originator: string
+  public readonly OrderID: string
+  public readonly EditOrderParams: object
+
+  constructor({
+    originator,
+    orderID,
+    editOrderParams,
+  }) {
+    this.Originator = originator
+    this.OrderID = orderID
+    this.EditOrderParams = editOrderParams
+  }
+}

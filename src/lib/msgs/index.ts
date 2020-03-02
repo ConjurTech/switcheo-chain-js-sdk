@@ -1,2 +1,2 @@
-export { CreateOrderMsg, CancelOrderMsg } from './orders'
+export { CreateOrderMsg, CancelOrderMsg, EditOrderMsg } from './orders'
 export { AddMarketMsg } from './markets'

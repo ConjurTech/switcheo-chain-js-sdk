@@ -49,3 +49,25 @@ export async function cancelOrder(wallet: Wallet, params: CancelOrderParams, opt
   )
   return wallet.broadcast(broadcastTxBody)
 }
+
+export interface EditOrderParams {
+  StopPrice?: string,
+  Quantity?: string,
+  Price?: string,
+}
+export async function editOrder(wallet: Wallet, orderID: string, params: EditOrderParams, options?: Options) {
+  const address = wallet.pubKeyBech32
+  const msg = new msgs.EditOrderMsg({
+    originator: address,
+    orderID,
+    editOrderParams: JSON.stringify(params),
+  })
+  const signature = await wallet.signMessage(msg, options)
+  const broadcastTxBody = new containers.Transaction(
+    types.EDIT_ORDER_MSG_TYPE,
+    msg,
+    signature,
+    options,
+  )
+  return wallet.broadcast(broadcastTxBody)
+}
