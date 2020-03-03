@@ -6,16 +6,16 @@ export { proposeDeposit, ProposeDepositMsg, deposit, DepositParams } from './dep
 export { addMarket } from './markets'
 export { createValidator, delegateTokens } from './staking'
 export {
-  WsGetOrderHistoryByMarketParams,
+  WsGetOrderHistoryParams,
   WsGetRecentTradesParams,
   WsGetCandlesticksParams,
-  WsGetOpenOrdersByMarketParams,
-  WsGetAccountTradesByMarketParams,
+  WsGetOpenOrdersParams,
+  WsGetAccountTradesParams,
   WsWrapper,
   WsGetRequestParams,
   WsSubscribeParams,
   WsSubscribeCandlesticksParams,
-  WsSubscribeOrderHistoryByMarketParams,
+  WsSubscribeOrdersParams,
   WsSubscribeRecentTradesParams,
   WsSubscribeWalletBalanceParams,
   WsUnsubscribeCandlesticksParams,

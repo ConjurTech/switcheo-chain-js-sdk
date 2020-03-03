@@ -21,25 +21,25 @@ export interface WsGetCandlesticksParams {
   from?: string,
   to?: string
 }
-export interface WsGetOrderHistoryByMarketParams {
+export interface WsGetOrderHistoryParams {
   market: string,
   address: string,
 }
 
-export interface WsGetOpenOrdersByMarketParams {
+export interface WsGetOpenOrdersParams {
   market: string,
   address: string,
 }
 
-export interface WsGetAccountTradesByMarketParams {
+export interface WsGetAccountTradesParams {
   market: string
   address: string
   page?: number
 }
 
 export type WsGetRequestParams = WsGetRecentTradesParams |
-  WsGetCandlesticksParams | WsGetOrderHistoryByMarketParams |
-  WsGetOpenOrdersByMarketParams | WsGetAccountTradesByMarketParams
+  WsGetCandlesticksParams | WsGetOrderHistoryParams |
+  WsGetOpenOrdersParams | WsGetAccountTradesParams
 
 /* WS subscribe params */
 export interface WsSubscribeCandlesticksParams {
@@ -52,9 +52,9 @@ export interface WsSubscribeRecentTradesParams {
   channel: string,
   market: string,
 }
-export interface WsSubscribeOrderHistoryByMarketParams {
+export interface WsSubscribeOrdersParams {
   channel: string,
-  market: string,
+  market?: string,
   address: string,
 }
 
@@ -68,16 +68,16 @@ export interface WsSubscribeWalletBalanceParams {
   address: string,
 }
 
-export interface WsSubscribeAccountTradesByMarketParams {
+export interface WsSubscribeAccountTradesParams {
   channel: string,
-  market: string,
+  market?: string,
   address: string,
 }
 
 export type WsSubscribeParams =
   WsSubscribeCandlesticksParams |
   WsSubscribeRecentTradesParams |
-  WsSubscribeOrderHistoryByMarketParams |
+  WsSubscribeOrdersParams |
   WsSubscribeWalletBalanceParams
 
 /* WS unsubscribe params */
@@ -135,11 +135,13 @@ export class WsWrapper {
     return this.isConnected
   }
 
-  public wsGetOrderHistoryByMarket(msgId: string, params: WsGetOrderHistoryByMarketParams) {
+  // WS Get requests
+
+  public wsGetOrderHistory(msgId: string, params: WsGetOrderHistoryParams) {
     try {
       const msg = JSON.stringify({
         id: msgId,
-        method: 'get_order_history_by_market',
+        method: 'get_order_history',
         params: { market: params.market, address: params.address }
       })
 
@@ -174,11 +176,11 @@ export class WsWrapper {
     } catch (e) { console.log(e.message) }
   }
 
-  public wsGetOpenOrdersByMarket(msgId: string, params: WsGetOpenOrdersByMarketParams) {
+  public wsGetOpenOrders(msgId: string, params: WsGetOpenOrdersParams) {
     try {
       const msg = JSON.stringify({
         id: msgId,
-        method: 'get_open_orders_by_market',
+        method: 'get_open_orders',
         params: { market: params.market, address: params.address }
       })
 
@@ -186,17 +188,19 @@ export class WsWrapper {
     } catch (e) { console.log(e.message) }
   }
 
-  public wsGetAccountTradesByMarket(msgId: string, params: WsGetAccountTradesByMarketParams) {
+  public wsGetAccountTrades(msgId: string, params: WsGetAccountTradesParams) {
     try {
       const msg = JSON.stringify({
         id: msgId,
-        method: 'get_account_trades_by_market',
+        method: 'get_account_trades',
         params,
       })
 
       this.socket.send(msg)
     } catch (e) { console.log(e.message) }
   }
+
+  // WS Subscriptions
 
   public subscribe(msgId: string, params: WsSubscribeParams[]) { // List of params
     try {
@@ -248,10 +252,20 @@ export class WsWrapper {
       case 'orders':
         return {
           channel,
+          address,
+        }
+      case 'orders_by_market':
+        return {
+          channel,
           market,
           address,
         }
       case 'balances':
+        return {
+          channel,
+          address,
+        }
+      case 'account_trades':
         return {
           channel,
           address,
@@ -282,15 +296,23 @@ export class WsWrapper {
         return [channel, market].join('.')
       }
       case 'orders': {
-        let { channel, market, address } = <WsSubscribeOrderHistoryByMarketParams>p
+        let { channel, address } = <WsSubscribeOrdersParams>p
+        return [channel, address].join('.')
+      }
+      case 'orders_by_market': {
+        let { channel, market, address } = <WsSubscribeOrdersParams>p
         return [channel, market, address].join('.')
       }
       case 'balances': {
         let { channel, address } = <WsSubscribeWalletBalanceParams>p
         return [channel, address].join('.')
       }
+      case 'account_trades': {
+        let { channel, address } = <WsSubscribeAccountTradesParams>p
+        return [channel, address].join('.')
+      }
       case 'account_trades_by_market': {
-        let {channel, market, address} = <WsSubscribeAccountTradesByMarketParams>p
+        let { channel, market, address } = <WsSubscribeAccountTradesParams>p
         return [channel, market, address].join('.')
       }
       default:
