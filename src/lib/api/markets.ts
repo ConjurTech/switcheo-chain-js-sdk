@@ -1,34 +1,27 @@
-import * as containers from '../containers'
-import * as msgs from '../msgs'
 import * as types from '../types'
 import { Wallet, SignMessageOptions }  from '../wallet'
 import { TransactionOptions } from '../containers/Transaction'
+import { BigNumber } from 'bignumber.js'
 
 interface Options extends SignMessageOptions, TransactionOptions {}
 
 export interface AddMarketParams {
-  name: string,
-  description: string,
-  base: string,
-  quote: string,
-  lotSize: string,
-  tickSize: string,
-  minQuantity: string,
-  marketType: string,
+  Name: string,
+  Description: string,
+  Base: string,
+  Quote: string,
+  LotSize: string,
+  TickSize: string,
+  MinQuantity: string,
+  MarketType: string,
 }
 export async function addMarket(wallet: Wallet, params: AddMarketParams, options?: Options) {
+  params.TickSize = new BigNumber(params.TickSize).toFixed(18)
   const address = wallet.pubKeyBech32
-  const msg = new msgs.AddMarketMsg({
+  const msg = {
     ...params,
-    originator: address,
-  })
-  const signature = await wallet.signMessage(msg, options)
-  const broadcastTxBody = new containers.Transaction(
-    types.ADD_MARKET_MSG_TYPE,
-    msg,
-    signature,
-    options,
-  )
-  return wallet.broadcast(broadcastTxBody)
+    Originator: address,
+  }
+  return wallet.signAndBroadcast(msg, types.ADD_MARKET_MSG_TYPE, options)
 }
 
