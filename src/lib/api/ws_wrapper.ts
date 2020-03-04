@@ -37,9 +37,9 @@ export interface WsGetAccountTradesParams {
   page?: number
 }
 
-export type WsGetRequestParams = WsGetRecentTradesParams |
-  WsGetCandlesticksParams | WsGetOrderHistoryParams |
-  WsGetOpenOrdersParams | WsGetAccountTradesParams
+export interface WsGetMarketStatsParams {
+  market: string
+}
 
 /* WS subscribe params */
 export interface WsSubscribeCandlesticksParams {
@@ -74,11 +74,19 @@ export interface WsSubscribeAccountTradesParams {
   address: string,
 }
 
+export interface WsSubscribeMarketStatsParams {
+  channel: string
+  market?: string
+}
+
 export type WsSubscribeParams =
   WsSubscribeCandlesticksParams |
   WsSubscribeRecentTradesParams |
   WsSubscribeOrdersParams |
-  WsSubscribeWalletBalanceParams
+  WsSubscribeWalletBalanceParams |
+  WsSubscribeOrderbookParams |
+  WsSubscribeAccountTradesParams |
+  WsSubscribeMarketStatsParams
 
 /* WS unsubscribe params */
 export interface WsUnsubscribeCandlesticksParams {
@@ -200,6 +208,18 @@ export class WsWrapper {
     } catch (e) { console.log(e.message) }
   }
 
+  public wsGetMarketStats(msgId: string, params: WsGetMarketStatsParams) {
+    try {
+      const msg = JSON.stringify({
+        id: msgId,
+        method: 'get_market_stats',
+        params,
+      })
+
+      this.socket.send(msg)
+    } catch (e) { console.log(e.message) }
+  }
+
   // WS Subscriptions
 
   public subscribe(msgId: string, params: WsSubscribeParams[]) { // List of params
@@ -276,6 +296,15 @@ export class WsWrapper {
           market,
           address,
         }
+      case 'market_stats':
+        return {
+          channel,
+        }
+      case 'market_stats_by_market':
+        return {
+          channel,
+          market,
+        }
       default:
         throw new Error("Error parsing channelId")
     }
@@ -314,6 +343,14 @@ export class WsWrapper {
       case 'account_trades_by_market': {
         let { channel, market, address } = <WsSubscribeAccountTradesParams>p
         return [channel, market, address].join('.')
+      }
+      case 'market_stats': {
+        let { channel } = <WsSubscribeMarketStatsParams>p
+        return [channel].join('.')
+      }
+      case 'market_stats_by_market': {
+        let { channel, market } = <WsSubscribeMarketStatsParams>p
+        return [channel, market].join('.')
       }
       default:
         throw new Error("Invalid subscription")
