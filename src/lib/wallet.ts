@@ -19,7 +19,7 @@ export class Wallet {
     const pubKeyBech32 = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex')).toPubKey().toAddress().toBech32('cosmos')
     const { result: { value }} = await fetch(`${network.REST_URL}/get_account?account=${pubKeyBech32}`)
       .then(res => res.json())
-    return new Wallet(privateKey, value.account_number, network)
+    return new Wallet(privateKey, value.account_number.toString(), network)
   }
 
   public readonly privKey: PrivKeySecp256k1
@@ -142,7 +142,7 @@ export class Wallet {
       fee: new Fee([], this.gas),
       memo,
       msgs,
-      sequence,
+      sequence: sequence.toString(),
     })
     return this.sign(marshalJSON(stdSignMsg))
   }
