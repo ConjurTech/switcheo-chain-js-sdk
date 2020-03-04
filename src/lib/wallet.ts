@@ -6,7 +6,7 @@ import { Fee, StdSignDoc, Transaction } from './containers'
 import { EthWallet } from './ethWallet'
 import { marshalJSON } from './utils/encoder'
 import { getPath, PrivKeySecp256k1, PubKeySecp256k1 } from './utils/wallet'
-import { Msg } from './containers/Transaction'
+import { ConcreteMsg } from './containers/Transaction'
 
 export interface SignMessageOptions { memo?: string, sequence?: string, useCosmosFormat?: boolean }
 
@@ -127,7 +127,7 @@ export class Wallet {
       .then(res => res.json()) // expecting a json response
   }
 
-  public async signMessage(msgs: object[], options: SignMessageOptions = {}) {
+  public async signMessage(msgs: ConcreteMsg[], options: SignMessageOptions = {}) {
     let sequence: string = options.sequence
 
     if (sequence === undefined || sequence === null) { // no sequence override, we get latest from blockchain
@@ -149,7 +149,7 @@ export class Wallet {
 
   public async signAndBroadcast(msgs: object[], types: string[], options) {
     if (msgs.length != types.length) throw new Error("Msg length is not equal to types length")
-    let concreteMsgs: Msg[] = []
+    let concreteMsgs: ConcreteMsg[] = []
     // format message with concrete codec type
     for (let i = 0; i < msgs.length; i++) {
       concreteMsgs[i] = {
@@ -158,7 +158,7 @@ export class Wallet {
       }
     }
     const signature = await this.signMessage(concreteMsgs, options)
-    const broadcastTxBody = new Transaction(concreteMsgs, signature, options)
+    const broadcastTxBody = new Transaction(concreteMsgs, [signature], options)
 
     return this.broadcast(broadcastTxBody)
   }
