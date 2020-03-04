@@ -1,9 +1,9 @@
-export { cancelOrder, CancelOrderParams, createOrder, CreateOrderParams, editOrder, EditOrderParams } from './orders'
+export { cancelOrder, cancelOrders, CancelOrderMsg, createOrder, createOrders, CreateOrderParams, editOrder, editOrders, EditOrderParams } from './orders'
 export { mintTokens, MintTokenRequest } from './mints'
-export { createToken, CreateTokenMsg } from './tokens'
+export { createToken, createTokens, CreateTokenMsg } from './tokens'
 export { createOracle, CreateOracleMsg, createProposition, CreatePropositionMsg } from './oracles'
 export { proposeDeposit, ProposeDepositMsg, deposit, DepositParams } from './deposit'
-export { addMarket } from './markets'
+export { addMarket, addMarkets, AddMarketMsg } from './markets'
 export { createValidator, delegateTokens } from './staking'
 export {
   WsGetOrderHistoryParams,

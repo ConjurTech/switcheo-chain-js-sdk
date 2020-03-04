@@ -13,24 +13,24 @@ export interface CreateOracleMsg {
 	Config: string,
 	Resolution: string,
 	Spec: string,
-	Originator: string,
+	Originator?: string,
 }
 
 export interface CreatePropositionMsg {
 	OracleName: string,
 	Timestamp: string,
 	Data: string,
-	Originator: string,
+	Originator?: string,
 }
 
 export async function createOracle(wallet: Wallet, msg: CreateOracleMsg, options?: Options) {
 	if(!msg.Originator) msg.Originator = wallet.pubKeyBech32
 
-  return wallet.signAndBroadcast(msg, types.CREATE_ORACLE_TYPE, options)
+  return wallet.signAndBroadcast([msg], [types.CREATE_ORACLE_TYPE], options)
 }
 
 export async function createProposition(wallet: Wallet, msg: CreatePropositionMsg, options?: Options) {
 	if(!msg.Originator) msg.Originator = wallet.pubKeyBech32
 
-	return wallet.signAndBroadcast(msg, types.CREATE_VOTE_TYPE, options)
+	return wallet.signAndBroadcast([msg], [types.CREATE_VOTE_TYPE], options)
 }

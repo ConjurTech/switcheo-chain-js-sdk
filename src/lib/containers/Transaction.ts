@@ -5,12 +5,10 @@ export interface TransactionOptions {
   fee?: Fee
   mode?: string
 }
-
-interface Msg {
+export interface Msg {
   type: string
-  value: any
+  value: object
 }
-
 interface Tx {
   fee: Fee
   msg: ReadonlyArray<Msg>
@@ -22,17 +20,13 @@ export class Transaction {
   public readonly mode: string
   public readonly tx: Tx
 
-  constructor(type, msg, signature, options: TransactionOptions = {}) {
+  constructor(msgs: Msg[], signatures, options: TransactionOptions = {}) {
     const fee = options.fee || new Fee([], CONFIG.DEFAULT_GAS)
-    const mode = options.mode || 'block'
+    this.mode = options.mode || 'block'
     this.tx = {
       fee,
-      msg: [{
-        type,
-        value: msg,
-      }],
-      signatures: [signature],
+      msg: msgs,
+      signatures,
     }
-    this.mode = mode
   }
 }

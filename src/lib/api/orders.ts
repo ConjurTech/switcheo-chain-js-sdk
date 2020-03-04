@@ -12,26 +12,36 @@ export interface CreateOrderParams {
   Quantity: string,
   Price: string,
 }
+
 export async function createOrder(wallet: Wallet, params: CreateOrderParams, options?: Options) {
+  return createOrders(wallet, [params], options)
+}
+
+export async function createOrders(wallet: Wallet, paramsList: CreateOrderParams[], options?: Options) {
   const address = wallet.pubKeyBech32
-  const msg = {
+  const msgs = paramsList.map(params => ({
     OrderParams: JSON.stringify(params),
     Originator: address,
-  }
-  return wallet.signAndBroadcast(msg, types.CREATE_ORDER_MSG_TYPE, options)
+  }))
+  return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.CREATE_ORDER_MSG_TYPE), options)
 }
 
-export interface CancelOrderParams {
+export interface CancelOrderMsg {
   OrderID: string,
+  Originator?: string,
 }
 
-export async function cancelOrder(wallet: Wallet, params: CancelOrderParams, options?: Options) {
+export async function cancelOrder(wallet: Wallet, msg: CancelOrderMsg, options?: Options) {
+  return cancelOrders(wallet, [msg], options)
+}
+
+export async function cancelOrders(wallet: Wallet, msgs: CancelOrderMsg[], options?: Options) {
   const address = wallet.pubKeyBech32
-  const msg = {
-    OrderID: params.OrderID,
-    Originator: address,
-  }
-  return wallet.signAndBroadcast(msg, types.CANCEL_ORDER_MSG_TYPE, options)
+  msgs = msgs.map(msg => {
+    if (!msg.Originator) msg.Originator = address
+    return msg
+  })
+  return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.CANCEL_ORDER_MSG_TYPE), options)
 }
 
 export interface EditOrderParams {
@@ -39,12 +49,18 @@ export interface EditOrderParams {
   Quantity?: string,
   Price?: string,
 }
+
 export async function editOrder(wallet: Wallet, orderID: string, params: EditOrderParams, options?: Options) {
+  return editOrders(wallet, [orderID], [params], options)
+}
+
+export async function editOrders(wallet: Wallet, orderIDs: string[], paramsList: EditOrderParams[], options?: Options) {
+  if (orderIDs.length != paramsList.length) throw new Error("orderIDs.length != paramsList.length")
   const address = wallet.pubKeyBech32
-  const msg = {
-    Originator: address,
-    OrderID: orderID,
+  const msgs = paramsList.map((params, i) => ({
+    OrderID: orderIDs[i],
     EditOrderParams: JSON.stringify(params),
-  }
-  return wallet.signAndBroadcast(msg, types.EDIT_ORDER_MSG_TYPE, options)
+    Originator: address,
+  }))
+  return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.EDIT_ORDER_MSG_TYPE), options)
 }

@@ -15,11 +15,19 @@ export interface CreateTokenMsg {
   AssetID: string,
   USDValue: string,
   IsCollateral: boolean,
-  Originator: string,
+  Originator?: string,
 }
 export async function createToken(wallet: Wallet, msg: CreateTokenMsg, options?: Options) {
-  if(!msg.Originator) msg.Originator = wallet.pubKeyBech32
-  msg.USDValue = new BigNumber(msg.USDValue).toFixed(18)
+  return createTokens(wallet, [msg], options)
+}
 
-  return wallet.signAndBroadcast(msg, types.CREATE_TOKEN_MSG_TYPE, options)
+export async function createTokens(wallet: Wallet, msgs: CreateTokenMsg[], options?: Options) {
+  const address = wallet.pubKeyBech32
+  msgs = msgs.map(msg => {
+    if (!msg.Originator) msg.Originator = address
+    msg.USDValue = new BigNumber(msg.USDValue).toFixed(18)
+    return msg
+  })
+
+  return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.CREATE_TOKEN_MSG_TYPE), options)
 }

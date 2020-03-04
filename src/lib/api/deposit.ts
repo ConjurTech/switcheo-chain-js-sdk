@@ -20,7 +20,7 @@ export interface ProposeDepositMsg {
 	Token: string,
 	ExtTxID: string,
 	Amount: string,
-	Originator: string,
+	Originator?: string,
 }
 
 export interface DepositParams {
@@ -32,7 +32,7 @@ export interface DepositParams {
 export async function proposeDeposit(wallet: Wallet, msg: ProposeDepositMsg, options?: Options) {
 	if(!msg.Originator) msg.Originator = wallet.pubKeyBech32
 
-  return wallet.signAndBroadcast(msg, types.PROPOSE_DEPOSIT_TYPE, options)
+  return wallet.signAndBroadcast([msg], [types.PROPOSE_DEPOSIT_TYPE], options)
 }
 
 export async function deposit(wallet: Wallet, params: DepositParams) {

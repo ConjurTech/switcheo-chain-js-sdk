@@ -5,7 +5,7 @@ import { BigNumber } from 'bignumber.js'
 
 interface Options extends SignMessageOptions, TransactionOptions {}
 
-export interface AddMarketParams {
+export interface AddMarketMsg {
   Name: string,
   Description: string,
   Base: string,
@@ -14,14 +14,20 @@ export interface AddMarketParams {
   TickSize: string,
   MinQuantity: string,
   MarketType: string,
+  Originator?: string,
 }
-export async function addMarket(wallet: Wallet, params: AddMarketParams, options?: Options) {
-  params.TickSize = new BigNumber(params.TickSize).toFixed(18)
+
+export async function addMarket(wallet: Wallet, msg: AddMarketMsg, options?: Options) {
+  return addMarkets(wallet, [msg], options)
+}
+
+export async function addMarkets(wallet: Wallet, msgs: AddMarketMsg[], options?: Options) {
   const address = wallet.pubKeyBech32
-  const msg = {
-    ...params,
-    Originator: address,
-  }
-  return wallet.signAndBroadcast(msg, types.ADD_MARKET_MSG_TYPE, options)
+  msgs = msgs.map(msg => {
+    msg.TickSize = new BigNumber(msg.TickSize).toFixed(18)
+    if (!msg.Originator) msg.Originator = address
+    return msg
+  })
+  return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.ADD_MARKET_MSG_TYPE), options)
 }
 
