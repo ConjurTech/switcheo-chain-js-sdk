@@ -1,4 +1,4 @@
-export { cancelOrder, cancelOrders, CancelOrderMsg, createOrder, createOrders, CreateOrderParams, editOrder, editOrders, EditOrderParams } from './orders'
+export { cancelOrder, cancelOrders, CancelOrderParams, createOrder, createOrders, CreateOrderParams, editOrder, editOrders, EditOrderParams } from './orders'
 export { mintTokens, MintTokenRequest } from './mints'
 export { createToken, createTokens, CreateTokenMsg } from './tokens'
 export { createOracle, CreateOracleMsg, createProposition, CreatePropositionMsg } from './oracles'

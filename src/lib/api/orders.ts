@@ -26,21 +26,21 @@ export async function createOrders(wallet: Wallet, paramsList: CreateOrderParams
   return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.CREATE_ORDER_MSG_TYPE), options)
 }
 
-export interface CancelOrderMsg {
+export interface CancelOrderParams {
   OrderID: string,
   Originator?: string,
 }
 
-export async function cancelOrder(wallet: Wallet, msg: CancelOrderMsg, options?: Options) {
-  return cancelOrders(wallet, [msg], options)
+export async function cancelOrder(wallet: Wallet, params: CancelOrderParams, options?: Options) {
+  return cancelOrders(wallet, [params], options)
 }
 
-export async function cancelOrders(wallet: Wallet, msgs: CancelOrderMsg[], options?: Options) {
+export async function cancelOrders(wallet: Wallet, paramsList: CancelOrderParams[], options?: Options) {
   const address = wallet.pubKeyBech32
-  msgs = msgs.map(msg => {
-    if (!msg.Originator) msg.Originator = address
-    return msg
-  })
+  const msgs = paramsList.map(params => ({
+    OrderID: params.OrderID,
+    Originator: params.Originator || address
+  }))
   return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.CANCEL_ORDER_MSG_TYPE), options)
 }
 
