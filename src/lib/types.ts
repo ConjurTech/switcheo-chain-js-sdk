@@ -5,6 +5,7 @@ export const ADD_MARKET_MSG_TYPE = 'broker/AddMarket'
 
 export const MINT_TOKEN_MSG_TYPE = 'coin/MintToken'
 export const CREATE_TOKEN_MSG_TYPE = 'coin/CreateToken'
+export const UPGRADE_SWTH_MSG_TYPE = 'coin/UpgradeSWTH'
 
 export const CREATE_ORACLE_TYPE = 'oracle/CreateOracle'
 export const CREATE_VOTE_TYPE = 'oracle/CreateVote'

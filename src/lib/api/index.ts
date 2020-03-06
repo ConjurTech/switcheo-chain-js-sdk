@@ -5,6 +5,7 @@ export { createOracle, CreateOracleMsg, createProposition, CreatePropositionMsg 
 export { proposeDeposit, ProposeDepositMsg, deposit, DepositParams } from './deposit'
 export { addMarket, addMarkets, AddMarketMsg } from './markets'
 export { createValidator, delegateTokens } from './staking'
+export { upgradeSWTH, upgradeSWTHs, UpgradeSwthMsg } from './upgrade_swth'
 export {
   WsGetOrderHistoryParams,
   WsGetRecentTradesParams,
