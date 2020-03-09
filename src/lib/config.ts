@@ -8,8 +8,8 @@ const port = process.env.REST_PORT || '5001'
 
 export const NETWORK = {
   DEVNET: {
-    REST_URL: `http://13.250.103.204:5001`,
-    COSMOS_URL: `http://13.250.103.204:1317`,
+    REST_URL: `http://13.251.218.38:5001`,
+    COSMOS_URL: `http://13.251.218.38:1317`,
   },
   LOCALHOST: {
     REST_URL: `http://${localhost}:${port}`,
