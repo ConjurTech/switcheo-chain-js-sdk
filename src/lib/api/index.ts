@@ -17,10 +17,9 @@ export {
   WsSubscribeParams,
   WsSubscribeCandlesticksParams,
   WsSubscribeOrdersParams,
+  WsSubscribeBooksParams,
   WsSubscribeRecentTradesParams,
   WsSubscribeWalletBalanceParams,
   WsSubscribeMarketStatsParams,
   WsUnsubscribeCandlesticksParams,
-  WsUnsubscribeBookParams,
-  WsUnsubscribeParams,
 } from './ws_wrapper'

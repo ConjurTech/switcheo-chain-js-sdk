@@ -58,7 +58,7 @@ export interface WsSubscribeOrdersParams {
   address: string,
 }
 
-export interface WsSubscribeOrderbookParams {
+export interface WsSubscribeBooksParams {
   channel: string,
   market: string,
 }
@@ -79,15 +79,6 @@ export interface WsSubscribeMarketStatsParams {
   market?: string
 }
 
-export type WsSubscribeParams =
-  WsSubscribeCandlesticksParams |
-  WsSubscribeRecentTradesParams |
-  WsSubscribeOrdersParams |
-  WsSubscribeWalletBalanceParams |
-  WsSubscribeOrderbookParams |
-  WsSubscribeAccountTradesParams |
-  WsSubscribeMarketStatsParams
-
 /* WS unsubscribe params */
 export interface WsUnsubscribeCandlesticksParams {
   channel: string,
@@ -95,12 +86,15 @@ export interface WsUnsubscribeCandlesticksParams {
   resolution: string,
 }
 
-export interface WsUnsubscribeBookParams {
-  channel: string,
-  market: string,
-}
-
-export type WsUnsubscribeParams = WsUnsubscribeCandlesticksParams | WsUnsubscribeBookParams
+export type WsSubscribeParams =
+  WsSubscribeCandlesticksParams |
+  WsSubscribeRecentTradesParams |
+  WsSubscribeOrdersParams |
+  WsSubscribeWalletBalanceParams |
+  WsSubscribeBooksParams |
+  WsSubscribeAccountTradesParams |
+  WsSubscribeMarketStatsParams |
+  WsUnsubscribeCandlesticksParams
 
 export class WsWrapper {
   serverWsUrl: string
@@ -236,7 +230,7 @@ export class WsWrapper {
     } catch (e) { console.log(e.message) }
   }
 
-  public unsubscribe(msgId: string, params: WsUnsubscribeParams[]) {
+  public unsubscribe(msgId: string, params: WsSubscribeParams[]) {
     try {
       let channelIds: string[] = params.map((p) => this.generateChannelId(p))
       console.log("Unsubscribing to " + channelIds)
@@ -310,14 +304,14 @@ export class WsWrapper {
     }
   }
 
-  public generateChannelId(p: WsSubscribeParams | WsUnsubscribeParams): string {
+  public generateChannelId(p: WsSubscribeParams ): string {
     switch (p.channel) {
       case 'candlesticks': {
         let { channel, market, resolution } = <WsSubscribeCandlesticksParams>p
         return [channel, market, resolution].join('.')
       }
       case 'books': {
-        let { channel, market } = <WsSubscribeOrderbookParams>p
+        let { channel, market } = <WsSubscribeBooksParams>p
         return [channel, market].join('.')
       }
       case 'recent_trades': {
