@@ -21,5 +21,6 @@ export {
   WsSubscribeRecentTradesParams,
   WsSubscribeWalletBalanceParams,
   WsSubscribeMarketStatsParams,
+  WsSubscribeAccountTradesParams,
   WsUnsubscribeCandlesticksParams,
 } from './ws_wrapper'
