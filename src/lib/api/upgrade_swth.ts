@@ -12,6 +12,7 @@ export interface UpgradeSwthMsg {
   ValAddress: string,
   Originator?: string,
 }
+
 export async function upgradeSWTH(wallet: Wallet, msg: UpgradeSwthMsg, options?: Options) {
   return upgradeSWTHs(wallet, [msg], options)
 }
