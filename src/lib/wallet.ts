@@ -73,7 +73,7 @@ export class Wallet {
   }
 
   public getValidators() {
-    return fetch(`${this.network.COSMOS_URL}/staking/validators`)
+    return fetch(`${this.network.REST_URL}/get_validators`)
       .then(res => res.json()) // expecting a json response
   }
 
