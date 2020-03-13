@@ -1,4 +1,3 @@
-import * as containers from '../containers'
 import * as types from '../types'
 import { Wallet, SignMessageOptions }  from '../wallet'
 import { TransactionOptions } from '../containers/Transaction'
