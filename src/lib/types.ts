@@ -3,6 +3,8 @@ export const CANCEL_ORDER_MSG_TYPE = 'broker/CancelOrder'
 export const EDIT_ORDER_MSG_TYPE = 'broker/EditOrder'
 export const ADD_MARKET_MSG_TYPE = 'broker/AddMarket'
 
+export const SET_LEVERAGE_MSG_TYPE = 'broker/SetLeverage'
+
 export const MINT_TOKEN_MSG_TYPE = 'coin/MintToken'
 export const CREATE_TOKEN_MSG_TYPE = 'coin/CreateToken'
 export const UPGRADE_SWTH_MSG_TYPE = 'coin/UpgradeSWTH'

@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 export { cancelOrder, cancelOrders, CancelOrderParams, createOrder, createOrders, CreateOrderParams, editOrder, editOrders, EditOrderParams } from './orders'
+=======
+export { cancelOrder, CancelOrderParams, createOrder, CreateOrderParams, editOrder, EditOrderParams } from './orders'
+export { setLeverage, SetLeverageParams } from './account'
+>>>>>>> add setLeverage
 export { mintTokens, MintTokenRequest } from './mints'
 export { createToken, createTokens, CreateTokenMsg } from './tokens'
 export { createOracle, CreateOracleMsg, createProposition, CreatePropositionMsg } from './oracles'
