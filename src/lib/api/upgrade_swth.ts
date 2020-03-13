@@ -9,6 +9,7 @@ export interface UpgradeSwthMsg {
   NeoAddress: string,
   AccAddress: string,
   Amount: string,
+  ValAddress: string,
   Originator?: string,
 }
 export async function upgradeSWTH(wallet: Wallet, msg: UpgradeSwthMsg, options?: Options) {
