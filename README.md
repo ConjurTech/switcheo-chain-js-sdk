@@ -5,7 +5,7 @@
 - look at examples, or run `node .` or `node worker.js` (assumes that mnemonic account number starts with 0!)
 
 symlink mnemonics.json from switcheo-chain
-`ln -s ~/go/src/github.com/ConjurTech/switcheo-chain/mnemonics.json mnemonics.json`
+`ln -s ~/go/src/github.com/ConjurTech/switcheo-chain/seed/mnemonics.json mnemonics.json`
 
 ## Deposit Example
 The deposit example can be run with:
