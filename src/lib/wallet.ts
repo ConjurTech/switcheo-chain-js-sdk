@@ -127,6 +127,11 @@ export class Wallet {
       .then(res => res.json()) // expecting a json response
   }
 
+  public getLeverage(market: string, account: string) {
+    return fetch(`${this.network.REST_URL}/get_leverage?market=${market}&account=${account}`)
+      .then(res => res.json()) // expecting a json response
+  }
+
   public async signMessage(msgs: ConcreteMsg[], options: SignMessageOptions = {}) {
     let sequence: string = options.sequence
 
