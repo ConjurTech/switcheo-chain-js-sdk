@@ -6,7 +6,7 @@ export { proposeDeposit, ProposeDepositMsg, deposit, DepositParams } from './dep
 export { addMarket, addMarkets, AddMarketMsg } from './markets'
 export { createValidator, delegateTokens } from './staking'
 export { upgradeSWTH, upgradeSWTHs, UpgradeSwthMsg } from './upgrade_swth'
-export { setLeverage, SetLeverageParams } from './account'
+export { setLeverage, setLeverages, SetLeverageParams } from './account'
 
 export {
   WsGetOrderHistoryParams,

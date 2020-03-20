@@ -39,7 +39,7 @@ export async function cancelOrders(wallet: Wallet, paramsList: CancelOrderParams
   const address = wallet.pubKeyBech32
   const msgs = paramsList.map(params => ({
     OrderID: params.OrderID,
-    Originator: params.Originator || address
+    Originator: address,
   }))
   return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.CANCEL_ORDER_MSG_TYPE), options)
 }
