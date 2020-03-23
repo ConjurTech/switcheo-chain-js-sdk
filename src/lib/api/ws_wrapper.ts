@@ -41,6 +41,11 @@ export interface WsGetMarketStatsParams {
   market: string
 }
 
+export interface WsGetLeveragesParams {
+  market: string,
+  address: string,
+}
+
 /* WS subscribe params */
 export interface WsSubscribeCandlesticksParams {
   channel: string,
@@ -79,6 +84,12 @@ export interface WsSubscribeMarketStatsParams {
   market?: string
 }
 
+export interface WsSubscribeLeveragesParams {
+  channel: string
+  market?: string
+  address: string
+}
+
 /* WS unsubscribe params */
 export interface WsUnsubscribeCandlesticksParams {
   channel: string,
@@ -94,6 +105,7 @@ export type WsSubscribeParams =
   WsSubscribeBooksParams |
   WsSubscribeAccountTradesParams |
   WsSubscribeMarketStatsParams |
+  WsSubscribeLeveragesParams |
   WsUnsubscribeCandlesticksParams
 
 export class WsWrapper {
@@ -214,6 +226,18 @@ export class WsWrapper {
     } catch (e) { console.log(e.message) }
   }
 
+  public wsGetLeverages(msgId: string, params: WsGetLeveragesParams) {
+    try {
+      const msg = JSON.stringify({
+        id: msgId,
+        method: 'get_leverages',
+        params,
+      })
+
+      this.socket.send(msg)
+    } catch (e) { console.log(e.message) }
+  }
+
   // WS Subscriptions
 
   public subscribe(msgId: string, params: WsSubscribeParams[]) { // List of params
@@ -299,6 +323,17 @@ export class WsWrapper {
           channel,
           market,
         }
+      case 'leverages':
+        return {
+          channel,
+          address,
+        }
+      case 'leverages_by_market':
+        return {
+          channel,
+          market,
+          address,
+        }
       default:
         throw new Error("Error parsing channelId")
     }
@@ -345,6 +380,14 @@ export class WsWrapper {
       case 'market_stats_by_market': {
         let { channel, market } = <WsSubscribeMarketStatsParams>p
         return [channel, market].join('.')
+      }
+      case 'leverages': {
+        let { channel, address } = <WsSubscribeWalletBalanceParams>p
+        return [channel, address].join('.')
+      }
+      case 'leverages_by_market': {
+        let { channel, market, address } = <WsSubscribeOrdersParams>p
+        return [channel, market, address].join('.')
       }
       default:
         throw new Error("Invalid subscription")

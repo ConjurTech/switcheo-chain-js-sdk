@@ -9,13 +9,16 @@ export { upgradeSWTH, upgradeSWTHs, UpgradeSwthMsg } from './upgrade_swth'
 export { setLeverage, setLeverages, SetLeverageParams } from './account'
 
 export {
+  WsWrapper,
+  // Ws gets
   WsGetOrderHistoryParams,
   WsGetRecentTradesParams,
   WsGetCandlesticksParams,
   WsGetOpenOrdersParams,
   WsGetAccountTradesParams,
   WsGetMarketStatsParams,
-  WsWrapper,
+  WsGetLeveragesParams,
+  // Ws subscriptions
   WsSubscribeParams,
   WsSubscribeCandlesticksParams,
   WsSubscribeOrdersParams,
@@ -24,5 +27,6 @@ export {
   WsSubscribeWalletBalanceParams,
   WsSubscribeMarketStatsParams,
   WsSubscribeAccountTradesParams,
+  WsSubscribeLeveragesParams,
   WsUnsubscribeCandlesticksParams,
 } from './ws_wrapper'
