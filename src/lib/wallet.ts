@@ -222,8 +222,9 @@ export class Wallet {
     if (this.broadcastQueue.length === 0) { return }
     if (this.isBroadcastQueuePaused === true) { return }
 
+    this.isBroadcastQueuePaused = true
+
     if (this.sequenceCounter === undefined) {
-      this.isBroadcastQueuePaused = true
       const { result } = await this.getAccount()
       this.sequenceCounter = result.value.sequence
     }
@@ -248,17 +249,26 @@ export class Wallet {
     const broadcastTxBody = new Transaction(allConcreteMsgs, [signature], { mode: 'block' })
 
     const response = await this.broadcast(broadcastTxBody)
-    const rawLogs = JSON.parse(response.raw_log)
+
+    let rawLogs
+    const isInvalidSequence = response.raw_log === 'unauthorized: signature verification failed; verify correct account sequence and chain-id'
+    if (response.raw_log !== undefined && !isInvalidSequence) {
+      rawLogs = JSON.parse(response.raw_log)
+    }
 
     for (let i = 0; i < ids.length; i++) {
       const id = ids[i]
       const responseCopy = JSON.parse(JSON.stringify(response))
-      responseCopy.logs = [response.logs[i]]
-      responseCopy.raw_log = JSON.stringify([rawLogs[i]])
+      if (response.logs !== undefined) {
+        responseCopy.logs = [response.logs[i]]
+      }
+      if (rawLogs !== undefined) {
+        responseCopy.raw_log = JSON.stringify([rawLogs[i]])
+      }
       this.broadcastResults[id] = responseCopy
     }
 
-    if (response.raw_log === 'unauthorized: signature verification failed; verify correct account sequence and chain-id') {
+    if (isInvalidSequence) {
       // reset sequenceCounter
       this.sequenceCounter = undefined
       return
