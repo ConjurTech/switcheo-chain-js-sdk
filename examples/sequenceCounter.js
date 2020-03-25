@@ -27,7 +27,7 @@ async function testSequenceCounter() {
   api.createOrder(accountWallet, params).then((response) => handleResponse('response2', response))
   api.createOrder(accountWallet, params).then((response) => handleResponse('response3', response))
 
-  await new Promise(resolve => setTimeout(resolve, 1000))
+  await new Promise(resolve => setTimeout(resolve, 200))
 
   api.createOrder(accountWallet, params).then((response) => handleResponse('response4', response))
   api.createOrder(accountWallet, params).then((response) => handleResponse('response5', response))

@@ -71,7 +71,7 @@ export class Wallet {
       this.useSequenceCounter = walletOptions.useSequenceCounter
     }
 
-    this.broadcastQueueIntervalTime = 1000
+    this.broadcastQueueIntervalTime = 100
     if (walletOptions.broadcastQueueIntervalTime !== undefined) {
       this.broadcastQueueIntervalTime = walletOptions.broadcastQueueIntervalTime
     }
@@ -228,20 +228,35 @@ export class Wallet {
       this.sequenceCounter = result.value.sequence
     }
 
-    let { id, concreteMsgs, options } = this.broadcastQueue.shift()
-    if (options === undefined) {
-      options = {}
+    const ids = []
+    let allConcreteMsgs = []
+
+    while (true) {
+      if (this.broadcastQueue.length === 0) { break }
+      if (allConcreteMsgs.length + this.broadcastQueue[0].concreteMsgs.length > 100) { break }
+
+      const { id, concreteMsgs } = this.broadcastQueue.shift()
+
+      ids.push(id)
+      allConcreteMsgs = allConcreteMsgs.concat(concreteMsgs)
     }
-    if (options.sequence === undefined) {
-      options.sequence = this.sequenceCounter
-    }
+
+    const options = { sequence: this.sequenceCounter.toString() }
     this.sequenceCounter++
 
-    const signature = await this.signMessage(concreteMsgs, options)
-    const broadcastTxBody = new Transaction(concreteMsgs, [signature], options)
+    const signature = await this.signMessage(allConcreteMsgs, options)
+    const broadcastTxBody = new Transaction(allConcreteMsgs, [signature], { mode: 'block' })
 
     const response = await this.broadcast(broadcastTxBody)
-    this.broadcastResults[id] = response
+    const rawLogs = JSON.parse(response.raw_log)
+
+    for (let i = 0; i < ids.length; i++) {
+      const id = ids[i]
+      const responseCopy = JSON.parse(JSON.stringify(response))
+      responseCopy.logs = [response.logs[i]]
+      responseCopy.raw_log = JSON.stringify([rawLogs[i]])
+      this.broadcastResults[id] = responseCopy
+    }
 
     if (response.raw_log === 'unauthorized: signature verification failed; verify correct account sequence and chain-id') {
       // reset sequenceCounter
@@ -254,6 +269,8 @@ export class Wallet {
 
   private constructConcreteMsgs(msgs: object[], types: string[]) {
     if (msgs.length != types.length) throw new Error("Msg length is not equal to types length")
+    if (msgs.length > 100) throw new Error("Cannot broadcast more than 100 messages in 1 transaction")
+
     let concreteMsgs: ConcreteMsg[] = []
     // format message with concrete codec type
     for (let i = 0; i < msgs.length; i++) {
