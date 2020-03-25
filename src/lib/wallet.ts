@@ -8,10 +8,15 @@ import { marshalJSON } from './utils/encoder'
 import { getPath, PrivKeySecp256k1, PubKeySecp256k1 } from './utils/wallet'
 import { ConcreteMsg } from './containers/Transaction'
 
-export interface SignMessageOptions { memo?: string, sequence?: string, useCosmosFormat?: boolean }
+export interface SignMessageOptions { memo?: string, sequence?: string }
+export interface WalletOptions { useSequenceCounter?: boolean, broadcastQueueIntervalTime?: number }
+export interface BroadcastQueueItem { id: string, concreteMsgs: ConcreteMsg[], options: any }
+export interface BroadcastResults {
+  [id: string]: any
+}
 
 export class Wallet {
-  public static async connect(privateKey: string, net = 'LOCALHOST') {
+  public static async connect(privateKey: string, net = 'LOCALHOST', walletOptions?: WalletOptions) {
     const network = NETWORK[net]
     if (!network) {
       throw new Error('network must be LOCALHOST/DEVNET')
@@ -19,7 +24,7 @@ export class Wallet {
     const pubKeyBech32 = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex')).toPubKey().toAddress().toBech32('cosmos')
     const { result: { value }} = await fetch(`${network.REST_URL}/get_account?account=${pubKeyBech32}`)
       .then(res => res.json())
-    return new Wallet(privateKey, value.account_number.toString(), network)
+    return new Wallet(privateKey, value.account_number.toString(), network, walletOptions)
   }
 
   public readonly privKey: PrivKeySecp256k1
@@ -35,7 +40,15 @@ export class Wallet {
   public eth: EthWallet
   public broadcastMode: string
 
-  constructor(privateKey, accountNumber, network) {
+  private useSequenceCounter: boolean
+  private sequenceCounter?: number
+  private broadcastQueueIntervalTime: number
+  private broadcastQueueIntervalId: number
+  private broadcastQueue: BroadcastQueueItem[]
+  private broadcastResults: BroadcastResults
+  private isBroadcastQueuePaused: boolean
+
+  constructor(privateKey, accountNumber, network, walletOptions?: WalletOptions) {
     const privKey = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex'))
 
     this.privKey = privKey
@@ -48,6 +61,31 @@ export class Wallet {
     this.gas = CONFIG.DEFAULT_GAS
     this.accountNumber = accountNumber
     this.network = network
+
+    if (walletOptions === undefined) {
+      walletOptions = {}
+    }
+
+    this.useSequenceCounter = false
+    if (walletOptions.useSequenceCounter !== undefined) {
+      this.useSequenceCounter = walletOptions.useSequenceCounter
+    }
+
+    this.broadcastQueueIntervalTime = 1000
+    if (walletOptions.broadcastQueueIntervalTime !== undefined) {
+      this.broadcastQueueIntervalTime = walletOptions.broadcastQueueIntervalTime
+    }
+
+    this.broadcastQueue = []
+    this.broadcastResults = {}
+
+    this.broadcastQueueIntervalId = <any>setInterval(() => {
+      this.processBroadcastQueue()
+    }, this.broadcastQueueIntervalTime)
+  }
+
+  public disconnect() {
+    clearInterval(this.broadcastQueueIntervalId)
   }
 
   public connectEthWallet(web3) {
@@ -153,6 +191,68 @@ export class Wallet {
   }
 
   public async signAndBroadcast(msgs: object[], types: string[], options) {
+    if (this.useSequenceCounter === true) {
+      return await this.seqSignAndBroadcast(msgs, types, options)
+    }
+
+    const concreteMsgs = this.constructConcreteMsgs(msgs, types)
+    const signature = await this.signMessage(concreteMsgs, options)
+    const broadcastTxBody = new Transaction(concreteMsgs, [signature], options)
+
+    return this.broadcast(broadcastTxBody)
+  }
+
+  public async seqSignAndBroadcast(msgs: object[], types: string[], options) {
+    const concreteMsgs = this.constructConcreteMsgs(msgs, types)
+    const id = Math.random().toString(36).substr(2, 9)
+    this.broadcastQueue.push({ id, concreteMsgs, options })
+
+    while (true) {
+      // sleep for broadcastQueueIntervalTime ms
+      await new Promise(resolve => setTimeout(resolve, 100))
+      const result = this.broadcastResults[id]
+      if (result !== undefined) {
+        delete this.broadcastResults[id]
+        return result
+      }
+    }
+  }
+
+  private async processBroadcastQueue() {
+    if (this.broadcastQueue.length === 0) { return }
+    if (this.isBroadcastQueuePaused === true) { return }
+
+    if (this.sequenceCounter === undefined) {
+      this.isBroadcastQueuePaused = true
+      const { result } = await this.getAccount()
+      this.sequenceCounter = result.value.sequence
+    }
+
+    let { id, concreteMsgs, options } = this.broadcastQueue.shift()
+    if (options === undefined) {
+      options = {}
+    }
+    if (options.sequence === undefined) {
+      options.sequence = this.sequenceCounter
+    }
+    this.sequenceCounter++
+
+    const signature = await this.signMessage(concreteMsgs, options)
+    const broadcastTxBody = new Transaction(concreteMsgs, [signature], options)
+
+    const response = await this.broadcast(broadcastTxBody)
+    this.broadcastResults[id] = response
+
+    if (response.raw_log === 'unauthorized: signature verification failed; verify correct account sequence and chain-id') {
+      // reset sequenceCounter
+      this.sequenceCounter = undefined
+      return
+    }
+
+    this.isBroadcastQueuePaused = false
+  }
+
+  private constructConcreteMsgs(msgs: object[], types: string[]) {
     if (msgs.length != types.length) throw new Error("Msg length is not equal to types length")
     let concreteMsgs: ConcreteMsg[] = []
     // format message with concrete codec type
@@ -162,10 +262,8 @@ export class Wallet {
         value: msgs[i],
       }
     }
-    const signature = await this.signMessage(concreteMsgs, options)
-    const broadcastTxBody = new Transaction(concreteMsgs, [signature], options)
 
-    return this.broadcast(broadcastTxBody)
+    return concreteMsgs
   }
 }
 

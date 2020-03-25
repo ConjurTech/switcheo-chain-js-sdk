@@ -36,13 +36,9 @@ export interface CreateValidatorMsg {
 }
 
 export async function createValidator(wallet: Wallet, msg: CreateValidatorMsg, options?: Options) {
-	if (options === undefined) { options = {} }
-	options.useCosmosFormat = true
   return wallet.signAndBroadcast([msg], [types.CREATE_VALIDATOR_MSG_TYPE], options)
 }
 
 export async function delegateTokens(wallet: Wallet, msg: DelegateTokensMsg, options?: Options) {
-	if (options === undefined) { options = {} }
-	options.useCosmosFormat = true
   return wallet.signAndBroadcast([msg], [types.DELEGATE_TOKENS_MSG_TYPE], options)
 }
