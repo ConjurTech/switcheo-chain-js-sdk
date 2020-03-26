@@ -5,12 +5,14 @@ const { Wallet } = wallet
 
 async function createOrder() {
   const newAccount = wallet.newAccount()
+  console.log('newAccount', newAccount.pubKeyBech32)
   const tokenReq = {
     address: newAccount.pubKeyBech32,
     amount: '1000',
     denom: 'swth',
   }
-  await api.mintTokens(tokenReq)
+  const mintResult = await api.mintTokens(tokenReq)
+  console.log('mintResult', mintResult)
 
   const accountWallet = await Wallet.connect(newAccount.privateKey)
   const params = {
@@ -19,8 +21,8 @@ async function createOrder() {
     Quantity: '200',
     Price: '1.01',
   }
-  const result = await api.createOrder(accountWallet, params)
-  console.log('result', result)
+  const orderResult = await api.createOrder(accountWallet, params)
+  console.log('orderResult', orderResult)
 }
 
 createOrder()
