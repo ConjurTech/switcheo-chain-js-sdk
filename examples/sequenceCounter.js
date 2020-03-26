@@ -16,6 +16,7 @@ async function testSequenceCounter() {
   }
   await api.mintTokens(tokenReq)
 
+  console.log(newAccount.pubKeyBech32)
   const accountWallet = await Wallet.connect(newAccount.privateKey, 'LOCALHOST', { useSequenceCounter: true })
   const params = {
     Market: 'swth_eth',
@@ -29,8 +30,22 @@ async function testSequenceCounter() {
 
   await new Promise(resolve => setTimeout(resolve, 500))
 
-  api.createOrder(accountWallet, params).then((response) => handleResponse('response4', response))
-  api.createOrder(accountWallet, params).then((response) => handleResponse('response5', response))
+  const oracleParams = {
+    Name: 'BTC_USD_xD',
+    Description: 'Calculated based on an average of price feeds from Binance and Coinbase, ... more info ...',
+    MinConsensusThreshold: '67',
+    MaxResultAge: '100',
+    SecurityType: 'SecuredByValidators',
+    ResultStrategy: 'median',
+    Config: JSON.stringify({
+      "median_threshold": '10'
+    }),
+    Resolution: '10',
+    Spec: '{}',
+  }
+
+  api.createOracle(accountWallet, oracleParams).then((response) => handleResponse('response4', response))
+  api.createOracle(accountWallet, oracleParams).then((response) => handleResponse('response5', response))
 
   await new Promise(resolve => setTimeout(resolve, 1000))
 

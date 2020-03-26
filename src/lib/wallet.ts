@@ -242,18 +242,21 @@ export class Wallet {
       allConcreteMsgs = allConcreteMsgs.concat(concreteMsgs)
     }
 
-    const options = { sequence: this.sequenceCounter.toString() }
+    const currSequence = this.sequenceCounter.toString()
+    const options = { sequence: currSequence }
     this.sequenceCounter++
 
     const signature = await this.signMessage(allConcreteMsgs, options)
     const broadcastTxBody = new Transaction(allConcreteMsgs, [signature], { mode: 'block' })
 
     const response = await this.broadcast(broadcastTxBody)
+    response.sequence = currSequence
 
     let rawLogs
-    const isInvalidSequence = response.raw_log === 'unauthorized: signature verification failed; verify correct account sequence and chain-id'
-    if (response.raw_log !== undefined && !isInvalidSequence) {
+    try {
       rawLogs = JSON.parse(response.raw_log)
+    } catch (e) {
+      // ignore parsing error
     }
 
     for (let i = 0; i < ids.length; i++) {
@@ -268,10 +271,10 @@ export class Wallet {
       this.broadcastResults[id] = responseCopy
     }
 
+    const isInvalidSequence = response.raw_log === 'unauthorized: signature verification failed; verify correct account sequence and chain-id'
     if (isInvalidSequence) {
       // reset sequenceCounter
       this.sequenceCounter = undefined
-      return
     }
 
     this.isBroadcastQueuePaused = false
