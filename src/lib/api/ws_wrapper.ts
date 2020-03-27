@@ -46,6 +46,11 @@ export interface WsGetLeveragesParams {
   address: string,
 }
 
+export interface WsGetPositionsParams {
+  market: string,
+  address: string,
+}
+
 /* WS subscribe params */
 export interface WsSubscribeCandlesticksParams {
   channel: string,
@@ -85,6 +90,12 @@ export interface WsSubscribeMarketStatsParams {
 }
 
 export interface WsSubscribeLeveragesParams {
+  channel: string
+  market?: string
+  address: string
+}
+
+export interface WsSubscribePositionsParams {
   channel: string
   market?: string
   address: string
@@ -238,6 +249,18 @@ export class WsWrapper {
     } catch (e) { console.log(e.message) }
   }
 
+  public wsGetPositions(msgId: string, params: WsGetLeveragesParams) {
+    try {
+      const msg = JSON.stringify({
+        id: msgId,
+        method: 'get_positions',
+        params,
+      })
+
+      this.socket.send(msg)
+    } catch (e) { console.log(e.message) }
+  }
+
   // WS Subscriptions
 
   public subscribe(msgId: string, params: WsSubscribeParams[]) { // List of params
@@ -334,12 +357,23 @@ export class WsWrapper {
           market,
           address,
         }
+      case 'positions':
+        return {
+          channel,
+          address,
+        }
+      case 'positions_by_market':
+        return {
+          channel,
+          market,
+          address,
+        }
       default:
         throw new Error("Error parsing channelId")
     }
   }
 
-  public generateChannelId(p: WsSubscribeParams ): string {
+  public generateChannelId(p: WsSubscribeParams): string {
     switch (p.channel) {
       case 'candlesticks': {
         let { channel, market, resolution } = <WsSubscribeCandlesticksParams>p
@@ -387,6 +421,14 @@ export class WsWrapper {
       }
       case 'leverages_by_market': {
         let { channel, market, address } = <WsSubscribeOrdersParams>p
+        return [channel, market, address].join('.')
+      }
+      case 'positions': {
+        let { channel, address } = <WsSubscribePositionsParams>p
+        return [channel, address].join('.')
+      }
+      case 'positions_by_market': {
+        let { channel, market, address } = <WsSubscribePositionsParams>p
         return [channel, market, address].join('.')
       }
       default:

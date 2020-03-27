@@ -18,6 +18,7 @@ export {
   WsGetAccountTradesParams,
   WsGetMarketStatsParams,
   WsGetLeveragesParams,
+  WsGetPositionsParams,
   // Ws subscriptions
   WsSubscribeParams,
   WsSubscribeCandlesticksParams,
@@ -28,5 +29,6 @@ export {
   WsSubscribeMarketStatsParams,
   WsSubscribeAccountTradesParams,
   WsSubscribeLeveragesParams,
+  WsSubscribePositionsParams,
   WsUnsubscribeCandlesticksParams,
 } from './ws_wrapper'
