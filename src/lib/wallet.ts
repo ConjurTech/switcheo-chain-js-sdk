@@ -66,7 +66,7 @@ export class Wallet {
       walletOptions = {}
     }
 
-    this.useSequenceCounter = false
+    this.useSequenceCounter = true
     if (walletOptions.useSequenceCounter !== undefined) {
       this.useSequenceCounter = walletOptions.useSequenceCounter
     }
