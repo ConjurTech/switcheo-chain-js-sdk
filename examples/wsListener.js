@@ -1,18 +1,16 @@
-let SDK = require('../.')
-let WebSocket =  require('ws')
-ws = new SDK.api.WsWrapper("http://localhost:5000/ws", msg => console.log("received msg:", msg.data))
-// ws = new SDK.api.WsWrapper("ws://13.251.218.38:5000/ws", msg => console.log("received msg:", msg.data))
+const { default: Client, ClientEvent, Network, MarketEvent } = require('../.')
 
-ws.socket = new WebSocket(ws.serverWsUrl)
-ws.socket.onopen = () => {
-  ws.isConnected = true
-  console.log('socket is connected')
-  ws.onMsgCallback("connected")
+const client = new Client(Network.TestNet)
 
-  msg = JSON.stringify({ id: '1', method: 'subscribe', params: { channels: ["market_stats"] } })
-  ws.socket.send(msg)
-}
+const marketWsApi = client.market.ws
+marketWsApi.on(MarketEvent.SUB_MARKET_STATS, (msg) => {
+    console.log('received msg:', msg)
+})
 
-ws.socket.onmessage = (msg) => {ws.onMsgCallback(msg)}
+client.on(ClientEvent.Connect, () => {
+    marketWsApi.subscribeMarketStats()
+})
 
-ws.socket.onclose = () => {ws.isConnected = false,console.log('socket off')}
+client.on(ClientEvent.Disconnect, () => {
+    console.log('socket off')
+})

@@ -6,6 +6,9 @@ const localhost = process.env.REST_HOST || '127.0.0.1'
 const port = process.env.REST_PORT || '5001'
 
 export const NETWORK = {
+  TestNet: {
+    REST_URL: `http://13.251.218.38:5001`,
+  },
   DEVNET: {
     REST_URL: `http://13.251.218.38:5001`,
   },

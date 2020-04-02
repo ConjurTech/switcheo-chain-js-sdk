@@ -7,6 +7,10 @@ import * as api from './lib/api'
 import * as config from './lib/config'
 import * as utils from './lib/utils'
 
+export { default } from './lib/Client'
+export * from './lib/Client'
+export * from './lib/clients'
+
 export {
   constants,
   wallet,
