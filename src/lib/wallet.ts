@@ -175,6 +175,11 @@ export class Wallet {
       .then(res => res.json()) // expecting a json response
   }
 
+  public getPosition(account: string, market: string) {
+    return fetch(`${this.network.REST_URL}/get_position?account=${account}&market=${market}`)
+      .then(res => res.json()) // expecting a json response
+  }
+
   public async signMessage(msgs: ConcreteMsg[], options: SignMessageOptions = {}) {
     let sequence: string = options.sequence
 
