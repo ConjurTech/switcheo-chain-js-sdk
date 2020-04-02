@@ -150,23 +150,23 @@ export class Wallet {
       .then(res => res.json()) // expecting a json response
   }
 
-  public getOrders(account: string) {
-    return fetch(`${this.network.REST_URL}/get_orders?account=${account}`)
+  public getOrders() {
+    return fetch(`${this.network.REST_URL}/get_orders?account=${this.pubKeyBech32}`)
       .then(res => res.json()) // expecting a json response
   }
 
-  public getOpenOrders(account: string) {
-    return fetch(`${this.network.REST_URL}/get_orders?account=${account}&order_status=open`)
+  public getOpenOrders() {
+    return fetch(`${this.network.REST_URL}/get_orders?account=${this.pubKeyBech32}&order_status=open`)
       .then(res => res.json()) // expecting a json response
   }
 
-  public getWalletBalance(account: string) {
-    return fetch(`${this.network.REST_URL}/get_balance?account=${account}`)
+  public getWalletBalance() {
+    return fetch(`${this.network.REST_URL}/get_balance?account=${this.pubKeyBech32}`)
       .then(res => res.json()) // expecting a json response
   }
 
-  public getLeverage(market: string, account: string) {
-    return fetch(`${this.network.REST_URL}/get_leverage?market=${market}&account=${account}`)
+  public getLeverage(market: string) {
+    return fetch(`${this.network.REST_URL}/get_leverage?market=${market}&account=${this.pubKeyBech32}`)
       .then(res => res.json()) // expecting a json response
   }
 
@@ -175,8 +175,8 @@ export class Wallet {
       .then(res => res.json()) // expecting a json response
   }
 
-  public getPosition(account: string, market: string) {
-    return fetch(`${this.network.REST_URL}/get_position?account=${account}&market=${market}`)
+  public getPosition(market: string) {
+    return fetch(`${this.network.REST_URL}/get_position?account=${this.pubKeyBech32}&market=${market}`)
       .then(res => res.json()) // expecting a json response
   }
 
