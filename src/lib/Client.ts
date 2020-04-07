@@ -1,5 +1,5 @@
 import {EventEmitter} from 'events'
-import WebSocket from 'ws'
+import WebSocket from 'isomorphic-ws'
 
 import MarketClient from './clients/Market/MarketClient'
 import TradeClient from './clients/Trade/TradeClient'
