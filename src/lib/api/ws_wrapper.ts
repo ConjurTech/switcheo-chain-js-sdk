@@ -249,11 +249,23 @@ export class WsWrapper {
     } catch (e) { console.log(e.message) }
   }
 
-  public wsGetPositions(msgId: string, params: WsGetLeveragesParams) {
+  public wsGetOpenPositions(msgId: string, params: WsGetLeveragesParams) {
     try {
       const msg = JSON.stringify({
         id: msgId,
-        method: 'get_positions',
+        method: 'get_open_positions',
+        params,
+      })
+
+      this.socket.send(msg)
+    } catch (e) { console.log(e.message) }
+  }
+
+  public wsGetClosedPositions(msgId: string, params: WsGetLeveragesParams) {
+    try {
+      const msg = JSON.stringify({
+        id: msgId,
+        method: 'get_closed_positions',
         params,
       })
 
