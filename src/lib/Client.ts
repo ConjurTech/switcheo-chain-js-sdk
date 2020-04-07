@@ -45,8 +45,8 @@ export default class Client extends EventEmitter {
   private newWebSocket(baseUrl: string): WebSocket {
     const socket = new WebSocket(baseUrl)
 
-    socket.on('open', (listener) => this.emit(ClientEvent.Connect, listener))
-    socket.on('close', (listener) => this.emit(ClientEvent.Disconnect, listener))
+    socket.onopen = () => this.emit(ClientEvent.Connect)
+    socket.onclose = () => this.emit(ClientEvent.Disconnect)
 
     socket.onmessage = (message) => {
       const data = JSON.parse(message.data)
