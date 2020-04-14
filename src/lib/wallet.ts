@@ -21,7 +21,7 @@ export class Wallet {
     if (!network) {
       throw new Error('network must be LOCALHOST/DEVNET')
     }
-    const pubKeyBech32 = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex')).toPubKey().toAddress().toBech32('cosmos')
+    const pubKeyBech32 = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex')).toPubKey().toAddress().toBech32('swth')
     const { result: { value }} = await fetch(`${network.REST_URL}/get_account?account=${pubKeyBech32}`)
       .then(res => res.json())
     return new Wallet(privateKey, value.account_number.toString(), network, walletOptions)
@@ -55,9 +55,9 @@ export class Wallet {
     this.address = privKey.toPubKey().toAddress().toBytes()
     this.pubKeySecp256k1 = privKey.toPubKey()
     this.pubKeyBase64 = this.pubKeySecp256k1.pubKey.toString('base64')
-    this.pubKeyBech32 = this.pubKeySecp256k1.toAddress().toBech32('cosmos')
-    this.validatorBech32 = this.pubKeySecp256k1.toAddress().toBech32('cosmosvaloper')
-    this.consensusBech32 = this.pubKeySecp256k1.toAddress().toBech32('cosmosvalconspub')
+    this.pubKeyBech32 = this.pubKeySecp256k1.toAddress().toBech32('swth')
+    this.validatorBech32 = this.pubKeySecp256k1.toAddress().toBech32('swthvaloper')
+    this.consensusBech32 = this.pubKeySecp256k1.toAddress().toBech32('swthvalconspub')
     this.gas = CONFIG.DEFAULT_GAS
     this.accountNumber = accountNumber
     this.network = network
@@ -310,7 +310,7 @@ export class Wallet {
 export function newAccount() {
   const mnemonic = bip39.generateMnemonic()
   const privateKey = getPrivKeyFromMnemonic(mnemonic)
-  const pubKeyBech32 = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex')).toPubKey().toAddress().toBech32('cosmos')
+  const pubKeyBech32 = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex')).toPubKey().toAddress().toBech32('swth')
   return {
     mnemonic,
     privateKey,
