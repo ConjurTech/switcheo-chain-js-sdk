@@ -38,7 +38,7 @@ function getConsensusPublicKey(privateKey) {
 
   const pubKeyBytes = concatTypedArrays(prefix, new Uint8Array(pubKey))
   const converted = bech32.toWords(pubKeyBytes)
-  const consPubKey = bech32.encode('cosmosvalconspub', converted)
+  const consPubKey = bech32.encode('swthvalconspub', converted)
   return consPubKey
 }
 

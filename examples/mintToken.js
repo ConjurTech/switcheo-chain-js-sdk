@@ -8,7 +8,7 @@ const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[1])
 
 async function mintToken() {
   const wallet = await Wallet.connect(privateKey)
-  const toAddress = 'cosmos1rzdwrr33z5pxw2ndtsdluxhce9p26emfs0f5dm'
+  const toAddress = 'swth1rzdwrr33z5pxw2ndtsdluxhce9p26emfs0f5dm'
   const params = {
     toAddress,
     amount: '1000',
