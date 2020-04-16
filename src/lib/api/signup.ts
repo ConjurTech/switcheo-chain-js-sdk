@@ -4,7 +4,7 @@ import { TransactionOptions } from '../containers/Transaction'
 
 interface Options extends SignMessageOptions, TransactionOptions {}
 
-export interface ProxySignupMsg {
+export interface SignalDepositMsg {
   AccAddress: string,
   Originator?: string,
   DepositInfo: {
@@ -14,10 +14,10 @@ export interface ProxySignupMsg {
   },
 }
 
-export async function proxySignup(wallet: Wallet, msg: ProxySignupMsg, options?: Options) {
+export async function signalDeposit(wallet: Wallet, msg: SignalDepositMsg, options?: Options) {
   if (msg.Originator === undefined) {
     msg.Originator = wallet.pubKeyBech32
   }
 
-  return wallet.signAndBroadcast([msg], [types.PROXY_SIGNUP_TYPE], options)
+  return wallet.signAndBroadcast([msg], [types.SIGNAL_DEPOSIT_TYPE], options)
 }

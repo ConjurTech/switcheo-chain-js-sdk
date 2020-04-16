@@ -3,7 +3,7 @@ const SDK = require('../.')
 const { wallet, api } = SDK
 const { Wallet } = wallet
 
-async function proxySignup() {
+async function signalDeposit() {
   const userAccount = wallet.newAccount()
 
   const helperAccount = wallet.newAccount()
@@ -17,7 +17,7 @@ async function proxySignup() {
   console.log('mintResult', mintResult)
 
   const accountWallet = await Wallet.connect(helperAccount.privateKey)
-  const proxySignupMsg = {
+  const signalDepositMsg = {
     AccAddress: userAccount.pubKeyBech32,
     DepositInfo: {
       Address: '0x45b6991975f1B5e428E31eA51817371b931Db892',
@@ -25,8 +25,8 @@ async function proxySignup() {
       AssetID: '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2',
     }
   }
-  const signupResult = await api.proxySignup(accountWallet, proxySignupMsg)
+  const signupResult = await api.signalDeposit(accountWallet, signalDepositMsg)
   console.log('signupResult', signupResult)
 }
 
-proxySignup()
+signalDeposit()

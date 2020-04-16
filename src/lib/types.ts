@@ -16,4 +16,4 @@ export const PROPOSE_DEPOSIT_TYPE = 'deposit/ProposeDeposit'
 export const CREATE_VALIDATOR_MSG_TYPE = 'cosmos-sdk/MsgCreateValidator'
 export const DELEGATE_TOKENS_MSG_TYPE = 'cosmos-sdk/MsgDelegate'
 
-export const PROXY_SIGNUP_TYPE = 'signup/ProxySignup'
+export const SIGNAL_DEPOSIT_TYPE = 'signup/SignalDeposit'
