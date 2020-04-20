@@ -64,3 +64,26 @@ export async function editOrders(wallet: Wallet, orderIDs: string[], paramsList:
   }))
   return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.EDIT_ORDER_MSG_TYPE), options)
 }
+
+export interface CancelOrderParams {
+  OrderID: string,
+  Originator?: string,
+}
+
+export interface EditMarginParams {
+  Market: string,
+  Margin: string,
+}
+
+export async function editMargin(wallet: Wallet, params: EditMarginParams, options?: Options) {
+  return editMargins(wallet, [params], options)
+}
+
+export async function editMargins(wallet: Wallet, paramsList: EditMarginParams[], options?: Options) {
+  const address = wallet.pubKeyBech32
+  const msgs = paramsList.map(params => ({
+    EditMarginParams: JSON.stringify(params),
+    Originator: address,
+  }))
+  return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.EDIT_MARGIN_MSG_TYPE), options)
+}
