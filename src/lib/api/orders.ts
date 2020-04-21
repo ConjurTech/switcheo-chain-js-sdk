@@ -82,7 +82,8 @@ export async function editMargin(wallet: Wallet, params: EditMarginParams, optio
 export async function editMargins(wallet: Wallet, paramsList: EditMarginParams[], options?: Options) {
   const address = wallet.pubKeyBech32
   const msgs = paramsList.map(params => ({
-    EditMarginParams: JSON.stringify(params),
+    Market: params.Market,
+    Margin: params.Margin,
     Originator: address,
   }))
   return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.EDIT_MARGIN_MSG_TYPE), options)
