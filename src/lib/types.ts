@@ -18,4 +18,4 @@ export const DELEGATE_TOKENS_MSG_TYPE = 'cosmos-sdk/MsgDelegate'
 
 export const SIGNAL_DEPOSIT_TYPE = 'signup/SignalDeposit'
 
-export const EDIT_MARGIN_MSG_TYPE = 'broker/AdjustMargin'
+export const EDIT_MARGIN_MSG_TYPE = 'broker/SetMargin'
