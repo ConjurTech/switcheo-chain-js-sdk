@@ -5,6 +5,7 @@ import MarketClient from './clients/Market/MarketClient'
 import TradeClient from './clients/Trade/TradeClient'
 
 export enum Network {
+  LocalHost = 'LOCALHOST',
   TestNet = 'TestNet',
   MainNet = 'MainNet',
 }
