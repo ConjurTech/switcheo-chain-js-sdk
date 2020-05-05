@@ -7,6 +7,7 @@ interface Options extends SignMessageOptions, TransactionOptions {}
 export interface CreateOrderParams {
   OrderType?: string,
   StopPrice?: string,
+  TriggerType?: string,
   Market: string,
   Side: string,
   Quantity: string,
