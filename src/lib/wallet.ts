@@ -180,6 +180,11 @@ export class Wallet {
       .then(res => res.json()) // expecting a json response
   }
 
+  public getIndexPrice(market: string) {
+    return fetch(`${this.network.REST_URL}/get_index_price?market=${market}`)
+      .then(res => res.json()) // expecting a json response
+  }
+
   public async signMessage(msgs: ConcreteMsg[], options: SignMessageOptions = {}) {
     let sequence: string = options.sequence
 
