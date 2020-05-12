@@ -6,14 +6,14 @@ const mnemonics = require('../mnemonics.json')
 
 const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[0])
 
-async function createProposition() { //
+async function createVote() { //
   const wallet = await Wallet.connect(privateKey)
   const msg = {
-    OracleName: 'BTC_USD',
+    OracleID: 'SYSTEM_DEPOSITS',
     Timestamp: '1577441290',
     Data: '60000'
   }
-  api.createProposition(wallet, msg).then(console.log)
+  api.createVote(wallet, msg).then(console.log)
 }
 
-createProposition()
+createVote()

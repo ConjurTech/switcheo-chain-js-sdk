@@ -16,8 +16,8 @@ export interface CreateOracleMsg {
 	Originator?: string,
 }
 
-export interface CreatePropositionMsg {
-	OracleName: string,
+export interface CreateVoteMsg {
+	OracleID: string,
 	Timestamp: string,
 	Data: string,
 	Originator?: string,
@@ -29,7 +29,7 @@ export async function createOracle(wallet: Wallet, msg: CreateOracleMsg, options
   return wallet.signAndBroadcast([msg], [types.CREATE_ORACLE_TYPE], options)
 }
 
-export async function createProposition(wallet: Wallet, msg: CreatePropositionMsg, options?: Options) {
+export async function createVote(wallet: Wallet, msg: CreateVoteMsg, options?: Options) {
 	if(!msg.Originator) msg.Originator = wallet.pubKeyBech32
 
 	return wallet.signAndBroadcast([msg], [types.CREATE_VOTE_TYPE], options)

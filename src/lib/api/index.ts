@@ -13,7 +13,7 @@ export {
 } from './orders'
 export {mintTokens, MintTokenRequest} from './mints'
 export {createToken, createTokens, CreateTokenMsg} from './tokens'
-export {createOracle, CreateOracleMsg, createProposition, CreatePropositionMsg} from './oracles'
+export { createOracle, CreateOracleMsg, createVote, CreateVoteMsg } from './oracles'
 export {proposeDeposit, ProposeDepositMsg, deposit, DepositParams} from './deposit'
 export {addMarket, addMarkets, AddMarketMsg} from './markets'
 export {createValidator, delegateTokens} from './staking'
