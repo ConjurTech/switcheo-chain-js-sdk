@@ -11,15 +11,16 @@ export {
     editMargin,
     EditMarginParams
 } from './orders'
-export {mintTokens, MintTokenRequest} from './mints'
-export {createToken, createTokens, CreateTokenMsg} from './tokens'
+export { mintTokens, MintTokenRequest } from './mints'
+export { createToken, createTokens, CreateTokenMsg } from './tokens'
 export { createOracle, CreateOracleMsg, createVote, CreateVoteMsg } from './oracles'
-export {proposeDeposit, ProposeDepositMsg, deposit, DepositParams} from './deposit'
-export {addMarket, addMarkets, AddMarketMsg} from './markets'
-export {createValidator, delegateTokens} from './staking'
-export {upgradeSWTH, upgradeSWTHs, UpgradeSwthMsg} from './upgrade_swth'
-export {setLeverage, setLeverages, SetLeverageParams} from './account'
-export {signalDeposit, SignalDepositMsg} from './signup'
+export { proposeDeposit, ProposeDepositMsg, deposit, DepositParams } from './deposit'
+export { createWithdrawal, CreateWithdrawalMsg } from './withdrawal'
+export { addMarket, addMarkets, AddMarketMsg } from './markets'
+export { createValidator, delegateTokens } from './staking'
+export { upgradeSWTH, upgradeSWTHs, UpgradeSwthMsg } from './upgrade_swth'
+export { setLeverage, setLeverages, SetLeverageParams } from './account'
+export { signalDeposit, SignalDepositMsg } from './signup'
 
 export {
     WsWrapper,
