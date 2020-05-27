@@ -2,6 +2,7 @@ export const CREATE_ORDER_MSG_TYPE = 'broker/CreateOrder'
 export const CANCEL_ORDER_MSG_TYPE = 'broker/CancelOrder'
 export const EDIT_ORDER_MSG_TYPE = 'broker/EditOrder'
 export const ADD_MARKET_MSG_TYPE = 'broker/AddMarket'
+export const INITIATE_SETTLEMENT_MSG_TYPE = 'broker/InitiateSettlement'
 
 export const SET_LEVERAGE_MSG_TYPE = 'broker/SetLeverage'
 

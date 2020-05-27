@@ -31,3 +31,22 @@ export async function addMarkets(wallet: Wallet, msgs: AddMarketMsg[], options?:
   return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.ADD_MARKET_MSG_TYPE), options)
 }
 
+
+export interface InitiateSettlementMsg {
+  Market: string,
+  Originator?: string,
+}
+
+export async function initiateSettlement(wallet: Wallet, msg: InitiateSettlementMsg, options?: Options) {
+  return initiateSettlements(wallet, [msg], options)
+}
+
+export async function initiateSettlements(wallet: Wallet, msgs: InitiateSettlementMsg[], options?: Options) {
+  const address = wallet.pubKeyBech32
+  msgs = msgs.map(msg => {
+    if (!msg.Originator) msg.Originator = address
+    return msg
+  })
+
+  return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.INITIATE_SETTLEMENT_MSG_TYPE), options)
+}
