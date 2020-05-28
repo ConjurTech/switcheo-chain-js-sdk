@@ -6,6 +6,7 @@ import { Fee, StdSignDoc, Transaction } from './containers'
 import { marshalJSON } from './utils/encoder'
 import { getPath, PrivKeySecp256k1, PubKeySecp256k1 } from './utils/wallet'
 import { ConcreteMsg } from './containers/Transaction'
+import { HDWallet } from './utils/hdwallet'
 
 export interface SignMessageOptions { memo?: string, sequence?: string }
 export interface WalletOptions { useSequenceCounter?: boolean, broadcastQueueIntervalTime?: number }
@@ -28,6 +29,7 @@ export class Wallet {
   }
 
   public readonly mnemonic: string
+  public readonly hdWallet: HDWallet
   public readonly privKey: PrivKeySecp256k1
   public readonly address: Uint8Array
   public readonly pubKeySecp256k1: PubKeySecp256k1
@@ -63,6 +65,7 @@ export class Wallet {
     this.gas = CONFIG.DEFAULT_GAS
     this.accountNumber = accountNumber
     this.network = network
+    this.hdWallet = HDWallet.getWallet(mnemonic)
 
     if (walletOptions === undefined) {
       walletOptions = {}
@@ -188,7 +191,7 @@ export class Wallet {
       throw new Error('Unsupported blockchain')
     }
     const accAddress = this.pubKeyBech32
-    const address = '' // derive address
+    const address = this.hdWallet[blockchain]
     return fetch(`${this.network.SIGNUP_URL}/deposit_address?blockchain=${blockchain}&accAddress=${accAddress}&address=${address}`)
         .then(res => res.json()) // expecting a json response
   }

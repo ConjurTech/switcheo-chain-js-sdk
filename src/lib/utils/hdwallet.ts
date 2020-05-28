@@ -1,4 +1,4 @@
-import bip39 from 'bip39'
+import * as bip39 from 'bip39'
 import hdkey from 'hdkey'
 import bip44Constants from 'bip44-constants'
 import wif from 'wif'
@@ -29,7 +29,7 @@ export class HDWallet {
     if (!skipValidate && !bip39.validateMnemonic(mnemonic)) {
       throw new Error('bad mnemonic from mnemonic by validateMnemonic')
     }
-    const seed: any = bip39.mnemonicToSeed(mnemonic)
+    const seed: any = bip39.mnemonicToSeedSync(mnemonic, '')
     const root: hdkey = hdkey.fromMasterSeed(seed)
 
     return this.getWalletResult(root, mnemonic)
@@ -58,8 +58,11 @@ export class HDWallet {
   }
 
   private static getCoinType(blockchain: Blockchain): number {
-    // tslint:disable-next-line:max-line-length
-    // https://github.com/bitcoinjs/bip44-constants/blob/e1d13a314beb2b7221dbdb10cf503a26aa78e33f/index.js
-    return bip44Constants[blockchain.toUpperCase()] - 0x80000000
+    const coins = bip44Constants.filter(item => item[1] === blockchain.toUpperCase())
+    if (coins.length != 1) {
+      throw new Error('Could not find maching bip44 constant')
+    }
+    const id = coins[0][0]
+    return id - 0x80000000
   }
 }
