@@ -20,7 +20,7 @@ async function createWithdrawal() {
     Blockchain: 'eth',
     ChainID: '3',
     AssetID: '0x000000000000000000000000000000008000003c',
-    Amount: '0.97',
+    Amount: '0.1',
   }
   const result = await api.createWithdrawal(accountWallet, params)
   console.log('result', result)
