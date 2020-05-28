@@ -1,6 +1,7 @@
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
 import fetch from 'node-fetch'
+import { ethers } from 'ethers'
 import { CONFIG, NETWORK, Network } from './config'
 import { Fee, StdSignDoc, Transaction } from './containers'
 import { marshalJSON } from './utils/encoder'
@@ -191,7 +192,9 @@ export class Wallet {
       throw new Error('Unsupported blockchain')
     }
     const accAddress = this.pubKeyBech32
-    const address = this.hdWallet[blockchain]
+    const privateKey = this.hdWallet[blockchain]
+    const account = new ethers.Wallet(privateKey)
+    const address = account.address
     return fetch(`${this.network.SIGNUP_URL}/deposit_address?blockchain=${blockchain}&accAddress=${accAddress}&address=${address}`)
         .then(res => res.json()) // expecting a json response
   }

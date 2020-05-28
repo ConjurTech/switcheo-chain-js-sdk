@@ -12,7 +12,8 @@ async function getAccount() {
   console.log('newAccount address', newAccount.pubKeyBech32)
   console.log('newAccount mnemonic', newAccount.mnemonic)
   const account = await Wallet.connect(newAccount.mnemonic, net)
-  console.log('account', account.hdWallet)
+  const { address } = await account.getDepositAddress('eth')
+  console.log('eth deposit address', address)
 }
 
 getAccount()
