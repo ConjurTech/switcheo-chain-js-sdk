@@ -3,7 +3,6 @@ import * as bip39 from 'bip39'
 import fetch from 'node-fetch'
 import { CONFIG, NETWORK, Network } from './config'
 import { Fee, StdSignDoc, Transaction } from './containers'
-import { EthWallet } from './ethWallet'
 import { marshalJSON } from './utils/encoder'
 import { getPath, PrivKeySecp256k1, PubKeySecp256k1 } from './utils/wallet'
 import { ConcreteMsg } from './containers/Transaction'
@@ -37,7 +36,6 @@ export class Wallet {
   public readonly gas: string
   public readonly network: Network
   public readonly accountNumber: string
-  public eth: EthWallet
   public broadcastMode: string
 
   private useSequenceCounter: boolean
@@ -86,10 +84,6 @@ export class Wallet {
 
   public disconnect() {
     clearInterval(this.broadcastQueueIntervalId)
-  }
-
-  public connectEthWallet(web3) {
-    this.eth = new EthWallet(web3)
   }
 
   public sign(message) {

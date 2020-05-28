@@ -14,7 +14,6 @@ export {
 export { mintTokens, MintTokenRequest } from './mints'
 export { createToken, createTokens, CreateTokenMsg } from './tokens'
 export { createOracle, CreateOracleMsg, createVote, CreateVoteMsg } from './oracles'
-export { proposeDeposit, ProposeDepositMsg, deposit, DepositParams } from './deposit'
 export { createWithdrawal, CreateWithdrawalMsg } from './withdrawal'
 export { addMarket, addMarkets, AddMarketMsg, initiateSettlement, initiateSettlements, InitiateSettlementMsg } from './markets'
 export { createValidator, delegateTokens } from './staking'
