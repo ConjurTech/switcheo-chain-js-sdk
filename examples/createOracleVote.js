@@ -4,10 +4,8 @@ const { wallet, api } = SDK
 const { Wallet } = wallet
 const mnemonics = require('../mnemonics.json')
 
-const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[0])
-
 async function createVote() { //
-  const wallet = await Wallet.connect(privateKey)
+  const wallet = await Wallet.connect(mnemonics[0])
   const msg = {
     OracleID: 'DXBT',
     Timestamp: '1577441290',

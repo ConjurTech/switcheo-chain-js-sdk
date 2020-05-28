@@ -4,10 +4,8 @@ const { wallet, api } = SDK
 const { Wallet } = wallet
 const mnemonics = require('../mnemonics.json')
 
-const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[1])
-
 async function asyncCreateOrders() {
-  const wallet = await Wallet.connect(privateKey)
+  const wallet = await Wallet.connect(mnemonics[1])
   const sequence = (await wallet.getAccount()).result.value.sequence
   const params = {
     Market: 'swth_eth',

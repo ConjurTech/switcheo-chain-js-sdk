@@ -1,1 +1,3 @@
-export const ETH_BLOCKCHAIN = "eth"
+export enum Blockchain {
+  Ethereum = 'eth',
+}

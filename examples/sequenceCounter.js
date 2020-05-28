@@ -17,7 +17,7 @@ async function testSequenceCounter() {
   await api.mintTokens(tokenReq)
 
   console.log(newAccount.pubKeyBech32)
-  const accountWallet = await Wallet.connect(newAccount.privateKey, 'LOCALHOST', { useSequenceCounter: true })
+  const accountWallet = await Wallet.connect(newAccount.mnemonic, 'LOCALHOST')
   const params = {
     Market: 'swth_eth',
     Side: 'sell',

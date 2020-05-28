@@ -4,10 +4,8 @@ const { wallet, api } = SDK
 const { Wallet } = wallet
 const mnemonics = require('../mnemonics.json')
 
-const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[1])
-
 async function createToken() {
-  const wallet = await Wallet.connect(privateKey)
+  const wallet = await Wallet.connect(mnemonics[1])
   const params = {
     Name: 'jiarong coin',
     Symbol: 'LAYWC',

@@ -14,7 +14,7 @@ async function createOrder() {
   const mintResult = await api.mintTokens(tokenReq)
   console.log('mintResult', mintResult)
 
-  const accountWallet = await Wallet.connect(newAccount.privateKey)
+  const accountWallet = await Wallet.connect(newAccount.mnemonic)
   const params = {
     Market: 'swth_eth',
     Side: 'sell',

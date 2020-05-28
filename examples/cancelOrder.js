@@ -4,10 +4,8 @@ const { wallet, api } = SDK
 const { Wallet } = wallet
 const mnemonics = require('../mnemonics.json')
 
-const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[1])
-
 async function cancelOrder() {
-  const wallet = await Wallet.connect(privateKey)
+  const wallet = await Wallet.connect(mnemonics[1])
   const params = {
     id: '6BCE28C18C37357486113A3939913EC70069637D717E71EF4ED7FC3594DDCA4F'
   }

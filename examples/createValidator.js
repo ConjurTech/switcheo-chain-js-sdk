@@ -52,7 +52,7 @@ async function createValidator() {
   }
   await api.mintTokens(tokenReq)
   console.log("newAccount.pubKeyBech32", newAccount.pubKeyBech32, newAccount.privateKey)
-  const accountWallet = await Wallet.connect(newAccount.privateKey)
+  const accountWallet = await Wallet.connect(newAccount.mnemonic)
   const consPubKey = getConsensusPublicKey(newAccount.privateKey)
   console.log("consPubKey", consPubKey)
 

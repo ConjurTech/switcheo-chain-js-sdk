@@ -4,10 +4,8 @@ const { wallet, api } = SDK
 const { Wallet } = wallet
 const mnemonics = require('../mnemonics.json')
 
-const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[1])
-
 async function mintToken() {
-  const wallet = await Wallet.connect(privateKey)
+  const wallet = await Wallet.connect(mnemonics[1])
   const toAddress = 'swth1rzdwrr33z5pxw2ndtsdluxhce9p26emfs0f5dm'
   const params = {
     toAddress,

@@ -16,7 +16,7 @@ async function signalDeposit() {
   const mintResult = await api.mintTokens(tokenMsg)
   console.log('mintResult', mintResult)
 
-  const accountWallet = await Wallet.connect(helperAccount.privateKey)
+  const accountWallet = await Wallet.connect(helperAccount.mnemonic)
   const signalDepositMsg = {
     AccAddress: userAccount.pubKeyBech32,
     DepositInfo: {

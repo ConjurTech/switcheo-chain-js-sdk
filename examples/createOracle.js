@@ -4,12 +4,10 @@ const { wallet, api } = SDK
 const { Wallet } = wallet
 const mnemonics = require('../mnemonics.json')
 
-const privateKey = wallet.getPrivKeyFromMnemonic(mnemonics[1])
-
 async function createOracle() {
-  const wallet = await Wallet.connect(privateKey)
+  const wallet = await Wallet.connect(mnemonics[0])
   const msg = {
-    Name: 'BTC_USD_xD',
+    ID: 'BTC_USD_xD',
     Description: 'Calculated based on an average of price feeds from Binance and Coinbase, ... more info ...',
     MinConsensusThreshold: '67',
     MaxResultAge: '100',

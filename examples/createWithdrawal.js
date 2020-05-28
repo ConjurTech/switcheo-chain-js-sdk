@@ -14,7 +14,7 @@ async function createWithdrawal() {
   const mintResult = await api.mintTokens(tokenReq)
   console.log('mintResult', mintResult)
 
-  const accountWallet = await Wallet.connect(newAccount.privateKey)
+  const accountWallet = await Wallet.connect(newAccount.mnemonic)
   const params = {
     ReceivingAddress: '0x6bae56C7C534c38E08564C4b482a04Ea53B7A29c',
     Blockchain: 'eth',

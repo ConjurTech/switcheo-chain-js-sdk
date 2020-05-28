@@ -13,7 +13,7 @@ async function delegateTokens() {
   await api.mintTokens(tokenReq)
   console.log("newAccount.pubKeyBech32", newAccount.pubKeyBech32, newAccount.privateKey)
 
-  const accountWallet = await Wallet.connect(newAccount.privateKey)
+  const accountWallet = await Wallet.connect(newAccount.mnemonic)
   const validators = (await accountWallet.getValidators()).result
 
   const params = {

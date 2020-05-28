@@ -15,17 +15,19 @@ export interface BroadcastResults {
 }
 
 export class Wallet {
-  public static async connect(privateKey: string, net = 'LOCALHOST', walletOptions?: WalletOptions) {
+  public static async connect(mnemonic: string, net = 'LOCALHOST', walletOptions?: WalletOptions) {
     const network = NETWORK[net]
     if (!network) {
       throw new Error('network must be LOCALHOST/DEVNET')
     }
+    const privateKey = getPrivKeyFromMnemonic(mnemonic)
     const pubKeyBech32 = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex')).toPubKey().toAddress().toBech32('swth')
     const { result: { value }} = await fetch(`${network.REST_URL}/get_account?account=${pubKeyBech32}`)
       .then(res => res.json())
-    return new Wallet(privateKey, value.account_number.toString(), network, walletOptions)
+    return new Wallet(mnemonic, value.account_number.toString(), network, walletOptions)
   }
 
+  public readonly mnemonic: string
   public readonly privKey: PrivKeySecp256k1
   public readonly address: Uint8Array
   public readonly pubKeySecp256k1: PubKeySecp256k1
@@ -46,9 +48,11 @@ export class Wallet {
   private broadcastResults: BroadcastResults
   private isBroadcastQueuePaused: boolean
 
-  constructor(privateKey, accountNumber, network, walletOptions?: WalletOptions) {
+  constructor(mnemonic, accountNumber, network, walletOptions?: WalletOptions) {
+    const privateKey = getPrivKeyFromMnemonic(mnemonic)
     const privKey = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex'))
 
+    this.mnemonic = mnemonic
     this.privKey = privKey
     this.address = privKey.toPubKey().toAddress().toBytes()
     this.pubKeySecp256k1 = privKey.toPubKey()
@@ -177,6 +181,16 @@ export class Wallet {
   public getIndexPrice(market: string) {
     return fetch(`${this.network.REST_URL}/get_index_price?market=${market}`)
       .then(res => res.json()) // expecting a json response
+  }
+
+  public getDepositAddress(blockchain: string) {
+    if (blockchain !== 'eth') {
+      throw new Error('Unsupported blockchain')
+    }
+    const accAddress = this.pubKeyBech32
+    const address = '' // derive address
+    return fetch(`${this.network.SIGNUP_URL}/deposit_address?blockchain=${blockchain}&accAddress=${accAddress}&address=${address}`)
+        .then(res => res.json()) // expecting a json response
   }
 
   public async signMessage(msgs: ConcreteMsg[], options: SignMessageOptions = {}) {

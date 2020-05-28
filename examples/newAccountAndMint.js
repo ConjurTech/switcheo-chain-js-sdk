@@ -5,7 +5,7 @@ const { Wallet } = wallet
 const newAccount = wallet.newAccount()
 
 async function newAccountAndMint() {
-  const wallet = await Wallet.connect(newAccount.privateKey)
+  const wallet = await Wallet.connect(newAccount.mnemonic)
   console.log(newAccount)
   console.log(wallet.pubKeyBech32)
 

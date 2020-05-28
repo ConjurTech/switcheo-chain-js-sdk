@@ -3,17 +3,16 @@ const SDK = require('../.')
 const { wallet, api } = SDK
 const { Wallet } = wallet
 
-const privateKey = wallet.getPrivKeyFromMnemonic("slogan text pig seed trust link series banner foam affair sing citizen wire slice level sword exchange tape quiz away win silly siege home")
-
 async function upgradeSWTH() {
   const validators = (await accountWallet.getValidators()).result
+  const mnemonic = "slogan text pig seed trust link series banner foam affair sing citizen wire slice level sword exchange tape quiz away win silly siege home"
 
   await api.mintTokens({
     address: 'swth1flqfs2dzzkrf49aj5pg0nj340jdqzgje02smww',
     amount: '100',
     denom: 'swth',
   }).then(console.log)
-  const wallet = await Wallet.connect(privateKey)
+  const wallet = await Wallet.connect(mnemonic)
   const params = {
     NeoTxHash: 'f'.repeat(64),
     NeoAddress: 'a'.repeat(40),
