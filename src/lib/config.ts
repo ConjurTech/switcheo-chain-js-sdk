@@ -1,6 +1,8 @@
 export interface Network {
   REST_URL: string,
   SIGNUP_URL: string,
+  ETH_ENV: string,
+  BALANCE_READER_ADDRESS: string,
 }
 
 const localhost = process.env.REST_HOST || '127.0.0.1'
@@ -10,14 +12,20 @@ export const NETWORK = {
   TestNet: {
     REST_URL: `http://13.251.218.38:5001`,
     SIGNUP_URL: `http://13.251.218.38:7001`,
+    ETH_ENV: 'ropsten',
+    BALANCE_READER_ADDRESS: '0xc08a56b059fb6776164a6499e3132efdbbfa15ca',
   },
   DEVNET: {
     REST_URL: `http://13.251.218.38:5001`,
     SIGNUP_URL: `http://13.251.218.38:7001`,
+    ETH_ENV: 'ropsten',
+    BALANCE_READER_ADDRESS: '0xc08a56b059fb6776164a6499e3132efdbbfa15ca',
   },
   LOCALHOST: {
     REST_URL: `http://${localhost}:${port}`,
     SIGNUP_URL: `http://${localhost}:7001`,
+    ETH_ENV: 'ropsten',
+    BALANCE_READER_ADDRESS: '0xc08a56b059fb6776164a6499e3132efdbbfa15ca',
   },
 }
 

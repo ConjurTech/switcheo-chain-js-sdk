@@ -8,6 +8,7 @@ import { marshalJSON } from './utils/encoder'
 import { getPath, PrivKeySecp256k1, PubKeySecp256k1 } from './utils/wallet'
 import { ConcreteMsg } from './containers/Transaction'
 import { HDWallet } from './utils/hdwallet'
+import BALANCE_READER_ABI from './eth/abis/balanceReader.json'
 
 export interface SignMessageOptions { memo?: string, sequence?: string }
 export interface WalletOptions { useSequenceCounter?: boolean, broadcastQueueIntervalTime?: number }
@@ -197,6 +198,26 @@ export class Wallet {
     const address = account.address
     return fetch(`${this.network.SIGNUP_URL}/deposit_address?blockchain=${blockchain}&accAddress=${accAddress}&address=${address}`)
         .then(res => res.json()) // expecting a json response
+  }
+
+  public async getExternalBalances(address: string, blockchain: string) {
+    if (blockchain !== 'eth') {
+      throw new Error('Unsupported blockchain')
+    }
+
+    const tokens = (await this.getTokens()).filter(token => token.blockchain == blockchain && token.asset_id.startsWith('0x'))
+    const assetIds = tokens.map(token => token.asset_id)
+    const abi = BALANCE_READER_ABI
+    const provider = ethers.getDefaultProvider(this.network.ETH_ENV)
+    const contractAddress = this.network.BALANCE_READER_ADDRESS
+    const contract = new ethers.Contract(contractAddress, abi, provider)
+
+    const balances = await contract.getBalances(address, assetIds)
+    for (let i = 0; i < tokens.length; i++) {
+      tokens[i].externalBalance = balances[i].toString()
+    }
+
+    return tokens
   }
 
   public async signMessage(msgs: ConcreteMsg[], options: SignMessageOptions = {}) {
