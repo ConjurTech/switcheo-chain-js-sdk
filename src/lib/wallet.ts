@@ -1,6 +1,7 @@
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
 import fetch from 'node-fetch'
+import Dagger from '@maticnetwork/eth-dagger'
 import { ethers } from 'ethers'
 import { CONFIG, NETWORK, Network } from './config'
 import { Fee, StdSignDoc, Transaction } from './containers'
@@ -193,15 +194,34 @@ export class Wallet {
     // if the address is already watched then just return
     if (watched) { return }
 
-    const tokens = await this.getExternalBalances(address, 'eth')
+    // do an initial check
+    this.signalDeposits(address, 'eth')
+
+    const dagger = new Dagger(this.network.ETH_WS_URL)
+    // watch for ETH transfers
+    dagger.on(`latest:addr/${address}/tx/in`, () => {
+      this.signalDeposits(address, 'eth')
+    })
+
+    // watch for Ethereum token transfers
+    const transferId = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
+    dagger.on(`latest:log/+/filter/${transferId}/+/${address}/#`, () => {
+      this.signalDeposits(address, 'eth')
+    })
+  }
+
+  public async signalDeposits(address, blockchain) {
+    if (blockchain != 'eth') {
+      throw new Error('Unsupported blockchain')
+    }
+
+    const tokens = await this.getExternalBalances(address, blockchain)
     for (let i = 0; i < tokens.length; i++) {
       const token = tokens[i]
       if (token.externalBalance != '0') {
-        this.signalDeposit('eth', address, token.asset_id)
+        this.signalDeposit(blockchain, address, token.asset_id)
       }
     }
-
-    // watch deposit address
   }
 
   public getDepositAddress(blockchain: string) {

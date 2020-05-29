@@ -5,7 +5,7 @@ const { Wallet } = wallet
 
 const net = 'LOCALHOST'
 
-async function signalDeposit() {
+async function run() {
   const newAccount = wallet.newAccount()
   console.log('newAccount address', newAccount.pubKeyBech32)
   console.log('newAccount mnemonic', newAccount.mnemonic)
@@ -16,4 +16,4 @@ async function signalDeposit() {
   console.log('result', await result.text())
 }
 
-signalDeposit()
+run()

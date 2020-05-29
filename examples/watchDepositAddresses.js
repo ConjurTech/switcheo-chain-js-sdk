@@ -13,7 +13,8 @@ async function run() {
   console.log('newAccount mnemonic', newAccount.mnemonic)
   const account = await Wallet.connect(newAccount.mnemonic, net)
   const { address } = await account.getDepositAddress('eth')
-  console.log('eth deposit address', address)
+  console.log('watching address', address)
+  account.watchDepositAddresses()
 }
 
 run()
