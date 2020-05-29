@@ -188,6 +188,22 @@ export class Wallet {
       .then(res => res.json()) // expecting a json response
   }
 
+  public async watchDepositAddresses() {
+    const { address, watched } = await this.getDepositAddress('eth')
+    // if the address is already watched then just return
+    if (watched) { return }
+
+    const tokens = await this.getExternalBalances(address, 'eth')
+    for (let i = 0; i < tokens.length; i++) {
+      const token = tokens[i]
+      if (token.externalBalance != '0') {
+        this.signalDeposit('eth', address, token.asset_id)
+      }
+    }
+
+    // watch deposit address
+  }
+
   public getDepositAddress(blockchain: string) {
     if (blockchain !== 'eth') {
       throw new Error('Unsupported blockchain')
