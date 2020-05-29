@@ -220,6 +220,23 @@ export class Wallet {
     return tokens
   }
 
+  public async signalDeposit(blockchain: string, address: string, assetId: string) {
+    if (blockchain !== 'eth') {
+      throw new Error('Unsupported blockchain')
+    }
+
+    const body = {
+      AccAddress: this.pubKeyBech32,
+      DepositInfo: {
+        Blockchain: blockchain,
+        Address: address,
+        AssetID: assetId,
+      },
+    }
+
+    return fetch(`${this.network.SIGNUP_URL}/signal_deposit`, { method: 'POST', body: JSON.stringify(body) })
+  }
+
   public async signMessage(msgs: ConcreteMsg[], options: SignMessageOptions = {}) {
     let sequence: string = options.sequence
 
