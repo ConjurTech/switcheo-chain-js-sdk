@@ -5,6 +5,7 @@ const { Wallet } = wallet
 const mnemonics = require('../mnemonics.json')
 
 async function createOracle() {
+  console.log("mnemonic", mnemonics[0])
   const wallet = await Wallet.connect(mnemonics[0])
   const msg = {
     ID: 'BTC_USD_xD',

@@ -19,6 +19,9 @@ export const CREATE_WITHDRAWAL_TYPE = 'withdrawal/CreateWithdrawal'
 export const CREATE_VALIDATOR_MSG_TYPE = 'cosmos-sdk/MsgCreateValidator'
 export const DELEGATE_TOKENS_MSG_TYPE = 'cosmos-sdk/MsgDelegate'
 
+export const CREATE_SUB_ACCOUNT_MSG_TYPE = 'subaccount/MsgCreateSubAccount'
+export const ACTIVATE_SUB_ACCOUNT_MSG_TYPE = 'subaccount/MsgActivateSubAccount'
+
 export const SIGNAL_DEPOSIT_TYPE = 'signup/SignalDeposit'
 
 export const EDIT_MARGIN_MSG_TYPE = 'broker/SetMargin'

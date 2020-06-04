@@ -17,6 +17,7 @@ export { createOracle, CreateOracleMsg, createVote, CreateVoteMsg } from './orac
 export { createWithdrawal, CreateWithdrawalMsg } from './withdrawal'
 export { addMarket, addMarkets, AddMarketMsg, initiateSettlement, initiateSettlements, InitiateSettlementMsg } from './markets'
 export { createValidator, delegateTokens } from './staking'
+export { createSubAccount, activateSubAccount } from './subaccount'
 export { upgradeSWTH, upgradeSWTHs, UpgradeSwthMsg } from './upgrade_swth'
 export { setLeverage, setLeverages, SetLeverageParams } from './account'
 
