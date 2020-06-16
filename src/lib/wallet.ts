@@ -42,7 +42,7 @@ export class Wallet {
   public readonly consensusBech32: string
   public readonly gas: string
   public readonly network: Network
-  public readonly accountNumber: string
+  public accountNumber: string
   public broadcastMode: string
 
   private useSequenceCounter: boolean
@@ -94,6 +94,13 @@ export class Wallet {
 
   public disconnect() {
     clearInterval(this.broadcastQueueIntervalId)
+  }
+
+  public getWalletOptions(): WalletOptions {
+    return {
+      useSequenceCounter: this.useSequenceCounter,
+      broadcastQueueIntervalTime: this.broadcastQueueIntervalTime,
+    }
   }
 
   public sign(message) {
@@ -279,6 +286,14 @@ export class Wallet {
     if (sequence === undefined || sequence === null) { // no sequence override, we get latest from blockchain
       const { result } = await this.getAccount()
       sequence = result.value.sequence
+    }
+
+    if (this.accountNumber === "0" || this.accountNumber === undefined || this.accountNumber === null) {
+      const { result } = await this.getAccount()
+      this.accountNumber = result.value.account_number.toString()
+      if (this.accountNumber === "0") {
+        throw new Error("Account number still 0 after refetching.")
+      }
     }
 
     const memo = options.memo || ''
