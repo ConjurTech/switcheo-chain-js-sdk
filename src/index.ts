@@ -11,6 +11,13 @@ export { default } from './lib/Client'
 export * from './lib/Client'
 export * from './lib/clients'
 
+export * from './lib/constants'
+export * from './lib/containers'
+export * from './lib/types'
+export * from './lib/wallet'
+export * from './lib/api'
+export * from './lib/utils'
+
 export {
   constants,
   wallet,
