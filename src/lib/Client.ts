@@ -6,8 +6,9 @@ import TradeClient from './clients/Trade/TradeClient'
 
 export enum Network {
   LocalHost = 'LOCALHOST',
-  TestNet = 'TestNet',
-  MainNet = 'MainNet',
+  TestNet = 'TESTNET',
+  MainNet = 'MAINNET',
+  DevNet = 'DEVNET',
 }
 
 export enum ClientEvent {
