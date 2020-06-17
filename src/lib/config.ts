@@ -10,7 +10,7 @@ const localhost = process.env.REST_HOST || '127.0.0.1'
 const port = process.env.REST_PORT || '5001'
 
 export const NETWORK = {
-  TestNet: {
+  TESTNET: {
     REST_URL: `http://103.253.147.91:5001`,
     SIGNUP_URL: `http://103.253.147.91:7001`,
     ETH_ENV: 'ropsten',
