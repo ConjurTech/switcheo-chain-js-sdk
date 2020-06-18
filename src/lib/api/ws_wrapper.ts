@@ -11,6 +11,8 @@
 */
 
 /* WS Get Request params */
+import {Network} from "../Client";
+
 export interface WsGetRecentTradesParams {
   market: string,
 }
@@ -126,8 +128,23 @@ export class WsWrapper {
   isConnected: boolean = false
   onMsgCallback: any
 
-  constructor(serverWsUrl: string, onMsgCallback: any) {
-    this.serverWsUrl = serverWsUrl
+  public getBaseUrls = function (network) {
+    switch (network) {
+      case Network.TestNet: {
+        return 'ws://128.199.242.88:5000/ws'
+      }
+      case Network.DevNet: {
+        return 'ws://13.251.218.38:5000/ws'
+      }
+      default: {
+        return 'ws://localhost:5000/ws'
+      }
+    }
+  };
+
+  constructor(net: Network, onMsgCallback: any) {
+
+    this.serverWsUrl = this.getBaseUrls(net)
     this.onMsgCallback = onMsgCallback
   }
 
