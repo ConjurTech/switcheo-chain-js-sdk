@@ -11,8 +11,8 @@ const port = process.env.REST_PORT || '5001'
 
 export const NETWORK = {
   TESTNET: {
-    REST_URL: `http://103.253.147.91:5001`,
-    SIGNUP_URL: `http://103.253.147.91:7001`,
+    REST_URL: `http://128.199.242.88:5001`,
+    SIGNUP_URL: `http://128.199.242.88:7001`,
     ETH_ENV: 'ropsten',
     ETH_WS_URL: 'wss://ropsten.dagger.matic.network',
     BALANCE_READER_ADDRESS: '0xc08a56b059fb6776164a6499e3132efdbbfa15ca',
