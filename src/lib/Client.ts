@@ -35,6 +35,9 @@ export default class Client extends EventEmitter {
   private getBaseUrls(network: Network): [string, string] {
     switch (network) {
       case Network.TestNet: {
+        return ['http://128.199.242.88:5001', 'ws://128.199.242.88:5000/ws']
+      }
+      case Network.DevNet: {
         return ['http://13.251.218.38:5001', 'ws://13.251.218.38:5000/ws']
       }
       default: {
