@@ -6,5 +6,5 @@ export interface MintTokenRequest {
   denom: string,
 }
 export async function mintTokens(msg: MintTokenRequest, net = 'LOCALHOST') {
-  return fetch(`${ NETWORK[net].REST_URL }/mint_tokens`, { method: 'POST', body: JSON.stringify(msg) })
+  return fetch(`${NETWORK[net].REST_URL}/mint_tokens`, { method: 'POST', body: JSON.stringify(msg) }).then(res => res.json())
 }
