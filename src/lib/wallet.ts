@@ -192,22 +192,22 @@ export class Wallet {
     if (watched) { return }
 
     // do an initial check
-    this.signalDeposits(address, 'eth')
+    this.requestDeposits(address, 'eth')
 
     const dagger = new Dagger(this.network.ETH_WS_URL)
     // watch for ETH transfers
     dagger.on(`latest:addr/${address}/tx/in`, () => {
-      this.signalDeposits(address, 'eth')
+      this.requestDeposits(address, 'eth')
     })
 
     // watch for Ethereum token transfers
     const transferId = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
     dagger.on(`latest:log/+/filter/${transferId}/+/${address}/#`, () => {
-      this.signalDeposits(address, 'eth')
+      this.requestDeposits(address, 'eth')
     })
   }
 
-  public async signalDeposits(address, blockchain) {
+  public async requestDeposits(address, blockchain) {
     if (blockchain != 'eth') {
       throw new Error('Unsupported blockchain')
     }
@@ -216,7 +216,7 @@ export class Wallet {
     for (let i = 0; i < tokens.length; i++) {
       const token = tokens[i]
       if (token.externalBalance != '0') {
-        this.signalDeposit(blockchain, address, token.asset_id)
+        // TODO: request deposit
       }
     }
   }
@@ -251,23 +251,6 @@ export class Wallet {
     }
 
     return tokens
-  }
-
-  public async signalDeposit(blockchain: string, address: string, assetId: string) {
-    if (blockchain !== 'eth') {
-      throw new Error('Unsupported blockchain')
-    }
-
-    const body = {
-      AccAddress: this.pubKeyBech32,
-      DepositInfo: {
-        Blockchain: blockchain,
-        Address: address,
-        AssetID: assetId,
-      },
-    }
-
-    return fetch(`${this.network.SIGNUP_URL}/signal_deposit`, { method: 'POST', body: JSON.stringify(body) })
   }
 
   public async signMessage(msgs: ConcreteMsg[], options: SignMessageOptions = {}) {
