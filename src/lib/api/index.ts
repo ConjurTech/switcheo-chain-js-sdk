@@ -20,6 +20,7 @@ export { createValidator, delegateTokens } from './staking'
 export { createSubAccount, activateSubAccount } from './subaccount'
 export { upgradeSWTH, upgradeSWTHs, UpgradeSwthMsg } from './upgrade_swth'
 export { setLeverage, setLeverages, SetLeverageParams } from './account'
+export { getPrices, getIndexPrice, getLastPrice } from './prices'
 
 export {
     WsWrapper,

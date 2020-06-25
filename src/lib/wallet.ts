@@ -181,18 +181,8 @@ export class Wallet {
       .then(res => res.json()) // expecting a json response
   }
 
-  public getLastPrice(market: string) {
-    return fetch(`${this.network.REST_URL}/get_last_price?market=${market}`)
-      .then(res => res.json()) // expecting a json response
-  }
-
   public getPosition(market: string) {
     return fetch(`${this.network.REST_URL}/get_position?account=${this.pubKeyBech32}&market=${market}`)
-      .then(res => res.json()) // expecting a json response
-  }
-
-  public getIndexPrice(market: string) {
-    return fetch(`${this.network.REST_URL}/get_index_price?market=${market}`)
       .then(res => res.json()) // expecting a json response
   }
 
