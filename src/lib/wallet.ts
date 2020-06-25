@@ -223,14 +223,12 @@ export class Wallet {
 
   public getDepositAddress(blockchain: string) {
     if (blockchain !== 'eth') {
-      throw new Error('Unsupported blockchain')
+      return "example address"
     }
     const accAddress = this.pubKeyBech32
     const privateKey = this.hdWallet[blockchain]
     const account = new ethers.Wallet(privateKey)
-    const address = account.address
-    return fetch(`${this.network.SIGNUP_URL}/deposit_address?blockchain=${blockchain}&accAddress=${accAddress}&address=${address}`)
-        .then(res => res.json()) // expecting a json response
+    return account.address
   }
 
   public async getExternalBalances(address: string, blockchain: string) {
