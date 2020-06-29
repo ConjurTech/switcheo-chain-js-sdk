@@ -1,8 +1,14 @@
 // const SDK = require('switcheo-chain-js-sdk') // use this instead if running this sdk as a library
+const fetch = require('node-fetch')
 const SDK = require('../.')
 const { wallet, api } = SDK
 const { Wallet } = wallet
 const mnemonics = require('../mnemonics.json')
+
+async function getBankBalances(address) {
+  return fetch('http://localhost:1317/bank/balances/' + address)
+    .then(res => res.json()) // expecting a json response
+}
 
 async function mint(id) {
   const newAccount = wallet.newAccount()
@@ -15,6 +21,10 @@ async function mint(id) {
   const result = await api.mintTokens(params)
   console.log('------------------')
   console.log(id + ":", toAddress)
+  const bankBalances = await getBankBalances(toAddress)
+  console.log('bank balances', bankBalances)
+  const account = await Wallet.connect(newAccount.mnemonic)
+  console.log('balances', await account.getWalletBalance())
   console.log(result)
   console.log('------------------')
 }
