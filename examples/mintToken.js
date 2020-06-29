@@ -25,6 +25,9 @@ async function mint(id) {
   console.log('bank balances', bankBalances)
   const account = await Wallet.connect(newAccount.mnemonic)
   console.log('balances', await account.getWalletBalance())
+  // wait for a short time
+  await new Promise(resolve => setTimeout(resolve, 500))
+  console.log('after delay balances', await account.getWalletBalance())
   console.log(result)
   console.log('------------------')
 }
