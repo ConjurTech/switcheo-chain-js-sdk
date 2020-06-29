@@ -187,9 +187,7 @@ export class Wallet {
   }
 
   public async watchDepositAddresses() {
-    const { address, watched } = await this.getDepositAddress('eth')
-    // if the address is already watched then just return
-    if (watched) { return }
+    const address = await this.getDepositAddress('eth')
 
     // do an initial check
     this.requestDeposits(address, 'eth')
@@ -225,7 +223,6 @@ export class Wallet {
     if (blockchain !== 'eth') {
       return "example address"
     }
-    const accAddress = this.pubKeyBech32
     const privateKey = this.hdWallet[blockchain]
     const account = new ethers.Wallet(privateKey)
     return account.address
