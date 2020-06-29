@@ -22,7 +22,7 @@ export class Wallet {
   public static async connect(mnemonic: string, net = 'LOCALHOST', walletOptions?: WalletOptions) {
     const network = NETWORK[net]
     if (!network) {
-      throw new Error('network must be LOCALHOST/DEVNET')
+      throw new Error('network must be LOCALHOST/DEVNET/TESTNET')
     }
     const privateKey = getPrivKeyFromMnemonic(mnemonic)
     const pubKeyBech32 = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex')).toPubKey().toAddress().toBech32('swth')
