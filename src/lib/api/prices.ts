@@ -12,7 +12,7 @@ export function getPrices(market: string, net: string): Promise<any> {
 
 export function getLastPrice(market: string, net: string): Promise<any> {
   return getPrices(market, net)
-    .then(res => ({ price: res.last, updated_at: res.index_updated_at })) // expecting a json response
+    .then(res => ({ price: res.last, updated_at: res.last_updated_at })) // expecting a json response
 }
 
 export function getIndexPrice(market: string, net: string): Promise<any> {
