@@ -1,10 +1,10 @@
-export const CREATE_ORDER_MSG_TYPE = 'broker/CreateOrder'
-export const CANCEL_ORDER_MSG_TYPE = 'broker/CancelOrder'
-export const EDIT_ORDER_MSG_TYPE = 'broker/EditOrder'
-export const ADD_MARKET_MSG_TYPE = 'broker/AddMarket'
+export const CREATE_ORDER_MSG_TYPE = 'order/CreateOrder'
+export const CANCEL_ORDER_MSG_TYPE = 'order/CancelOrder'
+export const EDIT_ORDER_MSG_TYPE = 'order/EditOrder'
+export const ADD_MARKET_MSG_TYPE = 'market/AddMarket'
 export const INITIATE_SETTLEMENT_MSG_TYPE = 'broker/InitiateSettlement'
 
-export const SET_LEVERAGE_MSG_TYPE = 'broker/SetLeverage'
+export const SET_LEVERAGE_MSG_TYPE = 'leverage/SetLeverage'
 
 export const MINT_TOKEN_MSG_TYPE = 'coin/MintToken'
 export const CREATE_TOKEN_MSG_TYPE = 'coin/CreateToken'
@@ -22,4 +22,4 @@ export const DELEGATE_TOKENS_MSG_TYPE = 'cosmos-sdk/MsgDelegate'
 export const CREATE_SUB_ACCOUNT_MSG_TYPE = 'subaccount/MsgCreateSubAccount'
 export const ACTIVATE_SUB_ACCOUNT_MSG_TYPE = 'subaccount/MsgActivateSubAccount'
 
-export const EDIT_MARGIN_MSG_TYPE = 'broker/SetMargin'
+export const EDIT_MARGIN_MSG_TYPE = 'position/SetMargin'
