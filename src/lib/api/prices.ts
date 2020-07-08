@@ -1,5 +1,5 @@
-import fetch from 'node-fetch'
 import { NETWORK } from '../config'
+import fetch from '../utils/fetch'
 
 export function getPrices(market: string, net: string): Promise<any> {
   const network = NETWORK[net]

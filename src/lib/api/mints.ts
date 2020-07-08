@@ -1,5 +1,5 @@
-import fetch from 'node-fetch'
 import { NETWORK } from '../config'
+import fetch from '../utils/fetch'
 export interface MintTokenRequest {
   address: string,
   amount: string,
