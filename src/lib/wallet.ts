@@ -1,11 +1,11 @@
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
+import fetch from 'node-fetch'
 import Dagger from '@maticnetwork/eth-dagger'
 import { ethers } from 'ethers'
 import { CONFIG, NETWORK, Network } from './config'
 import { Fee, StdSignDoc, Transaction } from './containers'
 import { marshalJSON } from './utils/encoder'
-import fetch from './utils/fetch'
 import { getPath, PrivKeySecp256k1, PubKeySecp256k1 } from './utils/wallet'
 import { ConcreteMsg } from './containers/Transaction'
 import { HDWallet } from './utils/hdwallet'
@@ -288,22 +288,6 @@ export class Wallet {
     return this.broadcast(broadcastTxBody)
   }
 
-  // When doing a direct broadcast there are problems with sequence numbers
-  // and blocking requests
-  // Problem 1: Cosmos requires that each txn from an address has a sequence
-  // number that increases by 1 per txn
-  // If the sequence number has been used before or is more than 1 ahead of the
-  // last seen sequence number, then the Cosmos server will reject the txn
-  // Problem 2: To get the logs of a txn, the txn request needs to be sent with
-  // a "block" mode, this makes the request wait for the txn to be included into
-  // a block
-  // This can the UI/UX to appear slow if a user does multiple actions within 1 second
-  //
-  // seqSignAndBroadcast solves these issues by enqueueing msgs into a queue
-  // the queue is then checked and processed periodically
-  // when processing, the msgs are batched into a single txn then signed
-  // the sequenceCounter is also used to manually keep track of the correct
-  // sequqne number to use for each txn
   public async seqSignAndBroadcast(msgs: object[], types: string[], options) {
     const concreteMsgs = this.constructConcreteMsgs(msgs, types)
     const id = Math.random().toString(36).substr(2, 9)

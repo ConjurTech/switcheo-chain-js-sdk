@@ -23,3 +23,5 @@ export const CREATE_SUB_ACCOUNT_MSG_TYPE = 'subaccount/MsgCreateSubAccount'
 export const ACTIVATE_SUB_ACCOUNT_MSG_TYPE = 'subaccount/MsgActivateSubAccount'
 
 export const EDIT_MARGIN_MSG_TYPE = 'position/SetMargin'
+
+export const UPDATE_PROFILE_MSG_TYPE = 'profile/UpdateProfile'
