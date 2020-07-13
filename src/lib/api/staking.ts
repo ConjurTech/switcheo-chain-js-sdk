@@ -1,7 +1,7 @@
 import * as types from '../types'
 import { Wallet, SignMessageOptions }  from '../wallet'
 import { TransactionOptions } from '../containers/Transaction'
-import { NETWORK } from '../config'
+import { getNetwork } from '../config'
 import fetch from '../utils/fetch'
 
 interface Options extends SignMessageOptions, TransactionOptions {}
@@ -46,10 +46,7 @@ export async function delegateTokens(wallet: Wallet, msg: DelegateTokensMsg, opt
 }
 
 export async function getStakingValidators(net: string): Promise<any> {
-	const network = NETWORK[net]
-	if (!network) {
-		throw new Error('network must be LOCALHOST/DEVNET/TESTNET')
-	}
+	const network = getNetwork(net)
 	return fetch(`${network.COSMOS_URL}/staking/validators`)
 		.then(res => res.json()) // expecting a json response
 }
@@ -59,10 +56,7 @@ interface GetValidatorDelegationsParams {
 }
 export async function getValidatorDelegations(net: string,
 																							params: GetValidatorDelegationsParams): Promise<any> {
-	const network = NETWORK[net]
-	if (!network) {
-		throw new Error('network must be LOCALHOST/DEVNET/TESTNET')
-	}
+	const network = getNetwork(net)
 	const { address } = params
 	return fetch(`${network.COSMOS_URL}/staking/validators/${address}/delegations`)
 		.then(res => res.json()) // expecting a json response

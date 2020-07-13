@@ -1,11 +1,8 @@
-import { NETWORK } from '../config'
+import { getNetwork } from '../config'
 import fetch from '../utils/fetch'
 
 export function getPrices(market: string, net: string): Promise<any> {
-  const network = NETWORK[net]
-  if (!network) {
-    throw new Error('network must be LOCALHOST/DEVNET/TESTNET')
-  }
+  const network = getNetwork(net)
   return fetch(`${network.REST_URL}/get_prices?market=${market}`)
     .then(res => res.json()) // expecting a json response
 }
