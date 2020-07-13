@@ -53,3 +53,17 @@ export async function getStakingValidators(net: string): Promise<any> {
 	return fetch(`${network.COSMOS_URL}/staking/validators`)
 		.then(res => res.json()) // expecting a json response
 }
+
+interface GetValidatorDelegationsParams {
+	address: string
+}
+export async function getValidatorDelegations(net: string,
+																							params: GetValidatorDelegationsParams): Promise<any> {
+	const network = NETWORK[net]
+	if (!network) {
+		throw new Error('network must be LOCALHOST/DEVNET/TESTNET')
+	}
+	const { address } = params
+	return fetch(`${network.COSMOS_URL}/staking/validators/${address}/delegations`)
+		.then(res => res.json()) // expecting a json response
+}
