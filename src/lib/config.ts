@@ -13,6 +13,7 @@ export const NETWORK = {
   TESTNET: {
     REST_URL: `http://128.199.131.67:5001`,
     SIGNUP_URL: `http://128.199.131.67:7001`,
+    COSMOS_URL: `http://128.199.131.67:1317`,
     ETH_ENV: 'ropsten',
     ETH_WS_URL: 'wss://ropsten.dagger.matic.network',
     BALANCE_READER_ADDRESS: '0xc08a56b059fb6776164a6499e3132efdbbfa15ca',
@@ -20,6 +21,7 @@ export const NETWORK = {
   DEVNET: {
     REST_URL: `http://13.251.218.38:5001`,
     SIGNUP_URL: `http://13.251.218.38:7001`,
+    COSMOS_URL: `http://13.251.218.38:1317`,
     ETH_ENV: 'ropsten',
     ETH_WS_URL: 'wss://ropsten.dagger.matic.network',
     BALANCE_READER_ADDRESS: '0xc08a56b059fb6776164a6499e3132efdbbfa15ca',
@@ -27,6 +29,7 @@ export const NETWORK = {
   LOCALHOST: {
     REST_URL: `http://${localhost}:${port}`,
     SIGNUP_URL: `http://${localhost}:7001`,
+    COSMOS_URL: `http://${localhost}:1317`,
     ETH_ENV: 'ropsten',
     ETH_WS_URL: 'wss://ropsten.dagger.matic.network',
     BALANCE_READER_ADDRESS: '0xc08a56b059fb6776164a6499e3132efdbbfa15ca',

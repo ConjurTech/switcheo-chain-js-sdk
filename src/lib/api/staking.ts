@@ -1,6 +1,8 @@
 import * as types from '../types'
 import { Wallet, SignMessageOptions }  from '../wallet'
 import { TransactionOptions } from '../containers/Transaction'
+import { NETWORK } from '../config'
+import fetch from '../utils/fetch'
 
 interface Options extends SignMessageOptions, TransactionOptions {}
 
@@ -41,4 +43,13 @@ export async function createValidator(wallet: Wallet, msg: CreateValidatorMsg, o
 
 export async function delegateTokens(wallet: Wallet, msg: DelegateTokensMsg, options?: Options) {
   return wallet.signAndBroadcast([msg], [types.DELEGATE_TOKENS_MSG_TYPE], options)
+}
+
+export async function getStakingValidators(net: string): Promise<any> {
+	const network = NETWORK[net]
+	if (!network) {
+		throw new Error('network must be LOCALHOST/DEVNET/TESTNET')
+	}
+	return fetch(`${network.COSMOS_URL}/staking/validators`)
+		.then(res => res.json()) // expecting a json response
 }
