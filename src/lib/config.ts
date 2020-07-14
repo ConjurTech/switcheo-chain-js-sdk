@@ -26,7 +26,7 @@ export const NETWORK: NetworkInterface = {
   DEVNET: {
     REST_URL: `http://13.251.218.38:5001`,
     SIGNUP_URL: `http://13.251.218.38:7001`,
-    COSMOS_URL: `http://13.251.218.38:1317`,
+    COSMOS_URL: `http://13.251.218.38:1318`,
     ETH_ENV: 'ropsten',
     ETH_WS_URL: 'wss://ropsten.dagger.matic.network',
     BALANCE_READER_ADDRESS: '0xc08a56b059fb6776164a6499e3132efdbbfa15ca',
