@@ -70,6 +70,6 @@ export async function getDelegatorDelegations(net: string,
 																							params: GetDelegatorDelegationsParams): Promise<any> {
 	const network = getNetwork(net)
 	const { address } = params
-	return fetch(`${network.COSMOS_URL}/delegators/${address}/delegations`)
+	return fetch(`${network.COSMOS_URL}/staking/delegators/${address}/delegations`)
 		.then(res => res.json()) // expecting a json response
 }
