@@ -61,3 +61,15 @@ export async function getValidatorDelegations(net: string,
 	return fetch(`${network.COSMOS_URL}/staking/validators/${address}/delegations`)
 		.then(res => res.json()) // expecting a json response
 }
+
+
+interface GetDelegatorDelegationsParams {
+	address: string
+}
+export async function getDelegatorDelegations(net: string,
+																							params: GetDelegatorDelegationsParams): Promise<any> {
+	const network = getNetwork(net)
+	const { address } = params
+	return fetch(`${network.COSMOS_URL}/delegators/${address}/delegations`)
+		.then(res => res.json()) // expecting a json response
+}
