@@ -18,6 +18,9 @@ export const CREATE_WITHDRAWAL_TYPE = 'withdrawal/CreateWithdrawal'
 
 export const CREATE_VALIDATOR_MSG_TYPE = 'cosmos-sdk/MsgCreateValidator'
 export const DELEGATE_TOKENS_MSG_TYPE = 'cosmos-sdk/MsgDelegate'
+export const BEGIN_UNBONDING_TOKENS_MSG_TYPE = 'cosmos-sdk/MsgBeginUnbonding'
+export const BEGIN_REDELEGATING_TOKENS_MSG_TYPE = 'cosmos-sdk/MsgBeginRedelegate'
+export const WITHDRAW_ALL_DELEGATION_REWARDS_MSG_TYPE = 'cosmos-sdk/MsgWithdrawDelegationRewardsAll'
 
 export const CREATE_SUB_ACCOUNT_MSG_TYPE = 'subaccount/MsgCreateSubAccount'
 export const ACTIVATE_SUB_ACCOUNT_MSG_TYPE = 'subaccount/MsgActivateSubAccount'
