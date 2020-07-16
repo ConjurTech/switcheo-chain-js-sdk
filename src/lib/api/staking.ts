@@ -35,8 +35,14 @@ export interface BeginRedelegatingTokensMsg {
   },
 }
 
-export interface WithdrawAllDelegationRewardsMsg {
+export interface WithdrawDelegatorRewardsMsg {
   delegator_address: string,
+  validator_address: string,
+}
+
+export interface WithdrawAllDelegatorRewardsParams {
+  delegatorAddress: string,
+  validatorAddresses: string[],
 }
 
 export interface CreateValidatorMsg {
@@ -86,11 +92,23 @@ export async function redelegateTokens(wallet: Wallet,
     [types.BEGIN_REDELEGATING_TOKENS_MSG_TYPE], options)
 }
 
-export async function withdrawAllDelegationRewards(wallet: Wallet,
-                                                msg: WithdrawAllDelegationRewardsMsg,
-                                                options?: Options) {
+export async function withdrawDelegatorRewards(wallet: Wallet,
+                                               msg: WithdrawDelegatorRewardsMsg,
+                                               options?: Options) {
   return wallet.signAndBroadcast([msg],
-    [types.WITHDRAW_ALL_DELEGATION_REWARDS_MSG_TYPE], options)
+    [types.WITHDRAW_DELEGATOR_REWARDS_MSG_TYPE], options)
+}
+
+export async function withdrawAllDelegatorRewards(wallet: Wallet,
+                                                  msg: WithdrawAllDelegatorRewardsParams,
+                                                  options?: Options) {
+  const { validatorAddresses, delegatorAddress } = msg
+  const messages: Array<WithdrawDelegatorRewardsMsg> =
+    validatorAddresses.map((address: string) => (
+      { validator_address: address, delegator_address: delegatorAddress }
+    ))
+  return wallet.signAndBroadcast(messages,
+    Array(validatorAddresses.length).fill(types.WITHDRAW_DELEGATOR_REWARDS_MSG_TYPE), options)
 }
 
 // * Get requests * //
@@ -122,7 +140,7 @@ export async function getDelegatorDelegations(net: string,
 
 // /staking/delegators/{address}/unbonding_delegations
 export async function getDelegatorUnbondingDelegations(net: string,
-                                              params: AddressOnlyGetterParams): Promise<any> {
+                                                       params: AddressOnlyGetterParams): Promise<any> {
   const network = getNetwork(net)
   const { address } = params
   return fetch(`${network.COSMOS_URL}/staking/delegators/${address}/unbonding_delegations`)
@@ -131,7 +149,7 @@ export async function getDelegatorUnbondingDelegations(net: string,
 
 // /staking/delegators/{address}/redelegations
 export async function getDelegatorRedelegations(net: string,
-                                              params: AddressOnlyGetterParams): Promise<any> {
+                                                params: AddressOnlyGetterParams): Promise<any> {
   const network = getNetwork(net)
   const { address } = params
   return fetch(`${network.COSMOS_URL}/staking/delegators/${address}/redelegations`)
@@ -140,7 +158,7 @@ export async function getDelegatorRedelegations(net: string,
 
 // /distribution/delegators/{address}/rewards
 export async function getDelegatorDelegationRewards(net: string,
-                                          params: AddressOnlyGetterParams): Promise<any> {
+                                                    params: AddressOnlyGetterParams): Promise<any> {
   const network = getNetwork(net)
   const { address } = params
   return fetch(`${network.COSMOS_URL}/distribution/delegators/${address}/rewards`)

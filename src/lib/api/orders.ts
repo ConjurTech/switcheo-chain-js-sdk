@@ -12,6 +12,8 @@ export interface CreateOrderParams {
   Side: string,
   Quantity: string,
   Price: string,
+  IsReduceOnly?: boolean,
+  IsPostOnly?: boolean,
 }
 
 export async function createOrder(wallet: Wallet, params: CreateOrderParams, options?: Options) {

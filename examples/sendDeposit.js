@@ -10,9 +10,13 @@ const net = 'LOCALHOST'
 async function run() {
   const mnemonic = 'weird album height core exercise loop must swear sort muscle mirror camp'
   const account = await Wallet.connect(mnemonic, net)
-  console.log('account address', account.pubKeyBech32)
-  const depositAddress = await account.getDepositAddress('eth')
-  console.log('eth deposit address', depositAddress)
+  const result = await account.sendDeposit(
+    'eth',
+    '0x0000000000000000000000000000000000000000',
+    'reth5',
+    '10000000000000000'
+  )
+  console.log('sent deposit', result)
 }
 
 run()
