@@ -10,6 +10,8 @@ import { getPath, PrivKeySecp256k1, PubKeySecp256k1 } from './utils/wallet'
 import { ConcreteMsg } from './containers/Transaction'
 import { HDWallet } from './utils/hdwallet'
 import BALANCE_READER_ABI from './eth/abis/balanceReader.json'
+import WALLET_FACTORY_ABI from './eth/abis/walletFactory.json'
+import { ETH_WALLET_BYTECODE } from './constants/bytecode'
 
 export interface SignMessageOptions { memo?: string, sequence?: string }
 export interface WalletOptions { useSequenceCounter?: boolean, broadcastQueueIntervalTime?: number }
@@ -44,6 +46,7 @@ export class Wallet {
   public readonly network: Network
   public accountNumber: string
   public broadcastMode: string
+  public depositAddresses: {[key: string]: string}
 
   private useSequenceCounter: boolean
   private sequenceCounter?: number
@@ -69,6 +72,7 @@ export class Wallet {
     this.accountNumber = accountNumber
     this.network = network
     this.hdWallet = HDWallet.getWallet(mnemonic)
+    this.depositAddresses = {}
 
     if (walletOptions === undefined) {
       walletOptions = {}
@@ -190,42 +194,109 @@ export class Wallet {
     const address = await this.getDepositAddress('eth')
 
     // do an initial check
-    this.requestDeposits(address, 'eth')
+    this.sendDeposits(address, 'eth')
 
     const dagger = new Dagger(this.network.ETH_WS_URL)
     // watch for ETH transfers
     dagger.on(`latest:addr/${address}/tx/in`, () => {
-      this.requestDeposits(address, 'eth')
+      this.sendDeposits(address, 'eth')
     })
 
     // watch for Ethereum token transfers
     const transferId = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
     dagger.on(`latest:log/+/filter/${transferId}/+/${address}/#`, () => {
-      this.requestDeposits(address, 'eth')
+      this.sendDeposits(address, 'eth')
     })
   }
 
-  public async requestDeposits(address, blockchain) {
+  public async sendDeposits(address, blockchain) {
     if (blockchain != 'eth') {
-      throw new Error('Unsupported blockchain')
+      throw new Error(blockchain + ' deposit not supported yet')
     }
 
     const tokens = await this.getExternalBalances(address, blockchain)
     for (let i = 0; i < tokens.length; i++) {
       const token = tokens[i]
       if (token.externalBalance != '0') {
-        // TODO: request deposit
+        // send the deposit in 30 seconds to avoid problems with block re-orgs
+        setTimeout(() => {
+          this.sendDeposit(
+            blockchain,
+            '0x' + token.asset_id,
+            token.denom,
+            token.externalBalance
+          )
+        }, 30)
       }
     }
   }
 
-  public getDepositAddress(blockchain: string) {
+  public async sendDeposit(blockchain, assetId, denom, amount) {
     if (blockchain !== 'eth') {
-      return "example address"
+      throw new Error(blockchain + ' deposit not supported yet')
     }
+
+    // hardcode feeAmount to 0.001 * 10^18 for now
+    const feeAmount = '1000000000000000'
+    const targetProxyHash = '0xdb8afcccebc026c6cae1d541b25f80a83b065c8a'
+    const feeAddress = '0x989761fb0c0eb0c05605e849cae77d239f98ac7f'
+
+    const toAssetHash = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(denom))
+    const message = ethers.utils.solidityKeccak256(
+      ['string', 'address', 'bytes', 'bytes', 'uint256', 'uint256', 'bytes'],
+      ['sendTokens', assetId, targetProxyHash, toAssetHash, amount, feeAmount, feeAddress]
+    )
+    const messageBytes = ethers.utils.arrayify(message)
+
     const privateKey = this.hdWallet[blockchain]
-    const account = new ethers.Wallet(privateKey)
-    return account.address
+    const etherWallet = new ethers.Wallet(privateKey)
+    const nativeAddress = etherWallet.address
+    const signature = await etherWallet.signMessage(messageBytes)
+    const rsv = ethers.utils.splitSignature(signature)
+
+    const externalAddress = ethers.utils.hexlify(this.address)
+    const body = {
+      NativeAddress: nativeAddress,
+      ExternalAddress: externalAddress,
+      AssetHash: assetId,
+      TargetProxyHash: targetProxyHash,
+      ToAssetHash: toAssetHash,
+      Amount: amount,
+      FeeAmount: feeAmount,
+      FeeAddress: feeAddress,
+      V: rsv.v.toString(),
+      R: rsv.r,
+      S: rsv.s,
+    }
+
+    console.log('body', JSON.stringify(body))
+    return fetch(
+      this.network.RELAYER_URL + '/deposit',
+      { method: 'POST', body: JSON.stringify(body) }
+    )
+  }
+
+  public async getDepositAddress(blockchain: string) {
+    if (blockchain !== 'eth') {
+      return `example ${blockchain.toLowerCase()} address`
+    }
+
+    if (this.depositAddresses[blockchain] !== undefined) {
+      return this.depositAddresses[blockchain]
+    }
+
+    const externalAddress = ethers.utils.hexlify(this.address)
+    const privateKey = this.hdWallet[blockchain]
+    console.log('privateKey', privateKey)
+    const nativeAddress = (new ethers.Wallet(privateKey)).address
+
+    const provider = ethers.getDefaultProvider(this.network.ETH_ENV)
+    const contractAddress = this.network.WALLET_FACTORY_ADDRESS
+    const contract = new ethers.Contract(contractAddress, WALLET_FACTORY_ABI, provider)
+    const walletAddress = await contract.getWalletAddress(nativeAddress, externalAddress, ETH_WALLET_BYTECODE)
+
+    this.depositAddresses[blockchain] = walletAddress
+    return walletAddress
   }
 
   public async getExternalBalances(address: string, blockchain: string) {
@@ -233,12 +304,11 @@ export class Wallet {
       throw new Error('Unsupported blockchain')
     }
 
-    const tokens = (await this.getTokens()).filter(token => token.blockchain == blockchain && token.asset_id.startsWith('0x'))
+    const tokens = (await this.getTokens()).filter(token => token.blockchain == blockchain)
     const assetIds = tokens.map(token => token.asset_id)
-    const abi = BALANCE_READER_ABI
     const provider = ethers.getDefaultProvider(this.network.ETH_ENV)
     const contractAddress = this.network.BALANCE_READER_ADDRESS
-    const contract = new ethers.Contract(contractAddress, abi, provider)
+    const contract = new ethers.Contract(contractAddress, BALANCE_READER_ABI, provider)
 
     const balances = await contract.getBalances(address, assetIds)
     for (let i = 0; i < tokens.length; i++) {
