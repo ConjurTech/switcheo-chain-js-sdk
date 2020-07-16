@@ -269,7 +269,6 @@ export class Wallet {
       S: rsv.s,
     }
 
-    console.log('body', JSON.stringify(body))
     return fetch(
       this.network.RELAYER_URL + '/deposit',
       { method: 'POST', body: JSON.stringify(body) }
@@ -287,7 +286,6 @@ export class Wallet {
 
     const externalAddress = ethers.utils.hexlify(this.address)
     const privateKey = this.hdWallet[blockchain]
-    console.log('privateKey', privateKey)
     const nativeAddress = (new ethers.Wallet(privateKey)).address
 
     const provider = ethers.getDefaultProvider(this.network.ETH_ENV)
