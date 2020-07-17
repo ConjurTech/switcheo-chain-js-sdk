@@ -22,7 +22,7 @@ export const NETWORK: NetworkInterface = {
     COSMOS_URL: `http://128.199.131.67:1317`,
     ETH_ENV: 'ropsten',
     ETH_WS_URL: 'wss://ropsten.dagger.matic.network',
-    BALANCE_READER_ADDRESS: '0xc08a56b059fb6776164a6499e3132efdbbfa15ca',
+    BALANCE_READER_ADDRESS: '0xb3c33ac95eda80dfa6853cc9bee5294a6bf98f80',
     WALLET_FACTORY_ADDRESS: '0x86edf4748efeded37f4932b7de93a575909cc892',
   },
   DEVNET: {
@@ -31,7 +31,7 @@ export const NETWORK: NetworkInterface = {
     COSMOS_URL: `http://13.251.218.38:1318`,
     ETH_ENV: 'ropsten',
     ETH_WS_URL: 'wss://ropsten.dagger.matic.network',
-    BALANCE_READER_ADDRESS: '0xc08a56b059fb6776164a6499e3132efdbbfa15ca',
+    BALANCE_READER_ADDRESS: '0xb3c33ac95eda80dfa6853cc9bee5294a6bf98f80',
     WALLET_FACTORY_ADDRESS: '0x86edf4748efeded37f4932b7de93a575909cc892',
   },
   LOCALHOST: {
@@ -40,7 +40,7 @@ export const NETWORK: NetworkInterface = {
     COSMOS_URL: `http://${localhost}:1317`,
     ETH_ENV: 'ropsten',
     ETH_WS_URL: 'wss://ropsten.dagger.matic.network',
-    BALANCE_READER_ADDRESS: '0xc08a56b059fb6776164a6499e3132efdbbfa15ca',
+    BALANCE_READER_ADDRESS: '0xb3c33ac95eda80dfa6853cc9bee5294a6bf98f80',
     WALLET_FACTORY_ADDRESS: '0x86edf4748efeded37f4932b7de93a575909cc892',
   },
 }

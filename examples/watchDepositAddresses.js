@@ -8,11 +8,9 @@ const net = 'LOCALHOST'
 // const net = 'DEVNET'
 
 async function run() {
-  const newAccount = wallet.newAccount()
-  console.log('newAccount address', newAccount.pubKeyBech32)
-  console.log('newAccount mnemonic', newAccount.mnemonic)
-  const account = await Wallet.connect(newAccount.mnemonic, net)
-  const { address } = await account.getDepositAddress('eth')
+  const mnemonic = 'rely final pipe disease fetch make noodle patch sting hand man digital'
+  const account = await Wallet.connect(mnemonic, net)
+  const address = await account.getDepositAddress('eth')
   console.log('watching address', address)
   account.watchDepositAddresses()
 }

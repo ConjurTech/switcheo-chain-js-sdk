@@ -303,7 +303,7 @@ export class Wallet {
     }
 
     const tokens = (await this.getTokens()).filter(token => token.blockchain == blockchain)
-    const assetIds = tokens.map(token => token.asset_id)
+    const assetIds = tokens.map(token => '0x' + token.asset_id)
     const provider = ethers.getDefaultProvider(this.network.ETH_ENV)
     const contractAddress = this.network.BALANCE_READER_ADDRESS
     const contract = new ethers.Contract(contractAddress, BALANCE_READER_ABI, provider)
