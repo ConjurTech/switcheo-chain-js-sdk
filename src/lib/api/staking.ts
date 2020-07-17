@@ -152,8 +152,25 @@ export async function getDelegatorRedelegations(net: string,
                                                 params: AddressOnlyGetterParams): Promise<any> {
   const network = getNetwork(net)
   const { address } = params
-  return fetch(`${network.COSMOS_URL}/staking/delegators/${address}/redelegations`)
+  return fetch(`${network.COSMOS_URL}/staking/redelegations?delegator=${address}`)
     .then(res => res.json()) // expecting a json response
+}
+
+// function to query 3 types of delegation at once
+export async function getAllDelegatorDelegations(net: string,
+                                                 params: AddressOnlyGetterParams): Promise<any> {
+  const promises = [
+    getDelegatorDelegations(net, params),
+    getDelegatorUnbondingDelegations(net, params),
+    getDelegatorRedelegations(net, params),
+  ]
+  return Promise.all(promises).then((responses) => {
+    return {
+      delegations: responses[0],
+      unbonding: responses[1],
+      redelegations: responses[2],
+    }
+  })
 }
 
 // /distribution/delegators/{address}/rewards
