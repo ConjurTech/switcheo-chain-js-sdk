@@ -120,6 +120,13 @@ export async function getStakingValidators(net: string): Promise<any> {
     .then(res => res.json()) // expecting a json response
 }
 
+// /staking/validators
+export async function getStakingPool(net: string): Promise<any> {
+  const network = getNetwork(net)
+  return fetch(`${network.COSMOS_URL}/staking/pool`)
+    .then(res => res.json()) // expecting a json response
+}
+
 // /staking/validators/{address}/delegations
 export async function getValidatorDelegations(net: string,
                                               params: AddressOnlyGetterParams): Promise<any> {
