@@ -227,7 +227,6 @@ export class Wallet {
           this.sendDeposit(
             blockchain,
             '0x' + token.asset_id,
-            token.denom,
             token.externalBalance
           )
         }, 30)
@@ -235,7 +234,7 @@ export class Wallet {
     }
   }
 
-  public async sendDeposit(blockchain, assetId, denom, amount) {
+  public async sendDeposit(blockchain, assetId, amount) {
     if (blockchain !== 'eth') {
       throw new Error(blockchain + ' deposit not supported yet')
     }
