@@ -245,7 +245,7 @@ export class Wallet {
     const targetProxyHash = '0xdb8afcccebc026c6cae1d541b25f80a83b065c8a'
     const feeAddress = '0x989761fb0c0eb0c05605e849cae77d239f98ac7f'
 
-    const toAssetHash = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(denom))
+    const toAssetHash = ethers.utils.hexlify(ethers.utils.toUtf8Bytes('reth5'))
     const message = ethers.utils.solidityKeccak256(
       ['string', 'address', 'bytes', 'bytes', 'uint256', 'uint256', 'bytes'],
       ['sendTokens', assetId, targetProxyHash, toAssetHash, amount, feeAmount, feeAddress]
