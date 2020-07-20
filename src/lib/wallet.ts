@@ -190,9 +190,13 @@ export class Wallet {
       .then(res => res.json()) // expecting a json response
   }
 
+  public getTransfers() {
+    return fetch(`${this.network.REST_URL}/get_external_transfers?account=${this.pubKeyBech32}`)
+        .then(res => res.json()); // expecting a json response
+  }
+
   public async watchDepositAddresses() {
     const address = await this.getDepositAddress('eth')
-
     // do an initial check
     this.sendDeposits(address, 'eth')
 
