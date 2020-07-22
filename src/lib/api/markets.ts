@@ -2,6 +2,8 @@ import * as types from '../types'
 import { Wallet, SignMessageOptions }  from '../wallet'
 import { TransactionOptions } from '../containers/Transaction'
 import { BigNumber } from 'bignumber.js'
+import { getNetwork } from '../config'
+import fetch from '../utils/fetch'
 
 interface Options extends SignMessageOptions, TransactionOptions {}
 
@@ -49,4 +51,10 @@ export async function initiateSettlements(wallet: Wallet, msgs: InitiateSettleme
   })
 
   return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.INITIATE_SETTLEMENT_MSG_TYPE), options)
+}
+
+export function getTokens(net: string): Promise<any> {
+  const network = getNetwork(net)
+  return fetch(`${network.REST_URL}/get_tokens`)
+    .then(res => res.json()) // expecting a json response
 }
