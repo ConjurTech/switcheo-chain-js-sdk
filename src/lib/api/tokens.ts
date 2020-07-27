@@ -31,3 +31,15 @@ export async function createTokens(wallet: Wallet, msgs: CreateTokenMsg[], optio
 
   return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.CREATE_TOKEN_MSG_TYPE), options)
 }
+
+export interface MintTokenMsg {
+  Originator?: string
+  ToAddress:  string
+  Amount:     string
+  Denom:      string
+}
+
+export async function mintTestnetTokens(wallet: Wallet, msg: MintTokenMsg, options?: Options) {
+  if(!msg.Originator) msg.Originator = wallet.pubKeyBech32
+  return wallet.signAndBroadcast([msg], [types.MINT_TOKEN_MSG_TYPE], options)
+}
