@@ -465,6 +465,16 @@ export function newAccount() {
   }
 }
 
+export function accountFromMnemonic(mnemonic) {
+  const privateKey = getPrivKeyFromMnemonic(mnemonic)
+  const pubKeyBech32 = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex')).toPubKey().toAddress().toBech32('swth')
+  return {
+    mnemonic,
+    privateKey,
+    pubKeyBech32,
+  }
+}
+
 export function getPrivKeyFromMnemonic(mnemonic) {
   const path = getPath()
   const seed = bip39.mnemonicToSeedSync(mnemonic, '')

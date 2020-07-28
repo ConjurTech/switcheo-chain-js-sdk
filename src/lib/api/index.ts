@@ -12,7 +12,7 @@ export {
     EditMarginParams
 } from './orders'
 export { mintTokens, MintTokenRequest } from './mints'
-export { createToken, createTokens, CreateTokenMsg, mintTestnetTokens, MintTokenMsg } from './tokens'
+export { createToken, createTokens, CreateTokenMsg, mintTestnetTokens, MintTokenMsg, mintMultipleTestnetTokens } from './tokens'
 export { createOracle, CreateOracleMsg, createVote, CreateVoteMsg } from './oracles'
 export { createWithdrawal, CreateWithdrawalMsg } from './withdrawal'
 export { addMarket, addMarkets, AddMarketMsg, initiateSettlement,

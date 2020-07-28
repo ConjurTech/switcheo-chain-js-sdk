@@ -11,14 +11,18 @@ async function getBankBalances(address) {
 }
 
 async function mint(id) {
+  const mintAccount = await Wallet.connect('quarter supreme focus dad thank utility aerobic improve flat sunset butter speed')
   const newAccount = wallet.newAccount()
   const toAddress = newAccount.pubKeyBech32
   const params = {
-    address: toAddress,
-    amount: '1000',
-    denom: 'swth',
+    toAddress,
+    mint: [{
+      amount: '1000',
+      denom: 'swth',
+    }],
   }
-  const result = await api.mintTokens(params)
+  const result = await api.mintMultipleTestnetTokens(mintAccount, params)
+
   console.log('------------------')
   console.log(id + ":", toAddress)
   const bankBalances = await getBankBalances(toAddress)
@@ -34,7 +38,7 @@ async function mint(id) {
 }
 
 async function run() {
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 1; i++) {
     mint(i)
   }
 }
