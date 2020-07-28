@@ -32,14 +32,31 @@ export async function createTokens(wallet: Wallet, msgs: CreateTokenMsg[], optio
   return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.CREATE_TOKEN_MSG_TYPE), options)
 }
 
+export interface MintParams {
+  toAddress: string
+  mint: Array<{denom: string, amount: string}>
+}
+
+export async function mintMultipleTestnetTokens(minterWallet: Wallet, params: MintParams) {
+  const { toAddress, mint } = params
+  const promises = mint.map((v: {denom: string, amount: string}) => {
+    return mintTestnetTokens(minterWallet, {
+      ToAddress: toAddress,
+      Amount: new BigNumber(v.amount).toFixed(18),
+      Denom: v.denom,
+    })
+  })
+  return Promise.all(promises)
+}
+
 export interface MintTokenMsg {
   Originator?: string
   ToAddress:  string
   Amount:     string
-  Denom:      string
+  Denom:      string // must have 18 decimal places e.g. 1.000000000000000000
 }
 
-export async function mintTestnetTokens(wallet: Wallet, msg: MintTokenMsg, options?: Options) {
-  if(!msg.Originator) msg.Originator = wallet.pubKeyBech32
-  return wallet.signAndBroadcast([msg], [types.MINT_TOKEN_MSG_TYPE], options)
+export async function mintTestnetTokens(minterWallet: Wallet, msg: MintTokenMsg, options?: Options) {
+  if(!msg.Originator) msg.Originator = minterWallet.pubKeyBech32
+  return minterWallet.signAndBroadcast([msg], [types.MINT_TOKEN_MSG_TYPE], options)
 }
