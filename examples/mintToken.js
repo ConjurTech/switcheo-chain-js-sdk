@@ -11,7 +11,7 @@ async function getBankBalances(address) {
 }
 
 async function mint(id) {
-  const mintAccount = await Wallet.connect('quarter supreme focus dad thank utility aerobic improve flat sunset butter speed')
+  const mintAccount = await Wallet.connect('MINTER MNEMONIC HERE')
   const newAccount = wallet.newAccount()
   const toAddress = newAccount.pubKeyBech32
   const params = {
