@@ -17,9 +17,9 @@ interface NetworkInterface {
 
 export const NETWORK: NetworkInterface = {
   TESTNET: {
-    REST_URL: `http://128.199.131.67:5001`,
-    RELAYER_URL: `http://128.199.131.67:7001`,
-    COSMOS_URL: `http://128.199.131.67:1317`,
+    REST_URL: `http://54.255.42.175:5001`,
+    RELAYER_URL: `http://54.255.42.175:7001`,
+    COSMOS_URL: `http://54.255.42.175:1317`,
     ETH_ENV: 'ropsten',
     ETH_WS_URL: 'wss://ropsten.dagger.matic.network',
     BALANCE_READER_ADDRESS: '0xb3c33ac95eda80dfa6853cc9bee5294a6bf98f80',

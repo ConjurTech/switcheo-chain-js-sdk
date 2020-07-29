@@ -131,7 +131,7 @@ export class WsWrapper {
   public getBaseUrls = function (network) {
     switch (network) {
       case Network.TestNet: {
-        return 'ws://128.199.131.67:5000/ws'
+        return 'ws://54.255.42.175:5000/ws'
       }
       case Network.DevNet: {
         return 'ws://13.251.218.38:5000/ws'
