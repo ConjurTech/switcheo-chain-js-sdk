@@ -243,11 +243,12 @@ export class Wallet {
     const feeAmount = '1000000000000000'
     const targetProxyHash = '0xdb8afcccebc026c6cae1d541b25f80a83b065c8a'
     const feeAddress = '0x989761fb0c0eb0c05605e849cae77d239f98ac7f'
-
     const toAssetHash = ethers.utils.hexlify(ethers.utils.toUtf8Bytes('reth5'))
+    // random nonce to prevent replay attacks
+    const nonce = Math.floor(Math.random() * 1000000000)
     const message = ethers.utils.solidityKeccak256(
-      ['string', 'address', 'bytes', 'bytes', 'uint256', 'uint256', 'bytes'],
-      ['sendTokens', assetId, targetProxyHash, toAssetHash, amount, feeAmount, feeAddress]
+      ['string', 'address', 'bytes', 'bytes', 'bytes', 'uint256', 'uint256', 'uint256'],
+      ['sendTokens', assetId, targetProxyHash, toAssetHash, feeAddress, amount, feeAmount, nonce]
     )
     const messageBytes = ethers.utils.arrayify(message)
 
@@ -257,8 +258,6 @@ export class Wallet {
     const signature = await etherWallet.signMessage(messageBytes)
     const rsv = ethers.utils.splitSignature(signature)
 
-    // random nonce to prevent replay attacks
-    const nonce = Math.floor(Math.random() * 1000000000)
     const externalAddress = ethers.utils.hexlify(this.address)
     const body = {
       NativeAddress: nativeAddress,
