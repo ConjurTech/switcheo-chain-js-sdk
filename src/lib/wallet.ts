@@ -257,6 +257,8 @@ export class Wallet {
     const signature = await etherWallet.signMessage(messageBytes)
     const rsv = ethers.utils.splitSignature(signature)
 
+    // random nonce to prevent replay attacks
+    const nonce = Math.floor(Math.random() * 1000000000)
     const externalAddress = ethers.utils.hexlify(this.address)
     const body = {
       NativeAddress: nativeAddress,
@@ -267,6 +269,7 @@ export class Wallet {
       Amount: amount,
       FeeAmount: feeAmount,
       FeeAddress: feeAddress,
+      Nonce: nonce,
       V: rsv.v.toString(),
       R: rsv.r,
       S: rsv.s,
