@@ -17,18 +17,18 @@ interface NetworkInterface {
 
 export const NETWORK: NetworkInterface = {
   TESTNET: {
-    REST_URL: `http://54.255.42.175:5001`,
+    REST_URL: 'https://test-tradescan.switcheo.org',
     RELAYER_URL: `http://54.255.42.175:7001`,
-    COSMOS_URL: `http://54.255.42.175:1317`,
+    COSMOS_URL: 'https://test-tradescan.switcheo.org',
     ETH_ENV: 'ropsten',
     ETH_WS_URL: 'wss://ropsten.dagger.matic.network',
     BALANCE_READER_ADDRESS: '0xb3c33ac95eda80dfa6853cc9bee5294a6bf98f80',
     WALLET_FACTORY_ADDRESS: '0x86edf4748efeded37f4932b7de93a575909cc892',
   },
   DEVNET: {
-    REST_URL: `http://13.251.218.38:5001`,
+    REST_URL: 'https://dev-tradescan.switcheo.org',
     RELAYER_URL: `http://13.251.218.38:7001`,
-    COSMOS_URL: `http://13.251.218.38:1318`,
+    COSMOS_URL: 'https://dev-tradescan.switcheo.org',
     ETH_ENV: 'ropsten',
     ETH_WS_URL: 'wss://ropsten.dagger.matic.network',
     BALANCE_READER_ADDRESS: '0xb3c33ac95eda80dfa6853cc9bee5294a6bf98f80',
