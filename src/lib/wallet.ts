@@ -11,7 +11,7 @@ import { ConcreteMsg } from './containers/Transaction'
 import { HDWallet } from './utils/hdwallet'
 import BALANCE_READER_ABI from './eth/abis/balanceReader.json'
 import WALLET_FACTORY_ABI from './eth/abis/walletFactory.json'
-import { ETH_WALLET_BYTECODE } from './constants/bytecode'
+import { Blockchain, ETH_WALLET_BYTECODE } from './constants'
 
 export interface SignMessageOptions { memo?: string, sequence?: string }
 export interface WalletOptions { useSequenceCounter?: boolean, broadcastQueueIntervalTime?: number }
@@ -196,36 +196,34 @@ export class Wallet {
   }
 
   public async watchDepositAddresses() {
-    const address = await this.getDepositAddress('eth')
+  }
+
+  public async watchEthDepositAddress() {
+    const address = await this.getDepositAddress(Blockchain.Ethereum)
     // do an initial check
-    this.sendDeposits(address, 'eth')
+    this.sendEthDeposits(address)
 
     const dagger = new Dagger(this.network.ETH_WS_URL)
-    // watch for ETH transfers
+    // watch for Ethereum transfers
     dagger.on(`latest:addr/${address}/tx/in`, () => {
-      this.sendDeposits(address, 'eth')
+      this.sendEthDeposits(address)
     })
 
     // watch for Ethereum token transfers
     const transferId = '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
     dagger.on(`latest:log/+/filter/${transferId}/+/${address}/#`, () => {
-      this.sendDeposits(address, 'eth')
+      this.sendEthDeposits(address)
     })
   }
 
-  public async sendDeposits(address, blockchain) {
-    if (blockchain != 'eth') {
-      throw new Error(blockchain + ' deposit not supported yet')
-    }
-
-    const tokens = await this.getExternalBalances(address, blockchain)
+  public async sendEthDeposits(address) {
+    const tokens = await this.getEthExternalBalances(address)
     for (let i = 0; i < tokens.length; i++) {
       const token = tokens[i]
       if (token.externalBalance != '0') {
         // send the deposit in 30 seconds to avoid problems with block re-orgs
         setTimeout(() => {
-          this.sendDeposit(
-            blockchain,
+          this.sendEthDeposit(
             '0x' + token.asset_id,
             token.externalBalance
           )
@@ -234,11 +232,7 @@ export class Wallet {
     }
   }
 
-  public async sendDeposit(blockchain, assetId, amount) {
-    if (blockchain !== 'eth') {
-      throw new Error(blockchain + ' deposit not supported yet')
-    }
-
+  public async sendEthDeposit(assetId, amount) {
     // hardcode feeAmount to 0.001 * 10^18 for now
     const feeAmount = '1000000000000000'
     const targetProxyHash = '0xdb8afcccebc026c6cae1d541b25f80a83b065c8a'
@@ -252,7 +246,7 @@ export class Wallet {
     )
     const messageBytes = ethers.utils.arrayify(message)
 
-    const privateKey = this.hdWallet[blockchain]
+    const privateKey = this.hdWallet[Blockchain.Ethereum]
     const etherWallet = new ethers.Wallet(privateKey)
     const nativeAddress = etherWallet.address
     const signature = await etherWallet.signMessage(messageBytes)
@@ -281,16 +275,24 @@ export class Wallet {
   }
 
   public async getDepositAddress(blockchain: string) {
-    if (blockchain !== 'eth') {
-      return `example ${blockchain.toLowerCase()} address`
-    }
-
     if (this.depositAddresses[blockchain] !== undefined) {
       return this.depositAddresses[blockchain]
     }
 
+    let depositAddress = ''
+    if (blockchain === Blockchain.Ethereum) {
+      depositAddress = await this.getEthDepositAddress()
+    } else {
+      return 'unsupported blockchain'
+    }
+
+    this.depositAddresses[blockchain] = depositAddress
+    return depositAddress
+  }
+
+  public async getEthDepositAddress() {
     const externalAddress = ethers.utils.hexlify(this.address)
-    const privateKey = this.hdWallet[blockchain]
+    const privateKey = this.hdWallet[Blockchain.Ethereum]
     const nativeAddress = (new ethers.Wallet(privateKey)).address
 
     const provider = ethers.getDefaultProvider(this.network.ETH_ENV)
@@ -298,16 +300,11 @@ export class Wallet {
     const contract = new ethers.Contract(contractAddress, WALLET_FACTORY_ABI, provider)
     const walletAddress = await contract.getWalletAddress(nativeAddress, externalAddress, ETH_WALLET_BYTECODE)
 
-    this.depositAddresses[blockchain] = walletAddress
     return walletAddress
   }
 
-  public async getExternalBalances(address: string, blockchain: string) {
-    if (blockchain !== 'eth') {
-      throw new Error('Unsupported blockchain')
-    }
-
-    const tokens = (await this.getTokens()).filter(token => token.blockchain == blockchain)
+  public async getEthExternalBalances(address: string) {
+    const tokens = (await this.getTokens()).filter(token => token.blockchain == Blockchain.Ethereum)
     const assetIds = tokens.map(token => '0x' + token.asset_id)
     const provider = ethers.getDefaultProvider(this.network.ETH_ENV)
     const contractAddress = this.network.BALANCE_READER_ADDRESS
