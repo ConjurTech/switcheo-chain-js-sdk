@@ -16,6 +16,15 @@ interface NetworkInterface {
 }
 
 export const NETWORK: NetworkInterface = {
+  MAINNET: {
+    REST_URL: 'https://tradescan.switcheo.org',
+    RELAYER_URL: 'https://tradescan.switcheo.org',
+    COSMOS_URL: 'https://tradescan.switcheo.org',
+    ETH_ENV: 'ropsten',
+    ETH_WS_URL: 'wss://ropsten.dagger.matic.network',
+    BALANCE_READER_ADDRESS: '0xb3c33ac95eda80dfa6853cc9bee5294a6bf98f80',
+    WALLET_FACTORY_ADDRESS: '0x86edf4748efeded37f4932b7de93a575909cc892',
+  },
   TESTNET: {
     REST_URL: 'https://test-tradescan.switcheo.org',
     RELAYER_URL: `http://54.255.42.175:7001`,
