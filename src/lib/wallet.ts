@@ -370,7 +370,12 @@ export class Wallet {
   }
 
   public async getEthExternalBalances(address: string) {
-    const tokens = (await this.getTokens()).filter(token => token.blockchain == Blockchain.Ethereum)
+    const tokenList = await this.getTokens()
+    const tokens = tokenList.filter(token =>
+      token.blockchain == Blockchain.Ethereum &&
+      token.asset_id.length == 40 &&
+      token.lockproxy_hash.length == 40
+    )
     const assetIds = tokens.map(token => '0x' + token.asset_id)
     const provider = ethers.getDefaultProvider(this.network.ETH_ENV)
     const contractAddress = this.network.ETH_BALANCE_READER
@@ -385,7 +390,12 @@ export class Wallet {
   }
 
   public async getNeoExternalBalances(address: string) {
-    const tokens = (await this.getTokens()).filter(token => token.blockchain == Blockchain.Neo && token.asset_id.length == 40)
+    const tokenList = await this.getTokens()
+    const tokens = tokenList.filter(token =>
+      token.blockchain == Blockchain.Neo &&
+      token.asset_id.length == 40 &&
+      token.lockproxy_hash.length == 40
+    )
     const assetIds = tokens.map(token => Neon.u.reverseHex(token.asset_id))
     const provider = this.network.NEO_URL
 

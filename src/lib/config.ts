@@ -64,8 +64,8 @@ export const NETWORK: NetworkInterface = {
     NEO_LOCKPROXY: '5faf564a13601fc39b7e1a3bbc862c450538fa89',
     ETH_ENV: 'ropsten',
     ETH_WS_URL: 'wss://ropsten.dagger.matic.network',
-    BALANCE_READER_ADDRESS: '0xb3c33ac95eda80dfa6853cc9bee5294a6bf98f80',
-    WALLET_FACTORY_ADDRESS: '0x86edf4748efeded37f4932b7de93a575909cc892',
+    ETH_BALANCE_READER: '0xb3c33ac95eda80dfa6853cc9bee5294a6bf98f80',
+    ETH_WALLET_FACTORY: '0x86edf4748efeded37f4932b7de93a575909cc892',
   },
 }
 
