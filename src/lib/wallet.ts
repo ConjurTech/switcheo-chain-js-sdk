@@ -12,6 +12,7 @@ import { HDWallet } from './utils/hdwallet'
 import BALANCE_READER_ABI from './eth/abis/balanceReader.json'
 import WALLET_FACTORY_ABI from './eth/abis/walletFactory.json'
 import { Blockchain, ETH_WALLET_BYTECODE } from './constants'
+import Neon, { nep5, api, u } from "@cityofzion/neon-js"
 
 export interface SignMessageOptions { memo?: string, sequence?: string }
 export interface WalletOptions { useSequenceCounter?: boolean, broadcastQueueIntervalTime?: number }
@@ -55,6 +56,7 @@ export class Wallet {
   private broadcastQueue: BroadcastQueueItem[]
   private broadcastResults: BroadcastResults
   private isBroadcastQueuePaused: boolean
+  private neoDepositsIntervalId: number
 
   constructor(mnemonic, accountNumber, network, walletOptions?: WalletOptions) {
     const privateKey = getPrivKeyFromMnemonic(mnemonic)
@@ -98,6 +100,7 @@ export class Wallet {
 
   public disconnect() {
     clearInterval(this.broadcastQueueIntervalId)
+    clearInterval(this.neoDepositsIntervalId)
   }
 
   public getWalletOptions(): WalletOptions {
@@ -196,12 +199,66 @@ export class Wallet {
   }
 
   public async watchDepositAddresses() {
+    this.watchNeoDepositAddress()
+    this.watchEthDepositAddress()
+  }
+
+  public async watchNeoDepositAddress() {
+    const address = await this.getDepositAddress(Blockchain.Neo)
+    await this.sendNeoDeposits(address)
+
+    // check every 30 seconds
+    this.neoDepositsIntervalId = <any>setInterval(() => {
+      this.sendNeoDeposits(address)
+    }, 30 * 1000)
+  }
+
+  public async sendNeoDeposits(address) {
+    const tokens = await this.getNeoExternalBalances(address)
+    for (let i = 0; i < tokens.length; i++) {
+      const token = tokens[i]
+      if (token.externalBalance !== undefined && token.externalBalance !== '0') {
+        this.sendNeoDeposit(token)
+      }
+    }
+  }
+
+  public async sendNeoDeposit(token) {
+    const toAddress = ethers.utils.hexlify(this.address)
+
+    const privateKey = this.hdWallet[Blockchain.Neo]
+    const account = Neon.create.account(privateKey)
+    const scriptHash = this.network.NEO_LOCKPROXY
+
+    const sb = Neon.create.scriptBuilder()
+    sb.emitAppCall(scriptHash, 'lock', [
+      token.asset_id, // fromAssetHash: swth_v2
+      u.reverseHex(account.scriptHash), // fromAddress
+      this.network.SWTH_CHAIN_ID, // toChainId
+      token.lockproxy_hash, // targetProxyHash
+      u.str2hexstring(token.denom), // toAssetHash
+      toAddress, // toAddress
+      parseInt(token.externalBalance), // amount
+      false, // deductFeeInLock
+      0, // feeAmount
+      '989761fb0c0eb0c05605e849cae77d239f98ac7f' // default feeAddress
+    ])
+
+    const apiProvider = new api.neoCli.instance(this.network.NEO_URL)
+    await Neon.doInvoke({
+      api: apiProvider,
+      url: this.network.NEO_URL,
+      account,
+      script: sb.str,
+      gas: 0,
+      fees: 0
+    })
   }
 
   public async watchEthDepositAddress() {
     const address = await this.getDepositAddress(Blockchain.Ethereum)
     // do an initial check
-    this.sendEthDeposits(address)
+    await this.sendEthDeposits(address)
 
     const dagger = new Dagger(this.network.ETH_WS_URL)
     // watch for Ethereum transfers
@@ -220,7 +277,7 @@ export class Wallet {
     const tokens = await this.getEthExternalBalances(address)
     for (let i = 0; i < tokens.length; i++) {
       const token = tokens[i]
-      if (token.externalBalance != '0') {
+      if (token.externalBalance !== undefined && token.externalBalance !== '0') {
         // send the deposit in 30 seconds to avoid problems with block re-orgs
         setTimeout(() => {
           this.sendEthDeposit(
@@ -280,7 +337,10 @@ export class Wallet {
     }
 
     let depositAddress = ''
-    if (blockchain === Blockchain.Ethereum) {
+    if (blockchain === Blockchain.Neo) {
+      depositAddress = await this.getNeoDepositAddress()
+    }
+    else if (blockchain === Blockchain.Ethereum) {
       depositAddress = await this.getEthDepositAddress()
     } else {
       return 'unsupported blockchain'
@@ -290,13 +350,19 @@ export class Wallet {
     return depositAddress
   }
 
+  public async getNeoDepositAddress() {
+    const privateKey = this.hdWallet[Blockchain.Neo]
+    const account = Neon.create.account(privateKey)
+    return account.address
+  }
+
   public async getEthDepositAddress() {
     const externalAddress = ethers.utils.hexlify(this.address)
     const privateKey = this.hdWallet[Blockchain.Ethereum]
     const nativeAddress = (new ethers.Wallet(privateKey)).address
 
     const provider = ethers.getDefaultProvider(this.network.ETH_ENV)
-    const contractAddress = this.network.WALLET_FACTORY_ADDRESS
+    const contractAddress = this.network.ETH_WALLET_FACTORY
     const contract = new ethers.Contract(contractAddress, WALLET_FACTORY_ABI, provider)
     const walletAddress = await contract.getWalletAddress(nativeAddress, externalAddress, ETH_WALLET_BYTECODE)
 
@@ -307,12 +373,31 @@ export class Wallet {
     const tokens = (await this.getTokens()).filter(token => token.blockchain == Blockchain.Ethereum)
     const assetIds = tokens.map(token => '0x' + token.asset_id)
     const provider = ethers.getDefaultProvider(this.network.ETH_ENV)
-    const contractAddress = this.network.BALANCE_READER_ADDRESS
+    const contractAddress = this.network.ETH_BALANCE_READER
     const contract = new ethers.Contract(contractAddress, BALANCE_READER_ABI, provider)
 
     const balances = await contract.getBalances(address, assetIds)
     for (let i = 0; i < tokens.length; i++) {
       tokens[i].externalBalance = balances[i].toString()
+    }
+
+    return tokens
+  }
+
+  public async getNeoExternalBalances(address: string) {
+    const tokens = (await this.getTokens()).filter(token => token.blockchain == Blockchain.Neo && token.asset_id.length == 40)
+    const assetIds = tokens.map(token => Neon.u.reverseHex(token.asset_id))
+    const provider = this.network.NEO_URL
+
+    const balances = await nep5.getTokenBalances(
+      provider,
+      assetIds,
+      address
+    )
+
+    for (let i = 0; i < tokens.length; i++) {
+      const token = tokens[i]
+      tokens[i].externalBalance = balances[token.symbol.toUpperCase()].toRawNumber().toString()
     }
 
     return tokens

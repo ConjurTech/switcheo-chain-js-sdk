@@ -6,7 +6,7 @@ import wif from 'wif'
 import { Blockchain } from '../constants'
 
 type WalletResult = Record<
-  Blockchain.Ethereum | 'mnemonic',
+  Blockchain.Neo | Blockchain.Ethereum | 'mnemonic',
   string
 >
 
@@ -53,6 +53,8 @@ export class HDWallet {
     return {
       [Blockchain.Ethereum]: this.getKey(
         root, this.getCoinType(Blockchain.Ethereum), PrivateKeyFormat.hex),
+      [Blockchain.Neo]: this.getKey(
+        root, this.getCoinType(Blockchain.Neo), PrivateKeyFormat.wif),
       mnemonic,
     }
   }
