@@ -2,25 +2,17 @@
 const SDK = require('../.')
 const { wallet, api } = SDK
 const { Wallet } = wallet
+const BigNumber = require('bignumber.js')
 
 async function createWithdrawal() {
-  const newAccount = wallet.newAccount()
-  console.log('newAccount', newAccount.pubKeyBech32)
-  const tokenReq = {
-    address: newAccount.pubKeyBech32,
-    amount: '1',
-    denom: 'eth',
-  }
-  const mintResult = await api.mintTokens(tokenReq)
-  console.log('mintResult', mintResult)
-
-  const accountWallet = await Wallet.connect(newAccount.mnemonic)
+  const mnemonic = 'direct social glue family aspect vanish hollow grocery armed goat fortune chapter'
+  const accountWallet = await Wallet.connect(mnemonic)
   const params = {
-    ReceivingAddress: '0x6bae56C7C534c38E08564C4b482a04Ea53B7A29c',
-    Blockchain: 'eth',
-    ChainID: '3',
-    AssetID: '0x000000000000000000000000000000008000003c',
-    Amount: '0.1',
+    ToAddress: '6bae56C7C534c38E08564C4b482a04Ea53B7A29c',
+    Denom: 'neo',
+    Amount: new BigNumber('10').toFixed(18),
+    FeeAmount: new BigNumber('1').toFixed(18),
+    FeeAddress: 'swth142ph88p9ju9wrmw65z6edq67f20p957m92ck9d',
   }
   const result = await api.createWithdrawal(accountWallet, params)
   console.log('result', result)
