@@ -21,7 +21,7 @@ export * from './staking'
 export { createSubAccount, activateSubAccount } from './subaccount'
 export { setLeverage, setLeverages, SetLeverageParams } from './account'
 export { getPrices, getIndexPrice, getLastPrice } from './prices'
-export { updateProfile } from './profile'
+export { updateProfile, getProfile, getUsernameIsTaken } from './profile'
 
 export {
     WsWrapper,

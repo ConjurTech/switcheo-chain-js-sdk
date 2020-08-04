@@ -17,3 +17,13 @@ export async function updateProfile(wallet: Wallet, msg: UpdateProfileMsg, optio
   }
   return wallet.signAndBroadcast([msg], [types.UPDATE_PROFILE_MSG_TYPE], options)
 }
+
+export function getProfile() {
+  return fetch(`${this.network.REST_URL}/get_profile?account=${this.pubKeyBech32}`)
+    .then(res => res.json()) // expecting a json response
+}
+
+export function getUsernameIsTaken(username: string) {
+  return fetch(`${this.network.REST_URL}/username_check?username=${username}`)
+    .then(res => res.json()) // expecting a json response
+}
