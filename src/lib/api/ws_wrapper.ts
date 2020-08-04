@@ -12,6 +12,7 @@
 
 /* WS Get Request params */
 import {Network} from "../Client";
+import { getNetwork } from '../config'
 
 export interface WsGetRecentTradesParams {
   market: string,
@@ -129,17 +130,8 @@ export class WsWrapper {
   onMsgCallback: any
 
   public getBaseUrls = function (network) {
-    switch (network) {
-      case Network.TestNet: {
-        return 'ws://54.255.42.175:5000/ws'
-      }
-      case Network.DevNet: {
-        return 'ws://13.251.218.38:5000/ws'
-      }
-      default: {
-        return 'ws://localhost:5000/ws'
-      }
-    }
+    const net = getNetwork(network)
+    return net.WS_URL
   };
 
   constructor(net: Network, onMsgCallback: any) {

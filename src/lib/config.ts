@@ -1,5 +1,6 @@
 export interface Network {
   REST_URL: string,
+  WS_URL: string,
   RELAYER_URL: string,
   COSMOS_URL: string,
   SWTH_CHAIN_ID: number,
@@ -22,6 +23,7 @@ export const NETWORK: NetworkInterface = {
   LOCALHOST: {
     SWTH_CHAIN_ID: 1000,
     REST_URL: `http://${localhost}:${port}`,
+    WS_URL: 'ws://localhost:5000/ws',
     RELAYER_URL: `http://${localhost}:7001`,
     COSMOS_URL: `http://${localhost}:1317`,
     NEO_URL: 'http://47.89.240.111:12332',
@@ -34,6 +36,7 @@ export const NETWORK: NetworkInterface = {
   DEVNET: {
     SWTH_CHAIN_ID: 180,
     REST_URL: 'https://dev-tradescan.switcheo.org',
+    WS_URL: 'wss://dev-ws.dem.exchange/ws',
     RELAYER_URL: `http://13.251.218.38:7001`,
     COSMOS_URL: 'https://dev-tradescan.switcheo.org',
     NEO_URL: 'http://47.89.240.111:12332',
@@ -46,6 +49,7 @@ export const NETWORK: NetworkInterface = {
   TESTNET: {
     SWTH_CHAIN_ID: 1000,
     REST_URL: 'https://test-tradescan.switcheo.org',
+    WS_URL: 'wss://test-ws.dem.exchange/ws',
     RELAYER_URL: `http://54.255.42.175:7001`,
     COSMOS_URL: 'https://test-tradescan.switcheo.org',
     NEO_URL: 'http://47.89.240.111:12332',
@@ -58,6 +62,7 @@ export const NETWORK: NetworkInterface = {
   MAINNET: {
     SWTH_CHAIN_ID: 6,
     REST_URL: 'https://tradescan.switcheo.org',
+    WS_URL: 'wss://ws.dem.exchange/ws',
     RELAYER_URL: 'https://tradescan.switcheo.org',
     COSMOS_URL: 'https://tradescan.switcheo.org',
     NEO_URL: 'http://47.89.240.111:12332',

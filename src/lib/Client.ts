@@ -3,6 +3,7 @@ import WebSocket from 'isomorphic-ws'
 
 import MarketClient from './clients/Market/MarketClient'
 import TradeClient from './clients/Trade/TradeClient'
+import { getNetwork } from '../lib/config'
 
 export enum Network {
   LocalHost = 'LOCALHOST',
@@ -33,17 +34,8 @@ export default class Client extends EventEmitter {
   }
 
   private getBaseUrls(network: Network): [string, string] {
-    switch (network) {
-      case Network.TestNet: {
-        return ['http://54.255.42.175:5001', 'ws://54.255.42.175:5000/ws']
-      }
-      case Network.DevNet: {
-        return ['http://13.251.218.38:5001', 'ws://13.251.218.38:5000/ws']
-      }
-      default: {
-        return ['http://localhost:5001', 'ws://localhost:5000/ws']
-      }
-    }
+    const net = getNetwork(network)
+    return [net.REST_URL, net.WS_URL]
 
   }
 
