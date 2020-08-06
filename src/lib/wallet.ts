@@ -1,6 +1,7 @@
 import * as bip32 from 'bip32'
 import * as bip39 from 'bip39'
 import fetch from 'node-fetch'
+import { BigNumber } from 'bignumber.js'
 import Dagger from '@maticnetwork/eth-dagger'
 import { ethers } from 'ethers'
 import { CONFIG, NETWORK, Network } from './config'
@@ -238,9 +239,9 @@ export class Wallet {
       token.lockproxy_hash, // targetProxyHash
       u.str2hexstring(token.denom), // toAssetHash
       toAddress, // toAddress
-      parseInt(token.externalBalance), // amount
+      (new BigNumber(token.externalBalance)).toNumber(), // amount
       false, // deductFeeInLock
-      0, // feeAmount
+      (new BigNumber('0')).toNumber(), // feeAmount
       '989761fb0c0eb0c05605e849cae77d239f98ac7f' // default feeAddress
     ])
 
