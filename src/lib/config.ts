@@ -76,7 +76,7 @@ export const NETWORK: NetworkInterface = {
 
 export const CONFIG = {
   CHAIN_ID: 'switcheochain',
-  DEFAULT_GAS: '100000000', // TOOD: make this configurable
+  DEFAULT_GAS: '100000000000', // TOOD: make this configurable 1000 SWTH
 }
 
 export function getNetwork(net): Network {
