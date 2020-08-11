@@ -1,3 +1,5 @@
+import { BigNumber } from 'bignumber.js'
+
 import { CONFIG } from '../config'
 import { Fee } from './StdSignDoc'
 
@@ -28,7 +30,7 @@ export class Transaction {
   public readonly tx: Tx
 
   constructor(msgs: ConcreteMsg[], signatures: Signature[], options: TransactionOptions = {}) {
-    const fee = options.fee || new Fee([], CONFIG.DEFAULT_GAS)
+    const fee = options.fee || new Fee([{denom: "swth", amount: (new BigNumber(msgs.length)).shiftedBy(8).toString()}], CONFIG.DEFAULT_GAS)
     this.mode = options.mode || 'block'
     this.tx = {
       fee,
