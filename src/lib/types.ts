@@ -1,5 +1,6 @@
 export const CREATE_ORDER_MSG_TYPE = 'order/CreateOrder'
 export const CANCEL_ORDER_MSG_TYPE = 'order/CancelOrder'
+export const CANCEL_ALL_MSG_TYPE = 'order/CancelAll'
 export const EDIT_ORDER_MSG_TYPE = 'order/EditOrder'
 export const ADD_MARKET_MSG_TYPE = 'market/AddMarket'
 export const INITIATE_SETTLEMENT_MSG_TYPE = 'broker/InitiateSettlement'

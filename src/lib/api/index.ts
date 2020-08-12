@@ -9,7 +9,9 @@ export {
     editOrders,
     EditOrderParams,
     editMargin,
-    EditMarginParams
+    EditMarginParams,
+    cancelAll,
+    CancelAllParams,
 } from './orders'
 export { mintTokens, MintTokenRequest } from './mints'
 export { createToken, createTokens, CreateTokenMsg, mintTestnetTokens, MintTokenMsg, mintMultipleTestnetTokens } from './tokens'

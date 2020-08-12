@@ -78,6 +78,11 @@ export interface EditMarginParams {
   Margin: string,
 }
 
+export interface CancelAllParams {
+  Market: string,
+  Originator?: string,
+}
+
 export async function editMargin(wallet: Wallet, params: EditMarginParams, options?: Options) {
   return editMargins(wallet, [params], options)
 }
@@ -90,4 +95,14 @@ export async function editMargins(wallet: Wallet, paramsList: EditMarginParams[]
     Originator: address,
   }))
   return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.EDIT_MARGIN_MSG_TYPE), options)
+}
+
+
+export async function cancelAll(wallet: Wallet, params: CancelAllParams, options?: Options) {
+  const address = wallet.pubKeyBech32
+  const msgs = [{
+    Market: params.Market,
+    Originator: address,
+  }]
+  return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.CANCEL_ALL_MSG_TYPE), options)
 }
