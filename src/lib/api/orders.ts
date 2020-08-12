@@ -1,6 +1,7 @@
 import * as types from '../types'
 import { Wallet, SignMessageOptions }  from '../wallet'
 import { TransactionOptions } from '../containers/Transaction'
+import { BigNumber } from 'bignumber.js'
 
 interface Options extends SignMessageOptions, TransactionOptions {}
 
@@ -91,7 +92,7 @@ export async function editMargins(wallet: Wallet, paramsList: EditMarginParams[]
   const address = wallet.pubKeyBech32
   const msgs = paramsList.map(params => ({
     Market: params.Market,
-    Margin: params.Margin,
+    Margin: new BigNumber(params.Margin).toFixed(18),
     Originator: address,
   }))
   return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.EDIT_MARGIN_MSG_TYPE), options)
