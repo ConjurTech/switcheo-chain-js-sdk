@@ -352,8 +352,7 @@ export class Wallet {
     let depositAddress = ''
     if (blockchain === Blockchain.Neo) {
       depositAddress = await this.getNeoDepositAddress()
-    }
-    else if (blockchain === Blockchain.Ethereum) {
+    } else if (blockchain === Blockchain.Ethereum) {
       depositAddress = await this.getEthDepositAddress()
     } else {
       return 'unsupported blockchain'
