@@ -201,7 +201,7 @@ export class Wallet {
   }
 
   public async watchDepositAddresses() {
-    if (this.network.NAME !== 'MAINNET') {
+    if (this.network.NAME !== 'mainnet') {
       return
     }
     this.watchNeoDepositAddress()
