@@ -201,17 +201,16 @@ export class Wallet {
 
   public async watchDepositAddresses() {
     this.watchNeoDepositAddress()
-    this.watchEthDepositAddress()
   }
 
   public async watchNeoDepositAddress() {
     const address = await this.getDepositAddress(Blockchain.Neo)
     await this.sendNeoDeposits(address)
 
-    // check every 30 seconds
+    // check every 15 seconds
     this.neoDepositsIntervalId = <any>setInterval(() => {
       this.sendNeoDeposits(address)
-    }, 30 * 1000)
+    }, 15 * 1000)
   }
 
   public async sendNeoDeposits(address) {
@@ -225,24 +224,37 @@ export class Wallet {
   }
 
   public async sendNeoDeposit(token) {
-    const toAddress = ethers.utils.hexlify(this.address)
-
     const privateKey = this.hdWallet[Blockchain.Neo]
     const account = Neon.create.account(privateKey)
+
     const scriptHash = this.network.NEO_LOCKPROXY
+
+    const fromAssetHash = token.asset_id
+    const fromAddress = u.reverseHex(account.scriptHash)
+    const targetProxyHash = this.network.TARGET_PROXY_HASH
+    const toAssetHash = u.str2hexstring(token.denom)
+    const toAddress = ethers.utils.hexlify(this.address)
+
+    const amount = new BigNumber(token.externalBalance)
+    const feeAmount = new BigNumber('100000000')
+    const feeAddress = this.network.FEE_ADDRESS
+    const nonce = Math.floor(Math.random() * 1000000)
+
+    if (amount.isLessThan(feeAmount)) {
+      return
+    }
 
     const sb = Neon.create.scriptBuilder()
     sb.emitAppCall(scriptHash, 'lock', [
-      token.asset_id, // fromAssetHash: swth_v2
-      u.reverseHex(account.scriptHash), // fromAddress
-      this.network.SWTH_CHAIN_ID, // toChainId
-      token.lockproxy_hash, // targetProxyHash
-      u.str2hexstring(token.denom), // toAssetHash
-      toAddress, // toAddress
-      (new BigNumber(token.externalBalance)).toNumber(), // amount
-      false, // deductFeeInLock
-      (new BigNumber('0')).toNumber(), // feeAmount
-      '989761fb0c0eb0c05605e849cae77d239f98ac7f' // default feeAddress
+      fromAssetHash,
+      fromAddress,
+      targetProxyHash,
+      toAssetHash,
+      toAddress,
+      amount.toNumber(),
+      feeAmount.toNumber(),
+      feeAddress,
+      nonce
     ])
 
     const apiProvider = new api.neoCli.instance(this.network.NEO_URL)
