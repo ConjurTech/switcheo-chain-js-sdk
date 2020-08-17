@@ -1,4 +1,5 @@
 export interface Network {
+  NAME: string,
   REST_URL: string,
   WS_URL: string,
   RELAYER_URL: string,
@@ -23,6 +24,7 @@ interface NetworkInterface {
 
 export const NETWORK: NetworkInterface = {
   LOCALHOST: {
+    NAME: 'localhost',
     SWTH_CHAIN_ID: 1000,
     REST_URL: `http://${localhost}:${port}`,
     WS_URL: 'ws://localhost:5000/ws',
@@ -38,6 +40,7 @@ export const NETWORK: NetworkInterface = {
     FEE_ADDRESS: '989761fb0c0eb0c05605e849cae77d239f98ac7f',
   },
   DEVNET: {
+    NAME: 'devnet',
     SWTH_CHAIN_ID: 180,
     REST_URL: 'https://dev-tradescan.switcheo.org',
     WS_URL: 'wss://dev-ws.dem.exchange/ws',
@@ -53,6 +56,7 @@ export const NETWORK: NetworkInterface = {
     FEE_ADDRESS: '989761fb0c0eb0c05605e849cae77d239f98ac7f',
   },
   TESTNET: {
+    NAME: 'testnet',
     SWTH_CHAIN_ID: 1000,
     REST_URL: 'https://test-tradescan.switcheo.org',
     WS_URL: 'wss://test-ws.dem.exchange/ws',
@@ -68,6 +72,7 @@ export const NETWORK: NetworkInterface = {
     FEE_ADDRESS: '989761fb0c0eb0c05605e849cae77d239f98ac7f',
   },
   MAINNET: {
+    NAME: 'mainnet',
     SWTH_CHAIN_ID: 6,
     REST_URL: 'https://tradescan.switcheo.org',
     WS_URL: 'wss://ws.dem.exchange/ws',
