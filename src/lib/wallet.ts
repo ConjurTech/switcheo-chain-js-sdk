@@ -58,6 +58,7 @@ export class Wallet {
   private broadcastResults: BroadcastResults
   private isBroadcastQueuePaused: boolean
   private neoDepositsIntervalId: number
+  private neoRpcUrl: string
 
   constructor(mnemonic, accountNumber, network, walletOptions?: WalletOptions) {
     const privateKey = getPrivKeyFromMnemonic(mnemonic)
@@ -213,7 +214,18 @@ export class Wallet {
     }, 15 * 1000)
   }
 
+  public async updateNeoRpcUrl() {
+    if (this.network.NEO_URL.length > 0) {
+      this.neoRpcUrl = this.network.NEO_URL
+      return
+    }
+    const res = await fetch('https://api.switcheo.network/v2/network/best_node').then(res => res.json())
+    this.neoRpcUrl = res.node
+  }
+
   public async sendNeoDeposits(address) {
+    this.updateNeoRpcUrl()
+
     const tokens = await this.getNeoExternalBalances(address)
     for (let i = 0; i < tokens.length; i++) {
       const token = tokens[i]
@@ -257,10 +269,10 @@ export class Wallet {
       nonce
     ])
 
-    const apiProvider = new api.neoCli.instance(this.network.NEO_URL)
+    const apiProvider = new api.neoCli.instance(this.neoRpcUrl)
     await Neon.doInvoke({
       api: apiProvider,
-      url: this.network.NEO_URL,
+      url: this.neoRpcUrl,
       account,
       script: sb.str,
       gas: 0,
@@ -409,7 +421,7 @@ export class Wallet {
       token.lockproxy_hash.length == 40
     )
     const assetIds = tokens.map(token => Neon.u.reverseHex(token.asset_id))
-    const provider = this.network.NEO_URL
+    const provider = this.neoRpcUrl
 
     const balances = await nep5.getTokenBalances(
       provider,
