@@ -14,6 +14,7 @@ import BALANCE_READER_ABI from './eth/abis/balanceReader.json'
 import WALLET_FACTORY_ABI from './eth/abis/walletFactory.json'
 import { Blockchain, ETH_WALLET_BYTECODE } from './constants'
 import Neon, { nep5, api, u } from "@cityofzion/neon-js"
+import stripHexPrefix from 'strip-hex-prefix'
 
 export interface SignMessageOptions { memo?: string, sequence?: string }
 export interface WalletOptions { useSequenceCounter?: boolean, broadcastQueueIntervalTime?: number }
@@ -68,7 +69,7 @@ export class Wallet {
     this.mnemonic = mnemonic
     this.privKey = privKey
     this.address = privKey.toPubKey().toAddress().toBytes()
-    this.addressHex = ethers.utils.hexlify(this.address)
+    this.addressHex = stripHexPrefix(ethers.utils.hexlify(this.address))
     this.pubKeySecp256k1 = privKey.toPubKey()
     this.pubKeyBase64 = this.pubKeySecp256k1.pubKey.toString('base64')
     this.pubKeyBech32 = this.pubKeySecp256k1.toAddress().toBech32('swth')
