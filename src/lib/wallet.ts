@@ -60,7 +60,6 @@ export class Wallet {
   private broadcastResults: BroadcastResults
   private isBroadcastQueuePaused: boolean
   private neoDepositsIntervalId: number
-  private neoRpcUrl: string
 
   constructor(mnemonic, accountNumber, network, walletOptions?: WalletOptions) {
     const privateKey = getPrivKeyFromMnemonic(mnemonic)
@@ -220,24 +219,7 @@ export class Wallet {
     }, 15 * 1000)
   }
 
-  public async updateNeoRpcUrl() {
-    if (this.network.NEO_URL.length > 0) {
-      this.neoRpcUrl = this.network.NEO_URL
-      return
-    }
-
-    const index = Math.floor(Math.random() * 3)
-    const urls = [
-      'https://rpc1.go.nspcc.ru:10331',
-      'https://explorer.o3node.org:443',
-      'https://main.neologin.io:443'
-    ]
-    this.neoRpcUrl = urls[index]
-  }
-
   public async sendNeoDeposits(address) {
-    this.updateNeoRpcUrl()
-
     const tokens = await this.getNeoExternalBalances(address)
     for (let i = 0; i < tokens.length; i++) {
       const token = tokens[i]
@@ -281,10 +263,11 @@ export class Wallet {
       nonce
     ])
 
-    const apiProvider = new api.neoCli.instance(this.neoRpcUrl)
+    const rpcUrl = this.getNeoWriteRpcUrl()
+    const apiProvider = new api.neoCli.instance(rpcUrl)
     await Neon.doInvoke({
       api: apiProvider,
-      url: this.neoRpcUrl,
+      url: rpcUrl,
       account,
       script: sb.str,
       gas: 0,
@@ -425,6 +408,35 @@ export class Wallet {
     return tokens
   }
 
+  public getNeoReadRpcUrl() {
+    if (this.network.NEO_URL.length > 0) {
+      return this.network.NEO_URL
+    }
+
+    const urls = [
+      "http://seed1.ngd.network:10332",
+      "http://seed2.ngd.network:10332",
+      "http://seed3.ngd.network:10332",
+      "http://seed4.ngd.network:10332",
+      "http://seed10.ngd.network:10332"
+    ]
+    const index = Math.floor(Math.random() * urls.length)
+    return urls[index]
+  }
+
+  public getNeoWriteRpcUrl() {
+    if (this.network.NEO_URL.length > 0) {
+      return this.network.NEO_URL
+    }
+
+    const urls = [
+      'https://explorer.o3node.org:443',
+      'https://main.neologin.io:443'
+    ]
+    const index = Math.floor(Math.random() * urls.length)
+    return urls[index]
+  }
+
   public async getNeoExternalBalances(address: string) {
     const tokenList = await this.getTokens()
     const tokens = tokenList.filter(token =>
@@ -434,7 +446,7 @@ export class Wallet {
       token.denom === 'swth'
     )
     const assetIds = tokens.map(token => Neon.u.reverseHex(token.asset_id))
-    const provider = this.neoRpcUrl
+    const provider = this.getNeoReadRpcUrl()
 
     const balances = await nep5.getTokenBalances(
       provider,
