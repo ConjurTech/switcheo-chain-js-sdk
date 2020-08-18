@@ -492,7 +492,7 @@ export class Wallet {
     const memo = options.memo || ''
     const stdSignMsg = new StdSignDoc({
       accountNumber: this.accountNumber,
-      chainId: CONFIG.CHAIN_ID,
+      chainId: this.network.CHAIN_ID,
       fee: new Fee([{denom: 'swth', amount: (new BigNumber(msgs.length)).shiftedBy(8).toString()}], this.gas),
       memo,
       msgs,

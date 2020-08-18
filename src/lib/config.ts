@@ -13,6 +13,7 @@ export interface Network {
   ETH_WALLET_FACTORY: string,
   TARGET_PROXY_HASH: string,
   FEE_ADDRESS: string,
+  CHAIN_ID: string,
 }
 
 const localhost = process.env.REST_HOST || '127.0.0.1'
@@ -38,6 +39,7 @@ export const NETWORK: NetworkInterface = {
     ETH_WALLET_FACTORY: '0x86edf4748efeded37f4932b7de93a575909cc892',
     TARGET_PROXY_HASH: 'db8afcccebc026c6cae1d541b25f80a83b065c8a',
     FEE_ADDRESS: '989761fb0c0eb0c05605e849cae77d239f98ac7f',
+    CHAIN_ID: 'switcheochain',
   },
   DEVNET: {
     NAME: 'devnet',
@@ -54,6 +56,7 @@ export const NETWORK: NetworkInterface = {
     ETH_WALLET_FACTORY: '0x86edf4748efeded37f4932b7de93a575909cc892',
     TARGET_PROXY_HASH: 'db8afcccebc026c6cae1d541b25f80a83b065c8a',
     FEE_ADDRESS: '989761fb0c0eb0c05605e849cae77d239f98ac7f',
+    CHAIN_ID: 'switcheochain',
   },
   TESTNET: {
     NAME: 'testnet',
@@ -70,6 +73,7 @@ export const NETWORK: NetworkInterface = {
     ETH_WALLET_FACTORY: '0x86edf4748efeded37f4932b7de93a575909cc892',
     TARGET_PROXY_HASH: 'db8afcccebc026c6cae1d541b25f80a83b065c8a',
     FEE_ADDRESS: '989761fb0c0eb0c05605e849cae77d239f98ac7f',
+    CHAIN_ID: 'switcheochain',
   },
   MAINNET: {
     NAME: 'mainnet',
@@ -86,11 +90,11 @@ export const NETWORK: NetworkInterface = {
     ETH_WALLET_FACTORY: '0x86edf4748efeded37f4932b7de93a575909cc892',
     TARGET_PROXY_HASH: 'db8afcccebc026c6cae1d541b25f80a83b065c8a',
     FEE_ADDRESS: '08d8f59e475830d9a1bb97d74285c4d34c6dac08',
+    CHAIN_ID: 'switcheo-tradehub-1',
   },
 }
 
 export const CONFIG = {
-  CHAIN_ID: 'switcheochain',
   DEFAULT_GAS: '100000000000', // TOOD: make this configurable 1000 SWTH
 }
 
