@@ -39,6 +39,7 @@ export class Wallet {
   public readonly hdWallet: HDWallet
   public readonly privKey: PrivKeySecp256k1
   public readonly address: Uint8Array
+  public readonly addressHex: string
   public readonly pubKeySecp256k1: PubKeySecp256k1
   public readonly pubKeyBase64: string
   public readonly pubKeyBech32: string
@@ -67,6 +68,7 @@ export class Wallet {
     this.mnemonic = mnemonic
     this.privKey = privKey
     this.address = privKey.toPubKey().toAddress().toBytes()
+    this.addressHex = ethers.utils.hexlify(this.address)
     this.pubKeySecp256k1 = privKey.toPubKey()
     this.pubKeyBase64 = this.pubKeySecp256k1.pubKey.toString('base64')
     this.pubKeyBech32 = this.pubKeySecp256k1.toAddress().toBech32('swth')
@@ -248,7 +250,7 @@ export class Wallet {
     const fromAddress = u.reverseHex(account.scriptHash)
     const targetProxyHash = this.network.TARGET_PROXY_HASH
     const toAssetHash = u.str2hexstring(token.denom)
-    const toAddress = ethers.utils.hexlify(this.address)
+    const toAddress = this.addressHex
 
     const amount = new BigNumber(token.externalBalance)
     const feeAmount = new BigNumber('100000000')
