@@ -414,11 +414,11 @@ export class Wallet {
     }
 
     const urls = [
-      "http://seed1.ngd.network:10332",
-      "http://seed2.ngd.network:10332",
-      "http://seed3.ngd.network:10332",
-      "http://seed4.ngd.network:10332",
-      "http://seed10.ngd.network:10332"
+      "https://vlqvfsx107.execute-api.ap-southeast-1.amazonaws.com", // ngd proxy seed1
+      "https://qtl81e9fhb.execute-api.ap-southeast-1.amazonaws.com", // ngd proxy seed2
+      "https://vonfbyseb2.execute-api.ap-southeast-1.amazonaws.com", // ngd proxy seed3
+      "https://cn2t0g46mi.execute-api.ap-southeast-1.amazonaws.com", // ngd proxy seed4
+      "https://ojgox44quf.execute-api.ap-southeast-1.amazonaws.com", // ngd proxy seed10
     ]
     const index = Math.floor(Math.random() * urls.length)
     return urls[index]
