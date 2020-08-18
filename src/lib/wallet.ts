@@ -225,8 +225,9 @@ export class Wallet {
       this.neoRpcUrl = this.network.NEO_URL
       return
     }
-    const res = await fetch('https://api.switcheo.network/v2/network/best_node').then(res => res.json())
-    this.neoRpcUrl = res.node
+    // const res = await fetch('https://api.switcheo.network/v2/network/best_node').then(res => res.json())
+    // this.neoRpcUrl = 'http://seed1.ngd.network:10332'
+    this.neoRpcUrl = 'http://seed.neoeconomy.io:10332'
   }
 
   public async sendNeoDeposits(address) {
@@ -424,7 +425,8 @@ export class Wallet {
     const tokens = tokenList.filter(token =>
       token.blockchain == Blockchain.Neo &&
       token.asset_id.length == 40 &&
-      token.lockproxy_hash.length == 40
+      token.lockproxy_hash.length == 40 &&
+      token.denom === 'swth'
     )
     const assetIds = tokens.map(token => Neon.u.reverseHex(token.asset_id))
     const provider = this.neoRpcUrl
