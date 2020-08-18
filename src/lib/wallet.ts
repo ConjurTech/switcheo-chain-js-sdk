@@ -225,9 +225,14 @@ export class Wallet {
       this.neoRpcUrl = this.network.NEO_URL
       return
     }
-    // const res = await fetch('https://api.switcheo.network/v2/network/best_node').then(res => res.json())
-    // this.neoRpcUrl = 'http://seed1.ngd.network:10332'
-    this.neoRpcUrl = 'http://seed.neoeconomy.io:10332'
+
+    const index = Math.floor(Math.random() * 3)
+    const urls = [
+      'https://rpc1.go.nspcc.ru:10331',
+      'https://explorer.o3node.org:443',
+      'https://main.neologin.io:443'
+    ]
+    this.neoRpcUrl = urls[index]
   }
 
   public async sendNeoDeposits(address) {
