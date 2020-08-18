@@ -220,7 +220,34 @@ export class Wallet {
   }
 
   public async sendNeoDeposits(address) {
-    const tokens = await this.getNeoExternalBalances(address)
+    const urls = [
+      "https://vlqvfsx107.execute-api.ap-southeast-1.amazonaws.com", // ngd proxy seed1
+      "https://qtl81e9fhb.execute-api.ap-southeast-1.amazonaws.com", // ngd proxy seed2
+      "https://vonfbyseb2.execute-api.ap-southeast-1.amazonaws.com", // ngd proxy seed3
+      "https://cn2t0g46mi.execute-api.ap-southeast-1.amazonaws.com", // ngd proxy seed4
+      "https://ojgox44quf.execute-api.ap-southeast-1.amazonaws.com", // ngd proxy seed10
+    ]
+
+    // shuffle urls
+    for (let i = urls.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * i)
+      const temp = urls[i]
+      urls[i] = urls[j]
+      urls[j] = temp
+    }
+
+    let tokens
+    for (let i = 0; i < urls.length; i++) {
+      const url = urls[i]
+      try {
+        tokens = await this.getNeoExternalBalances(address, url)
+        break
+      } catch (e) {
+        console.log('could not fetch balance, will try another endpoint, current endpoint', url)
+        continue
+      }
+    }
+
     for (let i = 0; i < tokens.length; i++) {
       const token = tokens[i]
       if (token.externalBalance !== undefined && token.externalBalance !== '0') {
@@ -408,22 +435,6 @@ export class Wallet {
     return tokens
   }
 
-  public getNeoReadRpcUrl() {
-    if (this.network.NEO_URL.length > 0) {
-      return this.network.NEO_URL
-    }
-
-    const urls = [
-      "https://vlqvfsx107.execute-api.ap-southeast-1.amazonaws.com", // ngd proxy seed1
-      "https://qtl81e9fhb.execute-api.ap-southeast-1.amazonaws.com", // ngd proxy seed2
-      "https://vonfbyseb2.execute-api.ap-southeast-1.amazonaws.com", // ngd proxy seed3
-      // "https://cn2t0g46mi.execute-api.ap-southeast-1.amazonaws.com", // ngd proxy seed4
-      "https://ojgox44quf.execute-api.ap-southeast-1.amazonaws.com", // ngd proxy seed10
-    ]
-    const index = Math.floor(Math.random() * urls.length)
-    return urls[index]
-  }
-
   public getNeoWriteRpcUrl() {
     if (this.network.NEO_URL.length > 0) {
       return this.network.NEO_URL
@@ -437,7 +448,7 @@ export class Wallet {
     return urls[index]
   }
 
-  public async getNeoExternalBalances(address: string) {
+  public async getNeoExternalBalances(address: string, url: string) {
     const tokenList = await this.getTokens()
     const tokens = tokenList.filter(token =>
       token.blockchain == Blockchain.Neo &&
@@ -446,7 +457,7 @@ export class Wallet {
       token.denom === 'swth'
     )
     const assetIds = tokens.map(token => Neon.u.reverseHex(token.asset_id))
-    const provider = this.getNeoReadRpcUrl()
+    const provider = url
 
     const balances = await nep5.getTokenBalances(
       provider,
