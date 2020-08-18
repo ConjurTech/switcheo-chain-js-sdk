@@ -16,7 +16,8 @@ import { Blockchain, ETH_WALLET_BYTECODE } from './constants'
 import Neon, { nep5, api, u } from "@cityofzion/neon-js"
 import stripHexPrefix from 'strip-hex-prefix'
 
-export interface SignMessageOptions { memo?: string, sequence?: string }
+export type SignerType = 'ledger' | 'privateKey'
+export interface SignMessageOptions { memo?: string, sequence?: string, signerType?: SignerType }
 export interface WalletOptions { useSequenceCounter?: boolean, broadcastQueueIntervalTime?: number }
 export interface BroadcastQueueItem { id: string, concreteMsgs: ConcreteMsg[], options: any }
 export interface BroadcastResults {
@@ -445,6 +446,7 @@ export class Wallet {
 
   public async signMessage(msgs: ConcreteMsg[], options: SignMessageOptions = {}) {
     let sequence: string = options.sequence
+    let signerType: SignerType = 'ledger'
 
     if (sequence === undefined || sequence === null) { // no sequence override, we get latest from blockchain
       const { result } = await this.getAccount()
@@ -468,6 +470,10 @@ export class Wallet {
       msgs,
       sequence: sequence.toString(),
     })
+
+    if (signerType === 'ledger') {
+
+    }
     return this.sign(marshalJSON(stdSignMsg))
   }
 
