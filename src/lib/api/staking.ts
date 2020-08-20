@@ -123,6 +123,12 @@ export async function getStakingValidators(net: string): Promise<any> {
 
 export async function getUnbondingStakingValidators(net: string): Promise<any> {
   const network = getNetwork(net)
+  return fetch(`${network.COSMOS_URL}/staking/validators?status=unbonding`)
+    .then(res => res.json()) // expecting a json response
+}
+
+export async function getUnbondedStakingValidators(net: string): Promise<any> {
+  const network = getNetwork(net)
   return fetch(`${network.COSMOS_URL}/staking/validators?status=unbonded`)
     .then(res => res.json()) // expecting a json response
 }
