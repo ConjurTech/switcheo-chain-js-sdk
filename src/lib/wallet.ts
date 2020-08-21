@@ -542,19 +542,41 @@ export class Wallet {
 
     const ids = []
     let allConcreteMsgs = []
+    let memo
 
     while (true) {
       if (this.broadcastQueue.length === 0) { break }
       if (allConcreteMsgs.length + this.broadcastQueue[0].concreteMsgs.length > 100) { break }
 
-      const { id, concreteMsgs } = this.broadcastQueue.shift()
+      const { id, concreteMsgs, options } = this.broadcastQueue[0]
+
+      // there can only be one memo per txn
+      // so if there is a memo, we want to put it in a queue by itself
+      if (options.memo !== undefined && options.memo.length > 0){
+        // the queue is not empty, so we just break for now
+        if (ids.length !== 0) {
+          break
+        }
+
+        // the queue is empty, so we assign the memo
+        memo = options.memo
+      }
 
       ids.push(id)
       allConcreteMsgs = allConcreteMsgs.concat(concreteMsgs)
+
+      // pop the first element, since we have enqueued it
+      this.broadcastQueue.shift()
+
+      // since there is a memo here, we just break to ensure that
+      // there will only be one msg in this batch
+      if (memo !== undefined) {
+        break
+      }
     }
 
     const currSequence = this.sequenceCounter.toString()
-    const options = { sequence: currSequence }
+    const options = { sequence: currSequence, memo }
     this.sequenceCounter++
 
     const signature = await this.signMessage(allConcreteMsgs, options)
