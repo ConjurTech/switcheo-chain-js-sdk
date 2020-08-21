@@ -576,11 +576,11 @@ export class Wallet {
     }
 
     const currSequence = this.sequenceCounter.toString()
-    const options = { sequence: currSequence, memo }
+    const options = { sequence: currSequence, memo, mode: 'block' }
     this.sequenceCounter++
 
     const signature = await this.signMessage(allConcreteMsgs, options)
-    const broadcastTxBody = new Transaction(allConcreteMsgs, [signature], { mode: 'block' })
+    const broadcastTxBody = new Transaction(allConcreteMsgs, [signature], options)
 
     const response = await this.broadcast(broadcastTxBody)
     response.sequence = currSequence
