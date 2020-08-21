@@ -6,6 +6,7 @@ import { Fee } from './StdSignDoc'
 export interface TransactionOptions {
   fee?: Fee
   mode?: string
+  memo?: string
 }
 export interface ConcreteMsg {
   type: string
@@ -21,6 +22,7 @@ interface Signature {
 interface Tx {
   fee: Fee
   msg: ReadonlyArray<ConcreteMsg>
+  memo?: string
   signatures: ReadonlyArray<any> // TODO: fix any
 }
 
@@ -36,6 +38,12 @@ export class Transaction {
       fee,
       msg: msgs,
       signatures,
+    }
+    if (options.memo) {
+      this.tx = {
+        ...this.tx,
+        memo: options.memo,
+      }
     }
   }
 }
