@@ -61,7 +61,6 @@ export class Wallet {
   private broadcastResults: BroadcastResults
   private isBroadcastQueuePaused: boolean
   private neoDepositsIntervalId: number
-  private neoRpcUrl: string
 
   constructor(mnemonic, accountNumber, network, walletOptions?: WalletOptions) {
     const privateKey = getPrivKeyFromMnemonic(mnemonic)
@@ -221,19 +220,35 @@ export class Wallet {
     }, 15 * 1000)
   }
 
-  public async updateNeoRpcUrl() {
-    if (this.network.NEO_URL.length > 0) {
-      this.neoRpcUrl = this.network.NEO_URL
-      return
-    }
-    const res = await fetch('https://api.switcheo.network/v2/network/best_node').then(res => res.json())
-    this.neoRpcUrl = res.node
-  }
-
   public async sendNeoDeposits(address) {
-    this.updateNeoRpcUrl()
+    const urls = [
+      "https://vlqvfsx107.execute-api.ap-southeast-1.amazonaws.com", // ngd proxy seed1
+      "https://qtl81e9fhb.execute-api.ap-southeast-1.amazonaws.com", // ngd proxy seed2
+      "https://vonfbyseb2.execute-api.ap-southeast-1.amazonaws.com", // ngd proxy seed3
+      "https://cn2t0g46mi.execute-api.ap-southeast-1.amazonaws.com", // ngd proxy seed4
+      "https://ojgox44quf.execute-api.ap-southeast-1.amazonaws.com", // ngd proxy seed10
+    ]
 
-    const tokens = await this.getNeoExternalBalances(address)
+    // shuffle urls
+    for (let i = urls.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * i)
+      const temp = urls[i]
+      urls[i] = urls[j]
+      urls[j] = temp
+    }
+
+    let tokens
+    for (let i = 0; i < urls.length; i++) {
+      const url = urls[i]
+      try {
+        tokens = await this.getNeoExternalBalances(address, url)
+        break
+      } catch (e) {
+        console.log('could not fetch balance, will try another endpoint, current endpoint', url)
+        continue
+      }
+    }
+
     for (let i = 0; i < tokens.length; i++) {
       const token = tokens[i]
       if (token.externalBalance !== undefined && token.externalBalance !== '0') {
@@ -276,10 +291,11 @@ export class Wallet {
       nonce
     ])
 
-    const apiProvider = new api.neoCli.instance(this.neoRpcUrl)
+    const rpcUrl = this.getNeoWriteRpcUrl()
+    const apiProvider = new api.neoCli.instance(rpcUrl)
     await Neon.doInvoke({
       api: apiProvider,
-      url: this.neoRpcUrl,
+      url: rpcUrl,
       account,
       script: sb.str,
       gas: 0,
@@ -420,15 +436,29 @@ export class Wallet {
     return tokens
   }
 
-  public async getNeoExternalBalances(address: string) {
+  public getNeoWriteRpcUrl() {
+    if (this.network.NEO_URL.length > 0) {
+      return this.network.NEO_URL
+    }
+
+    const urls = [
+      'https://explorer.o3node.org:443',
+      'https://main.neologin.io:443'
+    ]
+    const index = Math.floor(Math.random() * urls.length)
+    return urls[index]
+  }
+
+  public async getNeoExternalBalances(address: string, url: string) {
     const tokenList = await this.getTokens()
     const tokens = tokenList.filter(token =>
       token.blockchain == Blockchain.Neo &&
       token.asset_id.length == 40 &&
-      token.lockproxy_hash.length == 40
+      token.lockproxy_hash.length == 40 &&
+      token.denom === 'swth'
     )
     const assetIds = tokens.map(token => Neon.u.reverseHex(token.asset_id))
-    const provider = this.neoRpcUrl
+    const provider = url
 
     const balances = await nep5.getTokenBalances(
       provider,
@@ -464,7 +494,7 @@ export class Wallet {
     const memo = options.memo || ''
     const stdSignMsg = new StdSignDoc({
       accountNumber: this.accountNumber,
-      chainId: CONFIG.CHAIN_ID,
+      chainId: this.network.CHAIN_ID,
       fee: new Fee([{denom: 'swth', amount: (new BigNumber(msgs.length)).shiftedBy(8).toString()}], this.gas),
       memo,
       msgs,
@@ -518,23 +548,45 @@ export class Wallet {
 
     const ids = []
     let allConcreteMsgs = []
+    let memo
 
     while (true) {
       if (this.broadcastQueue.length === 0) { break }
       if (allConcreteMsgs.length + this.broadcastQueue[0].concreteMsgs.length > 100) { break }
 
-      const { id, concreteMsgs } = this.broadcastQueue.shift()
+      const { id, concreteMsgs, options } = this.broadcastQueue[0]
+
+      // there can only be one memo per txn
+      // so if there is a memo, we want to put it in a queue by itself
+      if (options.memo !== undefined && options.memo.length > 0){
+        // the queue is not empty, so we just break for now
+        if (ids.length !== 0) {
+          break
+        }
+
+        // the queue is empty, so we assign the memo
+        memo = options.memo
+      }
 
       ids.push(id)
       allConcreteMsgs = allConcreteMsgs.concat(concreteMsgs)
+
+      // pop the first element, since we have enqueued it
+      this.broadcastQueue.shift()
+
+      // since there is a memo here, we just break to ensure that
+      // there will only be one msg in this batch
+      if (memo !== undefined) {
+        break
+      }
     }
 
     const currSequence = this.sequenceCounter.toString()
-    const options = { sequence: currSequence }
+    const options = { sequence: currSequence, memo, mode: 'block' }
     this.sequenceCounter++
 
     const signature = await this.signMessage(allConcreteMsgs, options)
-    const broadcastTxBody = new Transaction(allConcreteMsgs, [signature], { mode: 'block' })
+    const broadcastTxBody = new Transaction(allConcreteMsgs, [signature], options)
 
     const response = await this.broadcast(broadcastTxBody)
     response.sequence = currSequence
