@@ -4,10 +4,10 @@ import fetch from 'node-fetch'
 import { BigNumber } from 'bignumber.js'
 import Dagger from '@maticnetwork/eth-dagger'
 import { ethers } from 'ethers'
-import { CONFIG, NETWORK, Network } from './config'
+import { BECH32_PREFIXES, CONFIG, NETWORK, Network } from './config'
 import { Fee, StdSignDoc, Transaction } from './containers'
 import { marshalJSON } from './utils/encoder'
-import { getPath, PrivKeySecp256k1, PubKeySecp256k1 } from './utils/wallet'
+import { getPath, getPathArray, PrivKeySecp256k1, PubKeySecp256k1 } from './utils/wallet'
 import { ConcreteMsg } from './containers/Transaction'
 import { HDWallet } from './utils/hdwallet'
 import BALANCE_READER_ABI from './eth/abis/balanceReader.json'
@@ -15,29 +15,53 @@ import WALLET_FACTORY_ABI from './eth/abis/walletFactory.json'
 import { Blockchain, ETH_WALLET_BYTECODE } from './constants'
 import Neon, { nep5, api, u } from "@cityofzion/neon-js"
 import stripHexPrefix from 'strip-hex-prefix'
+import CosmosLedger from '@lunie/cosmos-ledger'
 
-export type SignerType = 'ledger' | 'privateKey'
-export interface SignMessageOptions { memo?: string, sequence?: string, signerType?: SignerType }
-export interface WalletOptions { useSequenceCounter?: boolean, broadcastQueueIntervalTime?: number }
+export type SignerType = 'ledger' | 'mnemonic'
+export interface SignMessageOptions { memo?: string, sequence?: string }
+export interface WalletConstructorParams {
+  accountNumber: string
+  network: Network
+  useSequenceCounter?: boolean // default true
+  broadcastQueueIntervalTime?: number // default 100 (ms)
+  mnemonic?: string
+  gas?: string // default CONFIG.default_gas
+  signerType?: SignerType // default privateKey
+  onRequestSign?: (transaction: Transaction) => void
+  onSignComplete?: (signature: string) => void
+}
 export interface BroadcastQueueItem { id: string, concreteMsgs: ConcreteMsg[], options: any }
 export interface BroadcastResults {
   [id: string]: any
 }
 
 export class Wallet {
-  public static async connect(mnemonic: string, net = 'LOCALHOST', walletOptions?: WalletOptions) {
+  public static async connect(mnemonic: string, net = 'LOCALHOST') {
     const network = NETWORK[net]
     if (!network) {
       throw new Error('network must be LOCALHOST/DEVNET/TESTNET')
     }
     const privateKey = getPrivKeyFromMnemonic(mnemonic)
-    const pubKeyBech32 = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex')).toPubKey().toAddress().toBech32('swth')
+    const pubKeyBech32 = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex')).toPubKey().toAddress().toBech32(BECH32_PREFIXES.default)
     const { result: { value }} = await fetch(`${network.REST_URL}/get_account?account=${pubKeyBech32}`)
       .then(res => res.json())
-    return new Wallet(mnemonic, value.account_number.toString(), network, walletOptions)
+    return new Wallet({ mnemonic, accountNumber: value.account_number.toString(), network })
   }
 
-  public readonly mnemonic: string
+  public static async connectLedger(cosmosLedger: CosmosLedger, net = 'LOCALHOST') {
+    const network = NETWORK[net]
+    if (!network) {
+      throw new Error('Network unrecognised. Must be LOCALHOST/DEVNET/TESTNET/MAINNET')
+    }
+
+    const pubKeyBech32 = await cosmosLedger.getCosmosAddress()
+
+    const { result: { value }} = await fetch(`${network.REST_URL}/get_account?account=${pubKeyBech32}`)
+      .then(res => res.json())
+    return new Wallet({ accountNumber: value.account_number.toString(), network })
+  }
+
+  public readonly mnemonic?: string
   public readonly hdWallet: HDWallet
   public readonly privKey: PrivKeySecp256k1
   public readonly address: Uint8Array
@@ -52,6 +76,8 @@ export class Wallet {
   public accountNumber: string
   public broadcastMode: string
   public depositAddresses: {[key: string]: string}
+  public onRequestSign?: (transaction: Transaction) => void
+  public onSignComplete?: (signature: string) => void
 
   private useSequenceCounter: boolean
   private sequenceCounter?: number
@@ -62,39 +88,46 @@ export class Wallet {
   private isBroadcastQueuePaused: boolean
   private neoDepositsIntervalId: number
 
-  constructor(mnemonic, accountNumber, network, walletOptions?: WalletOptions) {
-    const privateKey = getPrivKeyFromMnemonic(mnemonic)
-    const privKey = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex'))
+  constructor(params: WalletConstructorParams) {
+    const {
+      mnemonic, accountNumber, network,
+      broadcastQueueIntervalTime = 100,
+      useSequenceCounter = true,
+      signerType,
+      gas = CONFIG.DEFAULT_GAS,
+      onRequestSign,
+      onSignComplete,
+    } = params
+    if (!mnemonic && signerType === 'mnemonic') {
+      throw new Error('Signer Type is mnemonic but mnemonic is not passed in')
+    }
+    if (mnemonic) {
+      const privateKey = getPrivKeyFromMnemonic(mnemonic)
+      const privKey = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex'))
+      this.mnemonic = mnemonic
+      this.hdWallet = HDWallet.getWallet(mnemonic)
+      this.privKey = privKey
+    }
+    if (this.privKey) {
+      this.address = this.privKey.toPubKey().toAddress().toBytes()
+      this.addressHex = stripHexPrefix(ethers.utils.hexlify(this.address))
+      this.pubKeySecp256k1 = this.privKey.toPubKey()
+      this.pubKeyBase64 = this.pubKeySecp256k1.pubKey.toString('base64')
+      this.pubKeyBech32 = this.pubKeySecp256k1.toAddress().toBech32(BECH32_PREFIXES.default)
+      this.validatorBech32 = this.pubKeySecp256k1.toAddress().toBech32(BECH32_PREFIXES.validator)
+      this.consensusBech32 = this.pubKeySecp256k1.toAddress().toBech32(BECH32_PREFIXES.consensus)
+    } else {
 
-    this.mnemonic = mnemonic
-    this.privKey = privKey
-    this.address = privKey.toPubKey().toAddress().toBytes()
-    this.addressHex = stripHexPrefix(ethers.utils.hexlify(this.address))
-    this.pubKeySecp256k1 = privKey.toPubKey()
-    this.pubKeyBase64 = this.pubKeySecp256k1.pubKey.toString('base64')
-    this.pubKeyBech32 = this.pubKeySecp256k1.toAddress().toBech32('swth')
-    this.validatorBech32 = this.pubKeySecp256k1.toAddress().toBech32('swthvaloper')
-    this.consensusBech32 = this.pubKeySecp256k1.toAddress().toBech32('swthvalconspub')
-    this.gas = CONFIG.DEFAULT_GAS
+    }
+    this.gas = gas
     this.accountNumber = accountNumber
     this.network = network
-    this.hdWallet = HDWallet.getWallet(mnemonic)
     this.depositAddresses = {}
+    this.onRequestSign = onRequestSign
+    this.onSignComplete = onSignComplete
 
-    if (walletOptions === undefined) {
-      walletOptions = {}
-    }
-
-    this.useSequenceCounter = true
-    if (walletOptions.useSequenceCounter !== undefined) {
-      this.useSequenceCounter = walletOptions.useSequenceCounter
-    }
-
-    this.broadcastQueueIntervalTime = 100
-    if (walletOptions.broadcastQueueIntervalTime !== undefined) {
-      this.broadcastQueueIntervalTime = walletOptions.broadcastQueueIntervalTime
-    }
-
+    this.useSequenceCounter = useSequenceCounter
+    this.broadcastQueueIntervalTime = broadcastQueueIntervalTime
     this.broadcastQueue = []
     this.broadcastResults = {}
 
@@ -106,13 +139,6 @@ export class Wallet {
   public disconnect() {
     clearInterval(this.broadcastQueueIntervalId)
     clearInterval(this.neoDepositsIntervalId)
-  }
-
-  public getWalletOptions(): WalletOptions {
-    return {
-      useSequenceCounter: this.useSequenceCounter,
-      broadcastQueueIntervalTime: this.broadcastQueueIntervalTime,
-    }
   }
 
   public sign(message) {
@@ -502,7 +528,12 @@ export class Wallet {
     })
 
     if (signerType === 'ledger') {
-
+      const ledger = await CosmosLedger({},
+        getPathArray(), // HDPATH
+        BECH32_PREFIXES.default, // BECH32PREFIX
+      ).connect()
+      const signature = await ledger.sign(stdSignMsg)
+      console.log('signature', signature)
     }
     return this.sign(marshalJSON(stdSignMsg))
   }

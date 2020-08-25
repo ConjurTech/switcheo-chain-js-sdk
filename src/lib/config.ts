@@ -98,6 +98,12 @@ export const CONFIG = {
   DEFAULT_GAS: '100000000000', // TOOD: make this configurable 1000 SWTH
 }
 
+export const BECH32_PREFIXES = {
+  default: 'swth',
+  validator: 'swthvaloper',
+  consensus: 'swthvalconspub',
+}
+
 export function getNetwork(net): Network {
   const network = NETWORK[net]
   if (!network) {
