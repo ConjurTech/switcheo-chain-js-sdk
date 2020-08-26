@@ -552,7 +552,7 @@ export class Wallet {
 
       // there can only be one memo per txn
       // so if there is a memo, we want to put it in a queue by itself
-      if (options.memo !== undefined && options.memo.length > 0){
+      if (options && options.memo !== undefined && options.memo.length > 0){
         // the queue is not empty, so we just break for now
         if (ids.length !== 0) {
           break
