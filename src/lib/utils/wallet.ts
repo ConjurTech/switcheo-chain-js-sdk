@@ -94,7 +94,7 @@ class BIP44 {
   public readonly purpose: number
   public readonly coinType: number
   public readonly account: number
-  constructor(purpose = 44, coinType = 118, account = 0, change = 0 , index = 0) {
+  constructor(purpose = 44, coinType = 118, account = 0) {
     this.purpose = purpose
     this.coinType = coinType
     this.account = account

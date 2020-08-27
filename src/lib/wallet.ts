@@ -24,6 +24,7 @@ export interface WalletConstructorParams {
   network: Network
   useSequenceCounter?: boolean // default true
   broadcastQueueIntervalTime?: number // default 100 (ms)
+  pubKeyBech32?: string
   mnemonic?: string
   gas?: string // default CONFIG.default_gas
   signerType?: SignerType // default privateKey
@@ -48,13 +49,25 @@ export class Wallet {
     return new Wallet({ mnemonic, accountNumber: value.account_number.toString(), network })
   }
 
-  public static async connectLedger(cosmosLedger: CosmosLedger, net = 'LOCALHOST') {
+  public static async connectLedger(cosmosLedger: any, net = 'LOCALHOST') {
     const network = NETWORK[net]
     if (!network) {
       throw new Error('Network unrecognised. Must be LOCALHOST/DEVNET/TESTNET/MAINNET')
     }
 
     const pubKeyBech32 = await cosmosLedger.getCosmosAddress()
+
+    const { result: { value }} = await fetch(`${network.REST_URL}/get_account?account=${pubKeyBech32}`)
+      .then(res => res.json())
+    return new Wallet({ accountNumber: value.account_number.toString(), network, pubKeyBech32 })
+  }
+
+  // for debug view
+  public static async connectPublicKey(pubKeyBech32: string, net = 'LOCALHOST') {
+    const network = NETWORK[net]
+    if (!network) {
+      throw new Error('Network unrecognised. Must be LOCALHOST/DEVNET/TESTNET/MAINNET')
+    }
 
     const { result: { value }} = await fetch(`${network.REST_URL}/get_account?account=${pubKeyBech32}`)
       .then(res => res.json())
@@ -72,6 +85,7 @@ export class Wallet {
   public readonly validatorBech32: string
   public readonly consensusBech32: string
   public readonly gas: string
+  public readonly signerType: SignerType
   public readonly network: Network
   public accountNumber: string
   public broadcastMode: string
@@ -90,7 +104,10 @@ export class Wallet {
 
   constructor(params: WalletConstructorParams) {
     const {
-      mnemonic, accountNumber, network,
+      mnemonic,
+      pubKeyBech32,
+      accountNumber,
+      network,
       broadcastQueueIntervalTime = 100,
       useSequenceCounter = true,
       signerType,
@@ -117,8 +134,9 @@ export class Wallet {
       this.validatorBech32 = this.pubKeySecp256k1.toAddress().toBech32(BECH32_PREFIXES.validator)
       this.consensusBech32 = this.pubKeySecp256k1.toAddress().toBech32(BECH32_PREFIXES.consensus)
     } else {
-
+      this.pubKeyBech32 = pubKeyBech32
     }
+    this.signerType = signerType
     this.gas = gas
     this.accountNumber = accountNumber
     this.network = network
@@ -513,7 +531,7 @@ export class Wallet {
       const { result } = await this.getAccount()
       this.accountNumber = result.value.account_number.toString()
       if (this.accountNumber === "0") {
-        throw new Error("Account number still 0 after refetching.")
+        throw new Error("Account number still 0 after refetching. This suggests your account is not initialized with funds")
       }
     }
 
