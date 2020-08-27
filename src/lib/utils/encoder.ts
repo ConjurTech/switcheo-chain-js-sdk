@@ -18,6 +18,9 @@ function sortObject(obj) {
 }
 
 export function marshalJSON(json) {
-  return Buffer.from(JSON.stringify(sortObject(json)))
+  return Buffer.from(sortAndStringifyJSON(json))
 }
 
+export function sortAndStringifyJSON(json) {
+  return JSON.stringify(sortObject(json))
+}

@@ -6,8 +6,8 @@ import Dagger from '@maticnetwork/eth-dagger'
 import { ethers } from 'ethers'
 import { BECH32_PREFIXES, CONFIG, NETWORK, Network } from './config'
 import { Fee, StdSignDoc, Transaction } from './containers'
-import { marshalJSON } from './utils/encoder'
-import { getPath, getPathArray, PrivKeySecp256k1, PubKeySecp256k1 } from './utils/wallet'
+import { marshalJSON, sortAndStringifyJSON } from './utils/encoder'
+import { Address, getPath, getPathArray, PrivKeySecp256k1, PubKeySecp256k1 } from './utils/wallet'
 import { ConcreteMsg } from './containers/Transaction'
 import { HDWallet } from './utils/hdwallet'
 import BALANCE_READER_ABI from './eth/abis/balanceReader.json'
@@ -24,6 +24,7 @@ export interface WalletConstructorParams {
   network: Network
   useSequenceCounter?: boolean // default true
   broadcastQueueIntervalTime?: number // default 100 (ms)
+  pubKey?: Array<Number>
   pubKeyBech32?: string
   mnemonic?: string
   gas?: string // default CONFIG.default_gas
@@ -56,10 +57,18 @@ export class Wallet {
     }
 
     const pubKeyBech32 = await cosmosLedger.getCosmosAddress()
+    const pubKey = await cosmosLedger.getPubKey()
+    console.log('pubKeyBech32', pubKeyBech32)
 
     const { result: { value }} = await fetch(`${network.REST_URL}/get_account?account=${pubKeyBech32}`)
       .then(res => res.json())
-    return new Wallet({ accountNumber: value.account_number.toString(), network, pubKeyBech32 })
+    return new Wallet({
+      accountNumber: value.account_number.toString(),
+      network,
+      pubKey,
+      pubKeyBech32,
+      signerType: 'ledger',
+    })
   }
 
   // for debug view
@@ -106,6 +115,7 @@ export class Wallet {
     const {
       mnemonic,
       pubKeyBech32,
+      pubKey,
       accountNumber,
       network,
       broadcastQueueIntervalTime = 100,
@@ -118,24 +128,29 @@ export class Wallet {
     if (!mnemonic && signerType === 'mnemonic') {
       throw new Error('Signer Type is mnemonic but mnemonic is not passed in')
     }
+    let address
     if (mnemonic) {
       const privateKey = getPrivKeyFromMnemonic(mnemonic)
       const privKey = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex'))
       this.mnemonic = mnemonic
       this.hdWallet = HDWallet.getWallet(mnemonic)
       this.privKey = privKey
-    }
-    if (this.privKey) {
-      this.address = this.privKey.toPubKey().toAddress().toBytes()
-      this.addressHex = stripHexPrefix(ethers.utils.hexlify(this.address))
+
       this.pubKeySecp256k1 = this.privKey.toPubKey()
+      address = this.pubKeySecp256k1.toAddress()
       this.pubKeyBase64 = this.pubKeySecp256k1.pubKey.toString('base64')
-      this.pubKeyBech32 = this.pubKeySecp256k1.toAddress().toBech32(BECH32_PREFIXES.default)
-      this.validatorBech32 = this.pubKeySecp256k1.toAddress().toBech32(BECH32_PREFIXES.validator)
-      this.consensusBech32 = this.pubKeySecp256k1.toAddress().toBech32(BECH32_PREFIXES.consensus)
     } else {
-      this.pubKeyBech32 = pubKeyBech32
+      this.pubKeySecp256k1 = new PubKeySecp256k1(Buffer.from(pubKey as number[]))
+      this.pubKeyBase64 = this.pubKeySecp256k1.pubKey.toString('base64')
+      console.log('pubKeyBech32', pubKeyBech32)
+      address = Address.fromBech32(BECH32_PREFIXES.default, pubKeyBech32)
     }
+    this.address = address.toBytes()
+    this.addressHex = stripHexPrefix(ethers.utils.hexlify(this.address))
+    this.pubKeyBech32 = address.toBech32(BECH32_PREFIXES.default)
+    this.validatorBech32 = address.toBech32(BECH32_PREFIXES.validator)
+    this.consensusBech32 = address.toBech32(BECH32_PREFIXES.consensus)
+
     this.signerType = signerType
     this.gas = gas
     this.accountNumber = accountNumber
@@ -520,7 +535,6 @@ export class Wallet {
 
   public async signMessage(msgs: ConcreteMsg[], options: SignMessageOptions = {}) {
     let sequence: string = options.sequence
-    let signerType: SignerType = 'ledger'
 
     if (sequence === undefined || sequence === null) { // no sequence override, we get latest from blockchain
       const { result } = await this.getAccount()
@@ -545,13 +559,23 @@ export class Wallet {
       sequence: sequence.toString(),
     })
 
-    if (signerType === 'ledger') {
-      const ledger = await CosmosLedger({},
+    console.log(this.signerType)
+    if (this.signerType === 'ledger') {
+      const ledger = await new CosmosLedger({},
         getPathArray(), // HDPATH
         BECH32_PREFIXES.default, // BECH32PREFIX
       ).connect()
-      const signature = await ledger.sign(stdSignMsg)
-      console.log('signature', signature)
+      const sigData = await ledger.sign(sortAndStringifyJSON(stdSignMsg))
+      console.log('signature', sigData)
+      const signatureBase64 = Buffer.from(sigData as number[]).toString('base64')
+      console.log('signature64', signatureBase64)
+      return {
+        pub_key: {
+          type: 'tendermint/PubKeySecp256k1',
+          value: this.pubKeyBase64,
+        },
+        signature: signatureBase64,
+      }
     }
     return this.sign(marshalJSON(stdSignMsg))
   }

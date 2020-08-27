@@ -72,7 +72,7 @@ export class Address {
     this.address = address
   }
 
-  public fromBech32(prefix, bech32Addr) {
+  public static fromBech32(prefix, bech32Addr) {
     const { prefix: b32Prefix, words } = bech32.decode(bech32Addr)
     if (b32Prefix !== prefix) {
       throw new Error("Prefix doesn't match")
