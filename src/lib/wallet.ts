@@ -7,7 +7,7 @@ import { ethers } from 'ethers'
 import { CONFIG, NETWORK, Network } from './config'
 import { Fee, StdSignDoc, Transaction } from './containers'
 import { marshalJSON } from './utils/encoder'
-import { getPath, PrivKeySecp256k1, PubKeySecp256k1 } from './utils/wallet'
+import { getPath, PrivKeySecp256k1, PubKeySecp256k1, /* Address */ } from './utils/wallet'
 import { ConcreteMsg } from './containers/Transaction'
 import { HDWallet } from './utils/hdwallet'
 import BALANCE_READER_ABI from './eth/abis/balanceReader.json'
@@ -114,6 +114,44 @@ export class Wallet {
     }
   }
 
+  public async getSwthAccountFromEthKey() {
+    const ethPrivateKey = this.hdWallet[Blockchain.Ethereum]
+    const etherWallet = new ethers.Wallet(ethPrivateKey)
+    const message = 'any_message'
+    const ethSig = await etherWallet.signMessage(message)
+    const digest = ethers.utils.hashMessage(message)
+    const ethPubKey = ethers.utils.recoverPublicKey(digest, ethSig)
+    const swthPubKey = ethPubKey.substr(ethPubKey.length - 66)
+
+    const pubKeyBuffer = Buffer.from(swthPubKey, 'hex')
+    const pubKeyObj = new PubKeySecp256k1(pubKeyBuffer)
+
+    return {
+      ethPubKey: ethPubKey,
+      pubKeyHex: pubKeyBuffer.toString('hex'),
+      pubKey: pubKeyBuffer.toString('base64'),
+      address: pubKeyObj.toAddress().toBech32('swth')
+    }
+  }
+
+  public async signWithEthKey(message) {
+    const swthAccount = await this.getSwthAccountFromEthKey()
+
+    const ethPrivateKey = this.hdWallet[Blockchain.Ethereum]
+    const etherWallet = new ethers.Wallet(ethPrivateKey)
+
+    const messageBytes = ethers.utils.arrayify('0x' + message.toString('hex'))
+    const signature = await etherWallet.signMessage(messageBytes)
+
+    return {
+      pub_key: {
+        type: 'tendermint/PubKeySecp256k1',
+        value: swthAccount.pubKey,
+      },
+      signature: Buffer.from(signature.substring(2), 'hex').toString('base64')
+    }
+  }
+
   public sign(message) {
     const privKey = this.privKey
     const data = privKey.sign(message)
@@ -137,8 +175,9 @@ export class Wallet {
       .then(res => res.json()) // expecting a json response
   }
 
-  public getAccount() {
-    return fetch(`${this.network.REST_URL}/get_account?account=${this.pubKeyBech32}`)
+  public async getAccount() {
+    const swthAccount = await this.getSwthAccountFromEthKey()
+    return fetch(`${this.network.REST_URL}/get_account?account=${swthAccount.address}`)
       .then(res => res.json()) // expecting a json response
   }
 
@@ -481,13 +520,8 @@ export class Wallet {
       sequence = result.value.sequence
     }
 
-    if (this.accountNumber === "0" || this.accountNumber === undefined || this.accountNumber === null) {
-      const { result } = await this.getAccount()
-      this.accountNumber = result.value.account_number.toString()
-      if (this.accountNumber === "0") {
-        throw new Error("Account number still 0 after refetching.")
-      }
-    }
+    const { result } = await this.getAccount()
+    this.accountNumber = result.value.account_number.toString()
 
     const memo = options.memo || ''
     const stdSignMsg = new StdSignDoc({
@@ -498,7 +532,7 @@ export class Wallet {
       msgs,
       sequence: sequence.toString(),
     })
-    return this.sign(marshalJSON(stdSignMsg))
+    return await this.signWithEthKey(marshalJSON(stdSignMsg))
   }
 
   public async signAndBroadcast(msgs: object[], types: string[], options) {
