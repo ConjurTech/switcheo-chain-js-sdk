@@ -79,7 +79,7 @@ export class Wallet {
 
     const { result: { value }} = await fetch(`${network.REST_URL}/get_account?account=${pubKeyBech32}`)
       .then(res => res.json())
-    return new Wallet({ accountNumber: value.account_number.toString(), network })
+    return new Wallet({ accountNumber: value.account_number.toString(), network, pubKeyBech32 })
   }
 
   public readonly mnemonic?: string
