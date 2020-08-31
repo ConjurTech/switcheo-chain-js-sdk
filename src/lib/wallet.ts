@@ -117,7 +117,7 @@ export class Wallet {
   public async getSwthAccountFromEthKey() {
     const ethPrivateKey = this.hdWallet[Blockchain.Ethereum]
     const etherWallet = new ethers.Wallet(ethPrivateKey)
-    const message = 'any_message'
+    const message = 'Login to TradeHub'
     const ethSig = await etherWallet.signMessage(message)
     const digest = ethers.utils.hashMessage(message)
     const ethPubKey = ethers.utils.recoverPublicKey(digest, ethSig)
