@@ -41,7 +41,7 @@ export const NETWORK: NetworkInterface = {
     TARGET_PROXY_HASH: 'db8afcccebc026c6cae1d541b25f80a83b065c8a',
     FEE_ADDRESS: '989761fb0c0eb0c05605e849cae77d239f98ac7f',
     CHAIN_ID: 'switcheochain',
-    BECH32_PREFIX: 'dswth',
+    BECH32_PREFIX: 'swth',
   },
   DEVNET: {
     NAME: 'devnet',
@@ -77,7 +77,7 @@ export const NETWORK: NetworkInterface = {
     TARGET_PROXY_HASH: 'db8afcccebc026c6cae1d541b25f80a83b065c8a',
     FEE_ADDRESS: '989761fb0c0eb0c05605e849cae77d239f98ac7f',
     CHAIN_ID: 'switcheochain',
-    BECH32_PREFIX: 'tswth',
+    BECH32_PREFIX: 'swth',
   },
   MAINNET: {
     NAME: 'mainnet',
