@@ -2,25 +2,31 @@
 const SDK = require('../.')
 const { wallet, api } = SDK
 const { Wallet } = wallet
-const mnemonics = require('../mnemonics.json')
 
 async function createOracle() {
-  console.log("mnemonic", mnemonics[0])
-  const wallet = await Wallet.connect(mnemonics[0])
+  const newAccount = wallet.newAccount()
+  console.log('newAccount', newAccount.pubKeyBech32)
+  const tokenReq = {
+    address: newAccount.pubKeyBech32,
+    amount: '1000',
+    denom: 'swth',
+  }
+  const mintResult = await api.mintTokens(tokenReq)
+  console.log('mintResult', mintResult)
+
+  const accountWallet = await Wallet.connect(newAccount.mnemonic)
   const msg = {
     ID: 'BTC_USD_xD',
     Description: 'Calculated based on an average of price feeds from Binance and Coinbase, ... more info ...',
-    MinConsensusThreshold: '67',
+    MinTurnoutPercentage: '67',
     MaxResultAge: '100',
     SecurityType: 'SecuredByValidators',
     ResultStrategy: 'median',
-    Config: JSON.stringify({
-      "median_threshold": '10'
-    }),
     Resolution: '10',
     Spec: '{}',
+    Originator: wallet.pubKeyBech32
   }
-	api.createOracle(wallet, msg).then(console.log)
+	api.createOracle(accountWallet, msg).then(console.log)
 }
 
 createOracle()
