@@ -72,7 +72,7 @@ export class Address {
     this.address = address
   }
 
-  public fromBech32(prefix, bech32Addr) {
+  public static fromBech32(prefix, bech32Addr) {
     const { prefix: b32Prefix, words } = bech32.decode(bech32Addr)
     if (b32Prefix !== prefix) {
       throw new Error("Prefix doesn't match")
@@ -94,7 +94,7 @@ class BIP44 {
   public readonly purpose: number
   public readonly coinType: number
   public readonly account: number
-  constructor(purpose, coinType, account) {
+  constructor(purpose = 44, coinType = 118, account = 0) {
     this.purpose = purpose
     this.coinType = coinType
     this.account = account
@@ -126,9 +126,11 @@ class BIP44 {
   }
 }
 
-export function getPath() {
-  const bip44 = new BIP44(44, 118, 0)
-  const index = 0
-  const change = 0
-  return bip44.pathString(index, change)
+export function getPathArray() {
+  return new BIP44().path(0, 0)
 }
+
+export function getPath() {
+  return new BIP44().pathString(0, 0)
+}
+

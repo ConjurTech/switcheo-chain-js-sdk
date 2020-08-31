@@ -56,6 +56,7 @@
   },
   "dependencies": {
     "@cityofzion/neon-js": "^4.8.0",
+    "@lunie/cosmos-ledger": "^0.1.8",
     "@maticnetwork/eth-dagger": "0.0.3",
     "@types/bip39": "^3.0.0",
     "@types/node-fetch": "^2.5.3",
