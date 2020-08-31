@@ -58,7 +58,6 @@ export class Wallet {
 
     const pubKeyBech32 = await cosmosLedger.getCosmosAddress()
     const pubKey = await cosmosLedger.getPubKey()
-    console.log('pubKeyBech32', pubKeyBech32)
 
     const { result: { value }} = await fetch(`${network.REST_URL}/get_account?account=${pubKeyBech32}`)
       .then(res => res.json())
@@ -564,9 +563,7 @@ export class Wallet {
         getBech32Prefix(this.network, 'main'), // BECH32PREFIX
       ).connect()
       const sigData = await ledger.sign(sortAndStringifyJSON(stdSignMsg))
-      console.log('signature', sigData)
       const signatureBase64 = Buffer.from(sigData as number[]).toString('base64')
-      console.log('signature64', signatureBase64)
       return {
         pub_key: {
           type: 'tendermint/PubKeySecp256k1',
