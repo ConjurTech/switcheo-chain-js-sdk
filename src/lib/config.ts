@@ -14,6 +14,7 @@ export interface Network {
   TARGET_PROXY_HASH: string,
   FEE_ADDRESS: string,
   CHAIN_ID: string,
+  BECH32_PREFIX: string,
 }
 
 const localhost = process.env.REST_HOST || '127.0.0.1'
@@ -40,6 +41,7 @@ export const NETWORK: NetworkInterface = {
     TARGET_PROXY_HASH: 'db8afcccebc026c6cae1d541b25f80a83b065c8a',
     FEE_ADDRESS: '989761fb0c0eb0c05605e849cae77d239f98ac7f',
     CHAIN_ID: 'switcheochain',
+    BECH32_PREFIX: 'dswth',
   },
   DEVNET: {
     NAME: 'devnet',
@@ -57,6 +59,7 @@ export const NETWORK: NetworkInterface = {
     TARGET_PROXY_HASH: 'db8afcccebc026c6cae1d541b25f80a83b065c8a',
     FEE_ADDRESS: '989761fb0c0eb0c05605e849cae77d239f98ac7f',
     CHAIN_ID: 'switcheochain',
+    BECH32_PREFIX: 'swth',
   },
   TESTNET: {
     NAME: 'testnet',
@@ -74,6 +77,7 @@ export const NETWORK: NetworkInterface = {
     TARGET_PROXY_HASH: 'db8afcccebc026c6cae1d541b25f80a83b065c8a',
     FEE_ADDRESS: '989761fb0c0eb0c05605e849cae77d239f98ac7f',
     CHAIN_ID: 'switcheochain',
+    BECH32_PREFIX: 'tswth',
   },
   MAINNET: {
     NAME: 'mainnet',
@@ -91,6 +95,7 @@ export const NETWORK: NetworkInterface = {
     TARGET_PROXY_HASH: 'db8afcccebc026c6cae1d541b25f80a83b065c8a',
     FEE_ADDRESS: '08d8f59e475830d9a1bb97d74285c4d34c6dac08',
     CHAIN_ID: 'switcheo-tradehub-1',
+    BECH32_PREFIX: 'swth',
   },
 }
 
@@ -98,10 +103,30 @@ export const CONFIG = {
   DEFAULT_GAS: '100000000000', // TOOD: make this configurable 1000 SWTH
 }
 
-export const BECH32_PREFIXES = {
-  default: 'swth',
-  validator: 'swthvaloper',
-  consensus: 'swthvalconspub',
+const BECH32_PREFIXES = {
+  validator: 'val',
+  operator: 'oper',
+  consensus: 'cons',
+  public: 'pub',
+}
+
+type Bech32Type = 'main' | 'validator' | 'consensus'
+
+export function getBech32Prefix(net: Network, type: Bech32Type = 'main') {
+  const mainPrefix = net.BECH32_PREFIX
+  switch (type) {
+    case 'main':
+      // e.g. swth
+      return mainPrefix
+    case 'validator':
+      // e.g. swthvaloper
+      return mainPrefix + BECH32_PREFIXES.validator + BECH32_PREFIXES.operator
+    case 'consensus':
+      // e.g. swthvalconspub
+      return mainPrefix + BECH32_PREFIXES.validator + BECH32_PREFIXES.consensus + BECH32_PREFIXES.public
+    default:
+      return mainPrefix
+  }
 }
 
 export function getNetwork(net): Network {

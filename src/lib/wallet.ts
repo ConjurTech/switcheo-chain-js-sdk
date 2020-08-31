@@ -4,7 +4,7 @@ import fetch from 'node-fetch'
 import { BigNumber } from 'bignumber.js'
 import Dagger from '@maticnetwork/eth-dagger'
 import { ethers } from 'ethers'
-import { BECH32_PREFIXES, CONFIG, NETWORK, Network } from './config'
+import { CONFIG, getBech32Prefix, NETWORK, Network } from './config'
 import { Fee, StdSignDoc, Transaction } from './containers'
 import { marshalJSON, sortAndStringifyJSON } from './utils/encoder'
 import { Address, getPath, getPathArray, PrivKeySecp256k1, PubKeySecp256k1 } from './utils/wallet'
@@ -44,7 +44,7 @@ export class Wallet {
       throw new Error('network must be LOCALHOST/DEVNET/TESTNET')
     }
     const privateKey = getPrivKeyFromMnemonic(mnemonic)
-    const pubKeyBech32 = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex')).toPubKey().toAddress().toBech32(BECH32_PREFIXES.default)
+    const pubKeyBech32 = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex')).toPubKey().toAddress().toBech32(getBech32Prefix(network, 'main'))
     const { result: { value }} = await fetch(`${network.REST_URL}/get_account?account=${pubKeyBech32}`)
       .then(res => res.json())
     return new Wallet({ mnemonic, accountNumber: value.account_number.toString(), network })
@@ -142,14 +142,13 @@ export class Wallet {
     } else {
       this.pubKeySecp256k1 = new PubKeySecp256k1(Buffer.from(pubKey as number[]))
       this.pubKeyBase64 = this.pubKeySecp256k1.pubKey.toString('base64')
-      console.log('pubKeyBech32', pubKeyBech32)
-      address = Address.fromBech32(BECH32_PREFIXES.default, pubKeyBech32)
+      address = Address.fromBech32(getBech32Prefix(network, 'main'), pubKeyBech32)
     }
     this.address = address.toBytes()
     this.addressHex = stripHexPrefix(ethers.utils.hexlify(this.address))
-    this.pubKeyBech32 = address.toBech32(BECH32_PREFIXES.default)
-    this.validatorBech32 = address.toBech32(BECH32_PREFIXES.validator)
-    this.consensusBech32 = address.toBech32(BECH32_PREFIXES.consensus)
+    this.pubKeyBech32 = address.toBech32(getBech32Prefix(network, 'main'))
+    this.validatorBech32 = address.toBech32(getBech32Prefix(network, 'validator'))
+    this.consensusBech32 = address.toBech32(getBech32Prefix(network, 'consensus'))
 
     this.signerType = signerType
     this.gas = gas
@@ -559,11 +558,10 @@ export class Wallet {
       sequence: sequence.toString(),
     })
 
-    console.log(this.signerType)
     if (this.signerType === 'ledger') {
       const ledger = await new CosmosLedger({},
         getPathArray(), // HDPATH
-        BECH32_PREFIXES.default, // BECH32PREFIX
+        getBech32Prefix(this.network, 'main'), // BECH32PREFIX
       ).connect()
       const sigData = await ledger.sign(sortAndStringifyJSON(stdSignMsg))
       console.log('signature', sigData)
