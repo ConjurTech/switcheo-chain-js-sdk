@@ -704,10 +704,11 @@ export class Wallet {
   }
 }
 
-export function newAccount() {
+export function newAccount(net: string = 'LOCALHOST') {
+  const network = NETWORK[net]
   const mnemonic = bip39.generateMnemonic()
   const privateKey = getPrivKeyFromMnemonic(mnemonic)
-  const pubKeyBech32 = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex')).toPubKey().toAddress().toBech32('swth')
+  const pubKeyBech32 = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex')).toPubKey().toAddress().toBech32(getBech32Prefix(network))
   return {
     mnemonic,
     privateKey,
@@ -715,9 +716,10 @@ export function newAccount() {
   }
 }
 
-export function accountFromMnemonic(mnemonic) {
+export function accountFromMnemonic(mnemonic, net: string = 'LOCALHOST') {
+  const network = NETWORK[net]
   const privateKey = getPrivKeyFromMnemonic(mnemonic)
-  const pubKeyBech32 = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex')).toPubKey().toAddress().toBech32('swth')
+  const pubKeyBech32 = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex')).toPubKey().toAddress().toBech32(getBech32Prefix(network))
   return {
     mnemonic,
     privateKey,
