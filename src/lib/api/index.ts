@@ -28,6 +28,7 @@ export { createSubAccount, activateSubAccount } from './subaccount'
 export { setLeverage, setLeverages, SetLeverageParams } from './account'
 export { getPrices, getIndexPrice, getLastPrice } from './prices'
 export { updateProfile, getProfile, getUsernameIsTaken } from './profile'
+export { addLiquidity, removeLiquidity, AddLiquidityMsg, RemoveLiquidityMsg } from './amm'
 
 export {
     WsWrapper,

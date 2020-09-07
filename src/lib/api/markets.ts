@@ -49,6 +49,7 @@ export async function addMarkets(wallet: Wallet, msgs: AddMarketMsg[], options?:
   msgs = msgs.map(msg => {
     msg.TickSize = new BigNumber(msg.TickSize).toFixed(18)
     if (!msg.Originator) msg.Originator = address
+    console.log(msg)
     return msg
   })
   return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.ADD_MARKET_MSG_TYPE), options)

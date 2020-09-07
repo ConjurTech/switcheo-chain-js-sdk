@@ -8,17 +8,23 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function addMarket() {
+async function addLiquidity() {
   const newAccount = wallet.newAccount()
   const accountWallet = await Wallet.connect(newAccount.mnemonic)
   const mintAccount = await Wallet.connect('student sell close mad beef exit gospel inform mom industry airport lounge')
 
   const tokenReq = {
     toAddress: newAccount.pubKeyBech32,
-    mint: [{
-      amount: '1000',
-      denom: 'swth',
-    }],
+    mint: [
+      {
+        amount: '100000',
+        denom: 'swth',
+      },
+      {
+        amount: '100000',
+        denom: 'eth',
+      }
+    ],
   }
   const mintResult = await api.mintMultipleTestnetTokens(mintAccount, tokenReq)
   console.log('mintResult', mintResult)
@@ -27,28 +33,12 @@ async function addMarket() {
 
   // console.log('minted')
   await sleep(2000)
-  console.log('creating market')
+  console.log('removing liquidity')
   const params = {
-    Name: 'lib_usd',
-    DisplayName: 'libra',
-    MarketType: 'spot',
-    Description: 'libra is the best coin',
-    Base: 'btc',
-    Quote: 'eth',
-    LotSize: '10000000000',
-    TickSize: '100000000.000000000000000000',
-    MinQuantity: '20000000000',
-    RiskStepSize: '0',
-    InitialMarginBase: '1.000000000000000000',
-    InitialMarginStep: '0.000000000000000000',
-    MaintenanceMarginRatio: '0.000000000000000000',
-    ImpactSize: 0,
-    MarkPriceBand: '0',
-    LastPriceProtectedBand: '0',
-    IndexOracleID: '',
-    ExpiryTime: '0',
+    Market: 'swth_eth',
+    Shares: '0.0022360679774997',
   }
-  api.addMarket(accountWallet, params).then(console.log)
+  api.removeLiquidity(accountWallet, params).then(console.log)
 }
 
-addMarket()
+addLiquidity()
