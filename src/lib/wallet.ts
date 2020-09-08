@@ -18,7 +18,7 @@ import stripHexPrefix from 'strip-hex-prefix'
 import CosmosLedger from '@lunie/cosmos-ledger'
 
 export type SignerType = 'ledger' | 'mnemonic'
-export type OnRequestSignCallback = (transaction: Transaction) => void
+export type OnRequestSignCallback = (signDoc: StdSignDoc) => void
 export type OnSignCompleteCallback = (signature: string) => void
 export interface SignMessageOptions { memo?: string, sequence?: string }
 export interface WalletConstructorParams {
@@ -104,8 +104,8 @@ export class Wallet {
   public accountNumber: string
   public broadcastMode: string
   public depositAddresses: {[key: string]: string}
-  public onRequestSign?: (transaction: Transaction) => void
-  public onSignComplete?: (signature: string) => void
+  public onRequestSign?: OnRequestSignCallback
+  public onSignComplete?: OnSignCompleteCallback
 
   private useSequenceCounter: boolean
   private sequenceCounter?: number
@@ -568,8 +568,10 @@ export class Wallet {
         getPathArray(), // HDPATH
         getBech32Prefix(this.network, 'main'), // BECH32PREFIX
       ).connect()
+      this.onRequestSign && this.onRequestSign(stdSignMsg)
       const sigData = await ledger.sign(sortAndStringifyJSON(stdSignMsg))
       const signatureBase64 = Buffer.from(sigData as number[]).toString('base64')
+      this.onSignComplete && this.onSignComplete(signatureBase64.toString())
       return {
         pub_key: {
           type: 'tendermint/PubKeySecp256k1',
