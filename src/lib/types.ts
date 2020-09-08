@@ -36,3 +36,6 @@ export const UPDATE_PROFILE_MSG_TYPE = 'profile/UpdateProfile'
 
 export const ADD_LIQUIDITY_MSG_TYPE = 'amm/AddLiquidity'
 export const REMOVE_LIQUIDITY_MSG_TYPE = 'amm/RemoveLiquidity'
+export const CREATE_POOL_MSG_TYPE = 'amm/CreatePool'
+export const LINK_POOL_MSG_TYPE = 'amm/LinkPool'
+export const UNLINK_POOL_MSG_TYPE = 'amm/UnlinkPool'

@@ -4,6 +4,24 @@ import { TransactionOptions } from '../containers/Transaction'
 
 interface Options extends SignMessageOptions, TransactionOptions {}
 
+export interface CreatePoolMsg {
+  TokenADenom?: string,
+  TokenBDenom?: string,
+  Originator?: string,
+}
+export interface LinkPoolMsg {
+  PoolID: string,
+  Market: string,
+  Strategy: string,
+  Originator?: string,
+}
+
+export interface UnlinkPoolMsg {
+  PoolID: string,
+  Originator?: string,
+}
+
+
 export interface AddLiquidityMsg {
   PoolID: string,
   ADenom?: string,
@@ -43,7 +61,6 @@ export async function addLiquidity(wallet: Wallet, msg: AddLiquidityMsg, options
   if (!msg.BMaxAmount) {
     msg.BMaxAmount = ''
   }
-    
   return wallet.signAndBroadcast([msg], [types.ADD_LIQUIDITY_MSG_TYPE], options)
 }
 
@@ -52,4 +69,29 @@ export async function removeLiquidity(wallet: Wallet, msg: RemoveLiquidityMsg, o
     msg.Originator = wallet.pubKeyBech32
   }
   return wallet.signAndBroadcast([msg], [types.REMOVE_LIQUIDITY_MSG_TYPE], options)
+}
+export async function createPool(wallet: Wallet, msg: CreatePoolMsg, options?: Options) {
+  if (!msg.TokenADenom) {
+    msg.TokenADenom = ''
+  }
+  if (!msg.TokenBDenom) {
+    msg.TokenBDenom = ''
+  }
+	if(!msg.Originator) {
+    msg.Originator = wallet.pubKeyBech32
+  }
+  return wallet.signAndBroadcast([msg], [types.CREATE_POOL_MSG_TYPE], options)
+}
+
+export async function linkPool(wallet: Wallet, msg: LinkPoolMsg, options?: Options) {
+	if(!msg.Originator) {
+    msg.Originator = wallet.pubKeyBech32
+  }
+  return wallet.signAndBroadcast([msg], [types.LINK_POOL_MSG_TYPE], options)
+}
+export async function unlinkPool(wallet: Wallet, msg: UnlinkPoolMsg, options?: Options) {
+	if(!msg.Originator) {
+    msg.Originator = wallet.pubKeyBech32
+  }
+  return wallet.signAndBroadcast([msg], [types.UNLINK_POOL_MSG_TYPE], options)
 }

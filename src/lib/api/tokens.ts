@@ -51,7 +51,6 @@ export interface MintParams {
 }
 
 export async function mintMultipleTestnetTokens(minterWallet: Wallet, params: MintParams) {
-  console.log('HELP!!!!')
   const { toAddress, mint } = params
   const promises = mint.map((v: {denom: string, amount: string}) => {
     return mintTestnetTokens(minterWallet, {
