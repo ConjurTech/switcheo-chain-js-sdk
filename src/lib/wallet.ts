@@ -18,6 +18,8 @@ import stripHexPrefix from 'strip-hex-prefix'
 import CosmosLedger from '@lunie/cosmos-ledger'
 
 export type SignerType = 'ledger' | 'mnemonic'
+export type OnRequestSignCallback = (transaction: Transaction) => void
+export type OnSignCompleteCallback = (signature: string) => void
 export interface SignMessageOptions { memo?: string, sequence?: string }
 export interface WalletConstructorParams {
   accountNumber: string
@@ -29,8 +31,8 @@ export interface WalletConstructorParams {
   mnemonic?: string
   gas?: string // default CONFIG.default_gas
   signerType?: SignerType // default privateKey
-  onRequestSign?: (transaction: Transaction) => void
-  onSignComplete?: (signature: string) => void
+  onRequestSign?: OnRequestSignCallback
+  onSignComplete?: OnSignCompleteCallback
 }
 export interface BroadcastQueueItem { id: string, concreteMsgs: ConcreteMsg[], options: any }
 export interface BroadcastResults {
@@ -50,7 +52,9 @@ export class Wallet {
     return new Wallet({ mnemonic, accountNumber: value.account_number.toString(), network })
   }
 
-  public static async connectLedger(cosmosLedger: any, net = 'LOCALHOST') {
+  public static async connectLedger(cosmosLedger: any, net = 'LOCALHOST',
+                                    onRequestSign: OnRequestSignCallback,
+                                    onSignComplete: OnSignCompleteCallback) {
     const network = NETWORK[net]
     if (!network) {
       throw new Error('Network unrecognised. Must be LOCALHOST/DEVNET/TESTNET/MAINNET')
@@ -67,6 +71,8 @@ export class Wallet {
       pubKey,
       pubKeyBech32,
       signerType: 'ledger',
+      onRequestSign,
+      onSignComplete,
     })
   }
 
