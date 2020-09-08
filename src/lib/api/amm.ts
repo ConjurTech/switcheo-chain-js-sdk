@@ -5,14 +5,18 @@ import { TransactionOptions } from '../containers/Transaction'
 interface Options extends SignMessageOptions, TransactionOptions {}
 
 export interface AddLiquidityMsg {
-  Market: string,
-  QuoteAmount: string,
-  MaxBaseAmount?: string,
+  PoolID: string,
+  ADenom?: string,
+  AAmount?: string,
+  AMaxAmount?: string,
+  BDenom?: string,
+  BAmount?: string,
+  BMaxAmount?: string,
   Originator?: string,
 }
 
 export interface RemoveLiquidityMsg {
-  Market: string,
+  PoolID: string,
   Shares: string,
   Originator?: string,
 }
@@ -21,8 +25,23 @@ export async function addLiquidity(wallet: Wallet, msg: AddLiquidityMsg, options
 	if(!msg.Originator) {
     msg.Originator = wallet.pubKeyBech32
   }
-  if (!msg.MaxBaseAmount) {
-    msg.MaxBaseAmount = ''
+  if (!msg.ADenom) {
+    msg.ADenom = ''
+  }
+  if (!msg.AAmount) {
+    msg.AAmount = ''
+  }
+  if (!msg.AMaxAmount) {
+    msg.AMaxAmount = ''
+  }
+  if (!msg.BDenom) {
+    msg.BDenom = ''
+  }
+  if (!msg.BAmount) {
+    msg.BAmount = ''
+  }
+  if (!msg.BMaxAmount) {
+    msg.BMaxAmount = ''
   }
     
   return wallet.signAndBroadcast([msg], [types.ADD_LIQUIDITY_MSG_TYPE], options)

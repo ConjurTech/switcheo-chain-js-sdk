@@ -51,6 +51,7 @@ export interface MintParams {
 }
 
 export async function mintMultipleTestnetTokens(minterWallet: Wallet, params: MintParams) {
+  console.log('HELP!!!!')
   const { toAddress, mint } = params
   const promises = mint.map((v: {denom: string, amount: string}) => {
     return mintTestnetTokens(minterWallet, {
@@ -70,6 +71,8 @@ export interface MintTokenMsg {
 }
 
 export async function mintTestnetTokens(minterWallet: Wallet, msg: MintTokenMsg, options?: Options) {
+  // console.log('msg', msg)
+  // console.log('minterWallet', minterWallet)
   if(!msg.Originator) msg.Originator = minterWallet.pubKeyBech32
   return minterWallet.signAndBroadcast([msg], [types.MINT_TOKEN_MSG_TYPE], options)
 }
