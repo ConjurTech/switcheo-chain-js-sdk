@@ -49,7 +49,7 @@ export class Wallet {
     const pubKeyBech32 = new PrivKeySecp256k1(Buffer.from(privateKey, 'hex')).toPubKey().toAddress().toBech32(getBech32Prefix(network, 'main'))
     const { result: { value }} = await fetch(`${network.REST_URL}/get_account?account=${pubKeyBech32}`)
       .then(res => res.json())
-    return new Wallet({ mnemonic, accountNumber: value.account_number.toString(), network })
+    return new Wallet({ mnemonic, accountNumber: value.account_number.toString(), network, signerType: 'mnemonic' })
   }
 
   public static async connectLedger(cosmosLedger: any, net = 'LOCALHOST',
