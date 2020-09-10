@@ -42,18 +42,18 @@ async function addLiquidity() {
   // const create = await api.createPool(accountWallet, params)
   // console.log('create', create)
 
-  // console.log('linking pool')
-  // const linkParams = {
-  //   PoolID: '32429488-b8b9-4016-aab6-1181195dc8bf',
-  //   Market: 'swth_eth',
-  //   Strategy: 'uniswap',
-  // }
-  // const link = await api.linkPool(accountWallet, linkParams)
-  // console.log('link', link)
+  console.log('linking pool')
+  const linkParams = {
+    PoolID: 'b33659f8-0cbd-445d-98eb-266f3e83b325',
+    Market: 'swth_eth',
+    Strategy: 'uniswap',
+  }
+  const link = await api.linkPool(accountWallet, linkParams)
+  console.log('link', link)
 
   console.log('adding liquidity')
   const addParams = {
-    PoolID: '32429488-b8b9-4016-aab6-1181195dc8bf',
+    PoolID: 'b33659f8-0cbd-445d-98eb-266f3e83b325',
     BDenom: 'eth',
     BAmount: '10000',
     ADenom: 'swth',
@@ -62,14 +62,14 @@ async function addLiquidity() {
   const add = await api.addLiquidity(accountWallet, addParams)
   console.log('add', add)
 
-  await sleep(2000)
+  // await sleep(2000)
 
-  console.log('removing liquidity')
-  const removeParams = {
-    PoolID: '32429488-b8b9-4016-aab6-1181195dc8bf',
-    Shares: '0.019999999999999988',
-  }
-  api.removeLiquidity(accountWallet, removeParams).then(console.log)
+  // console.log('removing liquidity')
+  // const removeParams = {
+  //   PoolID: 'b33659f8-0cbd-445d-98eb-266f3e83b325',
+  //   Shares: '0.019999999999999988',
+  // }
+  // api.removeLiquidity(accountWallet, removeParams).then(console.log)
 }
 
 addLiquidity()

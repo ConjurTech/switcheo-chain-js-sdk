@@ -545,13 +545,13 @@ export class Wallet {
       sequence = result.value.sequence
     }
 
-    // if (this.accountNumber === "0" || this.accountNumber === undefined || this.accountNumber === null) {
-    //   const { result } = await this.getAccount()
-    //   this.accountNumber = result.value.account_number.toString()
-    //   if (this.accountNumber === "0") {
-    //     throw new Error("Account number still 0 after refetching. This suggests your account is not initialized with funds")
-    //   }
-    // }
+    if (this.accountNumber === "0" || this.accountNumber === undefined || this.accountNumber === null) {
+      const { result } = await this.getAccount()
+      this.accountNumber = result.value.account_number.toString()
+      if (this.accountNumber === "0") {
+        throw new Error("Account number still 0 after refetching. This suggests your account is not initialized with funds")
+      }
+    }
 
     const memo = options.memo || ''
     const stdSignMsg = new StdSignDoc({
