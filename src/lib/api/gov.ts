@@ -24,6 +24,15 @@ export interface SubmitProposalMsg {
   proposer: string,
 }
 
+export interface DepositProposalMsg {
+  proposal_id: string,
+  depositor: string,
+  amount: ReadonlyArray<{
+    denom: string,
+    amount: string,
+  }>,
+}
+
 export interface VoteProposalMsg {
   proposal_id: string,
   voter: string,
@@ -33,6 +42,11 @@ export interface VoteProposalMsg {
 export async function submitProposal(wallet: Wallet, msg: SubmitProposalMsg, options?: Options) {
   if (!msg.proposer) msg.proposer = wallet.pubKeyBech32
   return wallet.signAndBroadcast([msg], [types.SUBMIT_PROPOSAL_TYPE], options)
+}
+
+export async function depositProposal(wallet: Wallet, msg: DepositProposalMsg, options?: Options) {
+  if (!msg.depositor) msg.depositor = wallet.pubKeyBech32
+  return wallet.signAndBroadcast([msg], [types.DEPOSIT_PROPOSAL_TYPE], options)
 }
 
 export async function voteProposal(wallet: Wallet, msg: VoteProposalMsg, options?: Options) {
