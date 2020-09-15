@@ -39,3 +39,7 @@ export const REMOVE_LIQUIDITY_MSG_TYPE = 'amm/RemoveLiquidity'
 export const CREATE_POOL_MSG_TYPE = 'amm/CreatePool'
 export const LINK_POOL_MSG_TYPE = 'amm/LinkPool'
 export const UNLINK_POOL_MSG_TYPE = 'amm/UnlinkPool'
+
+// Gov
+export const SUBMIT_PROPOSAL_TYPE = 'cosmos-sdk/MsgSubmitProposal'
+export const VOTE_PROPOSAL_TYPE = 'cosmos-sdk/MsgVote'
