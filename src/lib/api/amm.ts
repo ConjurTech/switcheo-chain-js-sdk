@@ -1,6 +1,8 @@
 import * as types from '../types'
 import { Wallet, SignMessageOptions }  from '../wallet'
 import { TransactionOptions } from '../containers/Transaction'
+import { getNetwork } from '../../lib/config'
+import fetch from '../../lib/utils/fetch'
 
 interface Options extends SignMessageOptions, TransactionOptions {}
 
@@ -9,6 +11,7 @@ export interface CreatePoolMsg {
   TokenBDenom?: string,
   Originator?: string,
 }
+
 export interface LinkPoolMsg {
   PoolID: string,
   Market: string,
@@ -20,7 +23,6 @@ export interface UnlinkPoolMsg {
   PoolID: string,
   Originator?: string,
 }
-
 
 export interface AddLiquidityMsg {
   PoolID: string,
@@ -94,4 +96,11 @@ export async function unlinkPool(wallet: Wallet, msg: UnlinkPoolMsg, options?: O
     msg.Originator = wallet.pubKeyBech32
   }
   return wallet.signAndBroadcast([msg], [types.UNLINK_POOL_MSG_TYPE], options)
+}
+
+// getLiquidityPools
+export async function getLiquidityPools(net: string): Promise<any> {
+  const network = getNetwork(net)
+  return fetch(`${network.REST_URL}/get_liquidity_pools`)
+    .then(res => res.json()) // expecting a json response
 }
