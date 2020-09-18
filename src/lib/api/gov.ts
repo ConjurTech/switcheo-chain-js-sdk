@@ -21,12 +21,12 @@ export interface SubmitProposalMsg {
     denom: string,
     amount: string,
   }>,
-  proposer: string,
+  proposer?: string,
 }
 
 export interface DepositProposalMsg {
   proposal_id: string,
-  depositor: string,
+  depositor?: string,
   amount: ReadonlyArray<{
     denom: string,
     amount: string,
@@ -35,7 +35,7 @@ export interface DepositProposalMsg {
 
 export interface VoteProposalMsg {
   proposal_id: string,
-  voter: string,
+  voter?: string,
   option: string,
 }
 
