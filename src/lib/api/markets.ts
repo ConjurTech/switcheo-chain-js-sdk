@@ -1,55 +1,46 @@
 import * as types from '../types'
-import { Wallet, SignMessageOptions }  from '../wallet'
+import { Wallet, SignMessageOptions } from '../wallet'
 import { TransactionOptions } from '../containers/Transaction'
-import { BigNumber } from 'bignumber.js'
 import { getNetwork } from '../config'
 import fetch from '../utils/fetch'
 
-interface Options extends SignMessageOptions, TransactionOptions {}
+interface Options extends SignMessageOptions, TransactionOptions { }
 
-export interface AddMarketMsg {
-  // Name: string,
-  // Description: string,
-  // Base: string,
-  // Quote: string,
-  // LotSize: string,
-  // TickSize: string,
-  // MinQuantity: string,
-  // MarketType: string,
-  // Originator?: string,
-  Name: string,
-	DisplayName: string,
-	MarketType: string,
-	Description: string,
-	Base: string,
-	Quote: string,
-	LotSize: string,
-	TickSize: string,
-	MinQuantity: string,
-	RiskStepSize: string,
-	InitialMarginBase: string,
-	InitialMarginStep: string,
-	MaintenanceMarginRatio: string,
-	MaxLiquidationOrderTicket: string,
-	MaxLiquidationOrderDuration: string,
-	ImpactSize: string,
-	MarkPriceBand: string,
-	LastPriceProtectedBand: string,
-	IndexOracleID: string,
-	ExpiryTime: string,
-	Originator?: string,
+export interface CreateMarketMsg {
+  name: string,
+  display_name: string,
+  market_type: string,
+  description: string,
+  base: string,
+  quote: string,
+  lot_size: string,
+  tick_size: string,
+  min_quantity: string,
+  risk_step_size: string,
+  initial_margin_base: string,
+  initial_margin_step: string,
+  maintenance_margin_ratio: string,
+  max_liquidation_order_ticket: string,
+  max_liquidation_order_duration: string,
+  impact_size: string,
+  mark_price_band: string,
+  last_price_protected_band: string,
+  index_oracle_id: string,
+  expiry_time: string,
+  taker_fee: string,
+  maker_fee: string,
+  originator?: string,
 }
 
-export async function addMarket(wallet: Wallet, msg: AddMarketMsg, options?: Options) {
-  return addMarkets(wallet, [msg], options)
+export async function createMarket(wallet: Wallet, msg: CreateMarketMsg, options?: Options) {
+  return createMarkets(wallet, [msg], options)
 }
 
-export async function addMarkets(wallet: Wallet, msgs: AddMarketMsg[], options?: Options) {
+export async function createMarkets(wallet: Wallet, msgs: CreateMarketMsg[], options?: Options) {
   const address = wallet.pubKeyBech32
   msgs = msgs.map(msg => {
-    msg.TickSize = new BigNumber(msg.TickSize).toFixed(18)
-    if (!msg.Originator) msg.Originator = address
-    console.log(msg)
+    // msg.TickSize = new BigNumber(msg.TickSize).toFixed(18)
+    if (!msg.originator) msg.originator = address
     return msg
   })
   return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.ADD_MARKET_MSG_TYPE), options)
@@ -57,8 +48,8 @@ export async function addMarkets(wallet: Wallet, msgs: AddMarketMsg[], options?:
 
 
 export interface InitiateSettlementMsg {
-  Market: string,
-  Originator?: string,
+  market: string,
+  originator?: string,
 }
 
 export async function initiateSettlement(wallet: Wallet, msg: InitiateSettlementMsg, options?: Options) {
@@ -68,10 +59,9 @@ export async function initiateSettlement(wallet: Wallet, msg: InitiateSettlement
 export async function initiateSettlements(wallet: Wallet, msgs: InitiateSettlementMsg[], options?: Options) {
   const address = wallet.pubKeyBech32
   msgs = msgs.map(msg => {
-    if (!msg.Originator) msg.Originator = address
+    if (!msg.originator) msg.originator = address
     return msg
   })
-
   return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.INITIATE_SETTLEMENT_MSG_TYPE), options)
 }
 

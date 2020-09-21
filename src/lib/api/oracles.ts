@@ -1,36 +1,36 @@
 import * as types from '../types'
-import { Wallet, SignMessageOptions }  from '../wallet'
+import { Wallet, SignMessageOptions } from '../wallet'
 import { TransactionOptions } from '../containers/Transaction'
 
-interface Options extends SignMessageOptions, TransactionOptions {}
+interface Options extends SignMessageOptions, TransactionOptions { }
 
 export interface CreateOracleMsg {
-	Name: string,
-	Description: string,
-	MinConsensusThreshold: string,
-	SecurityType: string,
-	ResultStrategy: string,
-	Config: string,
-	Resolution: string,
-	Spec: string,
-	Originator?: string,
+	id: string,
+	description: string,
+	min_turnout_percentage: string,
+	max_result_age: string,
+	security_type: string,
+	result_strategy: string,
+	resolution: string,
+	spec: string,
+	originator?: string,
 }
 
 export interface CreateVoteMsg {
-	OracleID: string,
-	Timestamp: string,
-	Data: string,
-	Originator?: string,
+	oracle_id: string,
+	timestamp: string,
+	data: string,
+	originator?: string,
 }
 
 export async function createOracle(wallet: Wallet, msg: CreateOracleMsg, options?: Options) {
-	if(!msg.Originator) msg.Originator = wallet.pubKeyBech32
+	if (!msg.originator) msg.originator = wallet.pubKeyBech32
 
-  return wallet.signAndBroadcast([msg], [types.CREATE_ORACLE_TYPE], options)
+	return wallet.signAndBroadcast([msg], [types.CREATE_ORACLE_TYPE], options)
 }
 
 export async function createVote(wallet: Wallet, msg: CreateVoteMsg, options?: Options) {
-	if(!msg.Originator) msg.Originator = wallet.pubKeyBech32
+	if (!msg.originator) msg.originator = wallet.pubKeyBech32
 
 	return wallet.signAndBroadcast([msg], [types.CREATE_VOTE_TYPE], options)
 }

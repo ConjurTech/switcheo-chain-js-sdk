@@ -5,7 +5,7 @@ const { Wallet } = wallet
 const mnemonics = require('../mnemonics.json')
 
 async function createToken() {
-  const wallet = await Wallet.connect(mnemonics[1])
+  const wallet = await Wallet.connect(mnemonics[0])
   const params = {
     Name: 'jiarong coin',
     Symbol: 'LAYWC',

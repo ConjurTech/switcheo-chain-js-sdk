@@ -1,17 +1,15 @@
 export {
     cancelOrder,
     cancelOrders,
-    CancelOrderParams,
+    CancelOrderMsg,
     createOrder,
     createOrders,
     CreateOrderParams,
     editOrder,
     editOrders,
     EditOrderParams,
-    editMargin,
-    EditMarginParams,
     cancelAll,
-    CancelAllParams,
+    CancelAllMsg,
 } from './orders'
 export { mintTokens, MintTokenRequest } from './mints'
 export {
@@ -21,11 +19,13 @@ export {
 } from './tokens'
 export { createOracle, CreateOracleMsg, createVote, CreateVoteMsg } from './oracles'
 export { createWithdrawal, CreateWithdrawalMsg } from './withdrawal'
-export { addMarket, addMarkets, AddMarketMsg, initiateSettlement,
-    initiateSettlements, InitiateSettlementMsg, getTokens } from './markets'
+export {
+    createMarket, createMarkets, CreateMarketMsg, initiateSettlement,
+    initiateSettlements, InitiateSettlementMsg, getTokens
+} from './markets'
 export * from './staking'
 export { createSubAccount, activateSubAccount } from './subaccount'
-export { setLeverage, setLeverages, SetLeverageParams } from './account'
+export { setLeverage, setLeverages, SetLeverageMsg } from './leverage'
 export { getPrices, getIndexPrice, getLastPrice } from './prices'
 export { updateProfile, getProfile, getUsernameIsTaken } from './profile'
 export * from './amm'

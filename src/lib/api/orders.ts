@@ -1,9 +1,8 @@
 import * as types from '../types'
-import { Wallet, SignMessageOptions }  from '../wallet'
+import { Wallet, SignMessageOptions } from '../wallet'
 import { TransactionOptions } from '../containers/Transaction'
-import { BigNumber } from 'bignumber.js'
 
-interface Options extends SignMessageOptions, TransactionOptions {}
+interface Options extends SignMessageOptions, TransactionOptions { }
 
 export interface CreateOrderParams {
   OrderType?: string,
@@ -30,21 +29,20 @@ export async function createOrders(wallet: Wallet, paramsList: CreateOrderParams
   return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.CREATE_ORDER_MSG_TYPE), options)
 }
 
-export interface CancelOrderParams {
-  OrderID: string,
-  Originator?: string,
+export interface CancelOrderMsg {
+  order_id: string,
+  originator?: string,
 }
 
-export async function cancelOrder(wallet: Wallet, params: CancelOrderParams, options?: Options) {
-  return cancelOrders(wallet, [params], options)
+export async function cancelOrder(wallet: Wallet, msg: CancelOrderMsg, options?: Options) {
+  return cancelOrders(wallet, [msg], options)
 }
 
-export async function cancelOrders(wallet: Wallet, paramsList: CancelOrderParams[], options?: Options) {
-  const address = wallet.pubKeyBech32
-  const msgs = paramsList.map(params => ({
-    OrderID: params.OrderID,
-    Originator: address,
-  }))
+export async function cancelOrders(wallet: Wallet, msgs: CancelOrderMsg[], options?: Options) {
+  msgs = msgs.map(msg => {
+    if (!msg.originator) msg.originator = wallet.pubKeyBech32
+    return msg
+  })
   return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.CANCEL_ORDER_MSG_TYPE), options)
 }
 
@@ -69,41 +67,15 @@ export async function editOrders(wallet: Wallet, orderIDs: string[], paramsList:
   return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.EDIT_ORDER_MSG_TYPE), options)
 }
 
-export interface CancelOrderParams {
-  OrderID: string,
-  Originator?: string,
-}
 
-export interface EditMarginParams {
-  Market: string,
-  Margin: string,
-}
-
-export interface CancelAllParams {
-  Market: string,
-  Originator?: string,
-}
-
-export async function editMargin(wallet: Wallet, params: EditMarginParams, options?: Options) {
-  return editMargins(wallet, [params], options)
-}
-
-export async function editMargins(wallet: Wallet, paramsList: EditMarginParams[], options?: Options) {
-  const address = wallet.pubKeyBech32
-  const msgs = paramsList.map(params => ({
-    Market: params.Market,
-    Margin: new BigNumber(params.Margin).toFixed(18),
-    Originator: address,
-  }))
-  return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.EDIT_MARGIN_MSG_TYPE), options)
+export interface CancelAllMsg {
+  market: string,
+  originator?: string,
 }
 
 
-export async function cancelAll(wallet: Wallet, params: CancelAllParams, options?: Options) {
-  const address = wallet.pubKeyBech32
-  const msgs = [{
-    Market: params.Market,
-    Originator: address,
-  }]
-  return wallet.signAndBroadcast(msgs, Array(msgs.length).fill(types.CANCEL_ALL_MSG_TYPE), options)
+
+export async function cancelAll(wallet: Wallet, msg: CancelAllMsg, options?: Options) {
+  if (!msg.originator) msg.originator = wallet.pubKeyBech32
+  return wallet.signAndBroadcast([msg], [types.CANCEL_ALL_MSG_TYPE], options)
 }

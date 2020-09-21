@@ -6,18 +6,18 @@ const { Wallet } = wallet
 const mnemonics = require('../mnemonics.json')
 
 async function getBankBalances(address) {
-  return fetch('http://localhost:1317/bank/balances/' + address)
+  return fetch('http://localhost:1318/bank/balances/' + address)
     .then(res => res.json()) // expecting a json response
 }
 
 async function mint(id) {
-  const mintAccount = await Wallet.connect('MINTER MNEMONIC HERE')
+  const mintAccount = await Wallet.connect(mnemonics[0])
   const newAccount = wallet.newAccount()
   const toAddress = newAccount.pubKeyBech32
   const params = {
     toAddress,
     mint: [{
-      amount: '1000',
+      amount: '1000.25',
       denom: 'swth',
     }],
   }
@@ -25,7 +25,7 @@ async function mint(id) {
 
   console.log('------------------')
   console.log(id + ":", toAddress)
-  const bankBalances = await getBankBalances(toAddress)
+  const bankBalances = await getBankBalances(toAddress).catch(console.error)
   console.log('bank balances', bankBalances)
   const account = await Wallet.connect(newAccount.mnemonic)
   console.log('account', await account.getAccount())

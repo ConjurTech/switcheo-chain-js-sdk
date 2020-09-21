@@ -8,7 +8,7 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function addMarket() {
+async function createMarket() {
   const newAccount = wallet.newAccount()
   const accountWallet = await Wallet.connect(newAccount.mnemonic)
   const mintAccount = await Wallet.connect('student sell close mad beef exit gospel inform mom industry airport lounge')
@@ -51,4 +51,4 @@ async function addMarket() {
   api.addMarket(accountWallet, params).then(console.log)
 }
 
-addMarket()
+createMarket()
