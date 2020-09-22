@@ -17,7 +17,7 @@ export interface SubmitProposalMsg {
       }>,
     },
   },
-  initial_deposit: ReadonlyArray<{
+  initial_deposit?: ReadonlyArray<{
     denom: string,
     amount: string,
   }>,
