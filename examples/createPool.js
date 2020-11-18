@@ -31,6 +31,7 @@ async function createPool() {
   const params = {
     TokenADenom: 'eth',
     TokenBDenom: 'swth',
+    NumQuotes: '20',
   }
   api.createPool(accountWallet, params).then(console.log)
 }

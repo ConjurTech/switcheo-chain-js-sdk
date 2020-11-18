@@ -10,6 +10,7 @@ export interface CreatePoolMsg {
   TokenADenom?: string,
   TokenBDenom?: string,
   Originator?: string,
+  NumQuotes?: string,
 }
 
 export interface LinkPoolMsg {
@@ -81,6 +82,9 @@ export async function createPool(wallet: Wallet, msg: CreatePoolMsg, options?: O
   }
 	if(!msg.Originator) {
     msg.Originator = wallet.pubKeyBech32
+  }
+  if(!msg.NumQuotes) {
+    msg.NumQuotes = ''
   }
   return wallet.signAndBroadcast([msg], [types.CREATE_POOL_MSG_TYPE], options)
 }
